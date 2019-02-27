@@ -19,7 +19,10 @@ white = (255, 255, 255)
 peach = (254, 154, 101)
 red = (200, 0, 0)
 green = (0, 200, 0)
+orange = (200,100,50)
+trans = (1,1,1)
 
+dark_gray = (100,100,100)
 dark_peach = (204, 104, 51)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
@@ -49,14 +52,76 @@ gear = pygame.image.load(os.path.join('images','gear.png'))
 clock = pygame.time.Clock()
 gameDisplay.fill(gray)
 pygame.mixer.music.load(os.path.join('images','background.wav'))
+font = pygame.font.SysFont("Verdana", 12)
+
+
 
 class gun(object):
- def __init__(self, cost, gunSelectIdle, gunSelectPrac, gunBought):
-     self.cost = cost
-     self.gunSelectIdle = gunSelectIdle
-     self.gunSelectPrac = gunSelectPrac
-     self.gunBought = gunBought
+   def __init__(self, cost, gunSelectIdle, gunSelectPrac, gunBought):
+       self.cost = cost
+       self.gunSelectIdle = gunSelectIdle
+       self.gunSelectPrac = gunSelectPrac
+       self.gunBought = gunBought
 
+class Slider():
+    def __init__(self, name, val, maxi, mini, xpos,ypos):
+        self.val = val  # start value
+        self.maxi = maxi  # maximum at slider position right
+        self.mini = mini  # minimum at slider position left
+        self.xpos = xpos  # x-location on screen
+        self.ypos = ypos
+        self.surf = pygame.surface.Surface((100, 50))
+        self.hit = False  # the hit attribute indicates slider movement due to mouse interaction
+        self.txt_surf = font.render(name, 1, black)
+        self.txt_rect = self.txt_surf.get_rect(center=(50, 15))
+
+        # Static graphics - slider background #
+        if name == '':
+            self.surf.fill((dark_gray))
+            pygame.draw.rect(self.surf, gray, [0, 0, 100, 50], 3)
+            pygame.draw.rect(self.surf, white, [10, 19, 80, 5], 0)
+        else:
+            self.surf.fill((dark_gray))
+            pygame.draw.rect(self.surf, gray, [0, 0, 100, 50], 3)
+            pygame.draw.rect(self.surf, orange, [10, 10, 80, 10], 0)
+            pygame.draw.rect(self.surf, white, [10, 30, 80, 5], 0)
+        self.surf.blit(self.txt_surf, self.txt_rect)  # this surface never changes
+
+        # dynamic graphics - button surface #
+        self.button_surf = pygame.surface.Surface((20, 20))
+        self.button_surf.fill(trans)
+        self.button_surf.set_colorkey(trans)
+        pygame.draw.circle(self.button_surf, black, (10, 10), 6, 0)
+        pygame.draw.circle(self.button_surf, orange, (10, 10), 4, 0)
+
+    def draw(self,name):
+        """ Combination of static and dynamic graphics in a copy of
+    the basic slide surface
+    """
+        # static
+        surf = self.surf.copy()
+        # dynamic
+        if name == '':
+            pos = (10+int((self.val-self.mini)/(self.maxi-self.mini)*80), 21)
+        else:
+            pos = (10+int((self.val-self.mini)/(self.maxi-self.mini)*80), 33)
+
+        self.button_rect = self.button_surf.get_rect(center=pos)
+        surf.blit(self.button_surf, self.button_rect)
+        self.button_rect.move_ip(self.xpos, self.ypos)  # move of button box to correct screen position
+
+        # screen
+        gameDisplay.blit(surf, (self.xpos, self.ypos))
+
+    def move(self):
+        """
+    The dynamic part; reacts to movement of the slider button.
+    """
+        self.val = (pygame.mouse.get_pos()[0] - self.xpos - 10) / 80 * (self.maxi - self.mini) + self.mini
+        if self.val < self.mini:
+            self.val = self.mini
+        if self.val > self.maxi:
+            self.val = self.maxi
 
 
 
@@ -67,8 +132,6 @@ weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle]
 weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac]
 weaponbought = [ak.gunBought, mp5.gunBought]
 pygame.mixer.music.play(-1)
-
-
 
 
 def gunbuy(cost, weaponBoughtNum, idleNum, pracNum):
@@ -375,7 +438,6 @@ def upgradebase():
 
 #def previousGamemode():
 
-
 def game_intro():
  # This is needed for the while loop
  intro = True
@@ -385,9 +447,12 @@ def game_intro():
          if event.type == pygame.QUIT:
              pygame.quit
              quit()
+
      # This makes the game gray
      gameDisplay.fill(gray)
      fontlarge.render_to(gameDisplay, (220, 300), "Idle Shooter", (black))
+
+
      #pygame.mixer.music.play(-1)
      # The two buttons on this page, remember not to put the () in the function being called
      button("Play Game", 320, 450, 140, 50, green, bright_green, game_loop_idle)
@@ -423,19 +488,39 @@ def paused():
      pygame.display.update()
      clock.tick(15)
 
+musicsound = Slider("", .5, 1, 0, 300,180)
+sensitivity = Slider("sens", .5,1,0,300,250)
+slides = [musicsound,sensitivity]
+
+
 def settings():
-  settings = True
-  while settings:
-      for event in pygame.event.get():
-          if event.type == pygame.QUIT:
-              pygame.quit
-              quit()
-      gameDisplay.fill(gray)
-      fontlarge.render_to(gameDisplay, (100, 80), "Settings", (black))
-      button("Music Volume", 200,200,0,0,gray,gray)
-      button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
-      pygame.display.update()
-      clock.tick(60)
+    settings = True
+    while settings:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit
+                quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                for s in slides:
+                    if s.button_rect.collidepoint(pos):
+                        s.hit = True
+            elif event.type == pygame.MOUSEBUTTONUP:
+                for s in slides:
+                    s.hit = False
+        for s in slides:
+            if s.hit:
+                s.move()
+                pygame.mixer.music.set_volume(musicsound.val)
+        gameDisplay.fill(gray)
+        fontlarge.render_to(gameDisplay, (80, 70), "Settings", (black))
+        button("Music Volume", 200,200,0,0,gray,gray)
+        button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
+        sensitivity.draw('sens')
+        musicsound.draw('')
+        fontsmall.render_to(gameDisplay, (400,180), str(musicsound.val* 100), (black))
+        pygame.display.update()
+        clock.tick(60)
 
 def game_loop_practice():
  global pause
