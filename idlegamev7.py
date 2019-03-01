@@ -53,7 +53,7 @@ clock = pygame.time.Clock()
 gameDisplay.fill(gray)
 pygame.mixer.music.load(os.path.join('images','background.wav'))
 font = pygame.font.SysFont("Verdana", 12)
-
+hitmarkerpos = []
 
 
 class gun(object):
@@ -132,115 +132,117 @@ weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle]
 weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac]
 weaponbought = [ak.gunBought, mp5.gunBought]
 pygame.mixer.music.play(-1)
-
+initialrun = 0
+def resetGraphics():
+    initialrun = 0
 
 def gunbuy(cost, weaponBoughtNum, idleNum, pracNum):
-  global scoreNum
-  global gamemode
-  if gamemode == "idle":
-      if int(scoreNum) >= 100 and weaponbought[weaponBoughtNum] == 0:
-          weaponbought[weaponBoughtNum] = 1
-          scoreNum -= ak.cost
-      if weaponbought[weaponBoughtNum] == 1:
-          for i in range(len(weaponSelectedIdle)):
-              weaponSelectedIdle[i] = 0
-          weaponSelectedIdle[idleNum] = 1
-  if gamemode == "practice":
-      for i in range(len(weaponSelectedPractice)):
-          weaponSelectedPractice[i] = 0
-      weaponSelectedPractice[pracNum] = 1
+    global scoreNum
+    global gamemode
+    if gamemode == "idle":
+        if int(scoreNum) >= 100 and weaponbought[weaponBoughtNum] == 0:
+            weaponbought[weaponBoughtNum] = 1
+            scoreNum -= ak.cost
+        if weaponbought[weaponBoughtNum] == 1:
+            for i in range(len(weaponSelectedIdle)):
+                weaponSelectedIdle[i] = 0
+            weaponSelectedIdle[idleNum] = 1
+    if gamemode == "practice":
+        for i in range(len(weaponSelectedPractice)):
+            weaponSelectedPractice[i] = 0
+        weaponSelectedPractice[pracNum] = 1
 
 
 def mp5gunbuy():
-  gunbuy(mp5.cost,0,2,2)
+    gunbuy(mp5.cost,0,2,2)
 
 def akgunbuy():
- gunbuy(ak.cost, 0,1,1)
+   gunbuy(ak.cost, 0,1,1)
 
 def target(xx, yy):
- gameDisplay.blit(targetimg, (xx, yy))
+   gameDisplay.blit(targetimg, (xx, yy))
 
 
 def quitgame():
- pygame.quit
- quit()
+    pygame.quit
+    quit()
 
 
 def text_objects(text, font):
- textSurface = font.render(text, True, black)
- return textSurface, textSurface.get_rect()
+    textSurface = font.render(text, True, black)
+    return textSurface, textSurface.get_rect()
 
 
 def button2(x, y, w, h, action=None):
- mouse = pygame.mouse.get_pos()
- click = pygame.mouse.get_pressed()
- if x + w > mouse[0] > x and y + h > mouse[1] > y:
-     if click[0] == 1 and action != None:
-         action()
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        if click[0] == 1 and action != None:
+            action()
 
 
 def buttonstate2(gunselect, selectmsg, unselectmsg, x, y, w, h, icselected, acselected, icunselected, acunselected,
               action=None):
- if gunselect == 1:
-     button(selectmsg, x, y, w, h, icselected, acselected, action)
- elif gunselect == 0:
-     button(unselectmsg, x, y, w, h, icunselected, acunselected, action)
+    if gunselect == 1:
+        button(selectmsg, x, y, w, h, icselected, acselected, action)
+    elif gunselect == 0:
+        button(unselectmsg, x, y, w, h, icunselected, acunselected, action)
 
 
 def buttonstate(gunselect, gunbought, selectedmsg, boughtmsg, buyingmsg, brokemsg, guncost, x, y, w, h, icselected,
              acselected, icbought, acbought, icbroke, acbroke, icbuying, acbuying, action=None):
- if gunbought == 1 and gunselect == 1:
-     button(selectedmsg, x, y, w, h, icselected, acselected, action)
- elif gunbought == 1 and gunselect == 0:
-     button(boughtmsg, x, y, w, h, icbought, acbought, action)
- elif gunbought == 0 and int(scoreNum) < guncost:
-     button(brokemsg, x, y, w, h, icbroke, acbroke, action)
- elif gunbought == 0 and int(scoreNum) >= guncost:
-     button(buyingmsg, x, y, w, h, icbuying, acbuying, action)
+    if gunbought == 1 and gunselect == 1:
+        button(selectedmsg, x, y, w, h, icselected, acselected, action)
+    elif gunbought == 1 and gunselect == 0:
+        button(boughtmsg, x, y, w, h, icbought, acbought, action)
+    elif gunbought == 0 and int(scoreNum) < guncost:
+        button(brokemsg, x, y, w, h, icbroke, acbroke, action)
+    elif gunbought == 0 and int(scoreNum) >= guncost:
+        button(buyingmsg, x, y, w, h, icbuying, acbuying, action)
 
 for i in range(len(weaponSelectedPractice)):
-  weaponSelectedPractice[i] = 0
+    weaponSelectedPractice[i] = 0
 weaponSelectedPractice[2] = 1
 def button(msg, x, y, w, h, ic, ac, action=None):
- # this gets the mouse's position
- mouse = pygame.mouse.get_pos()
- # This gets when the mouse clicks, it makes a tuple? like this: [1,1,1]
- # left, middle, right, 1 is active, 0 is inactive
- click = pygame.mouse.get_pressed()
+    # this gets the mouse's position
+    mouse = pygame.mouse.get_pos()
+   # This gets when the mouse clicks, it makes a tuple? like this: [1,1,1]
+    # left, middle, right, 1 is active, 0 is inactive
+    click = pygame.mouse.get_pressed()
 
- # If mouse[0] or left click is between the box then draw the active color
- if x + w > mouse[0] > x and y + h > mouse[1] > y:
-     pygame.draw.rect(gameDisplay, ac, (x, y, w, h))
+    # If mouse[0] or left click is between the box then draw the active color
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        pygame.draw.rect(gameDisplay, ac, (x, y, w, h))
 
-     # If the click is left then do the action that is called
-     if click[0] == 1 and action != None:
-         action()
- # If not draw the box with  the inactive color.
- else:
-     pygame.draw.rect(gameDisplay, ic, (x, y, w, h))
+        # If the click is left then do the action that is called
+        if click[0] == 1 and action != None:
+            action()
+    # If not draw the box with  the inactive color.
+    else:
+        pygame.draw.rect(gameDisplay, ic, (x, y, w, h))
 
- # This calls a small text. It goes the font then font size
- smallText = pygame.font.Font("freesansbold.ttf", 20)
+   # This calls a small text. It goes the font then font size
+    smallText = pygame.font.Font("freesansbold.ttf", 20)
 
- # no clue just do it
- textSurf, textRect = text_objects(msg, smallText)
- # This makes the text in the center of the button
- textRect.center = ((x + (w / 2)), (y + (h / 2)))
- # Draws something on screen
- gameDisplay.blit(textSurf, textRect)
+    # no clue just do it
+    textSurf, textRect = text_objects(msg, smallText)
+    # This makes the text in the center of the button
+    textRect.center = ((x + (w / 2)), (y + (h / 2)))
+    # Draws something on screen
+    gameDisplay.blit(textSurf, textRect)
 
 
 def baseselect2():
- global weaponSelectedIdle
- global weaponSelectedPractice
- if gamemode == "idle":
-     for i in range(len(weaponSelectedIdle)):
-         weaponSelectedIdle[i] = 0
-     weaponSelectedIdle[0] = 1
- if gamemode == "practice":
-     for i in range(len(weaponSelectedPractice)):
-         weaponSelectedPractice[i] = 0
-     weaponSelectedPractice[0] = 1
+    global weaponSelectedIdle
+    global weaponSelectedPractice
+    if gamemode == "idle":
+        for i in range(len(weaponSelectedIdle)):
+            weaponSelectedIdle[i] = 0
+        weaponSelectedIdle[0] = 1
+    if gamemode == "practice":
+        for i in range(len(weaponSelectedPractice)):
+            weaponSelectedPractice[i] = 0
+        weaponSelectedPractice[0] = 1
 
 
 games = ["rust", "csgo"]
@@ -249,50 +251,50 @@ game = 0
 
 
 def changeGameUp():
- global game
- global games
- global weaponSelectedPractice
- global weaponSelectedIdle
- game += 1
- if gamemode == "idle":
-     for i in range(len(weaponSelectedIdle)):
-         weaponSelectedIdle[i] = 0
-     weaponSelectedIdle[0] = 1
- if gamemode == "practice":
-     for i in range(len(weaponSelectedPractice)):
-         weaponSelectedPractice[i] = 0
-     weaponSelectedPractice[0] = 1
- if game >= len(games):
-     game = 0
+    global game
+    global games
+    global weaponSelectedPractice
+    global weaponSelectedIdle
+    game += 1
+    if gamemode == "idle":
+        for i in range(len(weaponSelectedIdle)):
+            weaponSelectedIdle[i] = 0
+        weaponSelectedIdle[0] = 1
+    if gamemode == "practice":
+        for i in range(len(weaponSelectedPractice)):
+            weaponSelectedPractice[i] = 0
+        weaponSelectedPractice[0] = 1
+    if game >= len(games):
+        game = 0
 
 
 def changeGameDown():
- global game
- global games
- global weaponSelectedPractice
- global weaponSelectedIdle
- game -= 1
- if gamemode == "idle":
-     for i in range(len(weaponSelectedIdle)):
-         weaponSelectedIdle[i] = 0
-     weaponSelectedIdle[0] = 1
- if gamemode == "practice":
-     for i in range(len(weaponSelectedPractice)):
-         weaponSelectedPractice[i] = 0
-     weaponSelectedPractice[0] = 1
- if game == -1:
-     game = len(games) - 1
+    global game
+    global games
+    global weaponSelectedPractice
+    global weaponSelectedIdle
+    game -= 1
+    if gamemode == "idle":
+        for i in range(len(weaponSelectedIdle)):
+            weaponSelectedIdle[i] = 0
+        weaponSelectedIdle[0] = 1
+    if gamemode == "practice":
+        for i in range(len(weaponSelectedPractice)):
+            weaponSelectedPractice[i] = 0
+        weaponSelectedPractice[0] = 1
+    if game == -1:
+        game = len(games) - 1
 
 
 def base():
- global scoreNum
- global hitNum
- global hitAdd
- global scoreAdd
- if gamemode == "idle":
-     scoreNum = int(scoreNum) + scoreAdd
- if gamemode == "practice":
-     hitNum = int(hitNum) + hitAdd
+    global scoreNum
+    global hitNum
+    global hitAdd
+    global scoreAdd
+    if gamemode == "idle":
+        scoreNum = int(scoreNum) + scoreAdd
+    if gamemode == "practice":
+        hitNum = int(hitNum) + hitAdd
 
 
 #Stops going left after 7 bullets, goes straight up for 1
@@ -366,127 +368,127 @@ AKPOS = (
  (0, 0),
 )
 def makeGunStart(GUNPOS,sleepTime):
-  for dx, dy in GUNPOS:
-      for event in pygame.event.get():
-          pygame.mouse.get_pos()
+    for dx, dy in GUNPOS:
+        for event in pygame.event.get():
+            pygame.mouse.get_pos()
 
-          button2(
-              250,
-              150,
-              300,
-              300,
-              make_gun(dx, dy,sleepTime)
-          )
+            button2(
+                250,
+                150,
+                300,
+                300,
+                make_gun(dx, dy,sleepTime)
+            )
 
 def make_gun(dx, dy,sleepTime):
- def gun():
-     global scoreNum
-     global hitNum
-     x, y = pygame.mouse.get_pos()
-     pygame.mouse.set_pos(x + dx, y + dy)
-     if gamemode == "idle":
-         scoreNum += scoreAdd
+    def gun():
+        global scoreNum
+        global hitNum
+        x, y = pygame.mouse.get_pos()
+        pygame.mouse.set_pos(x + dx, y + dy)
+        if gamemode == "idle":
+            scoreNum += scoreAdd
 
-         button("", 190, 70, 250, 30, gray, gray)
-         fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
-         if int(scoreNum) >= upgradecost:
-             button(upgradelabel, 600, 90, 180, 50, green, bright_green, )
-             button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green, )
-         if int(scoreNum) < upgradecost:
-             button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red, )
-     elif gamemode == "practice":
-         hitNum += hitAdd
-         button("", 140, 70, 250, 30, gray, gray)
-         fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
-     #pygame.draw.circle(gameDisplay,red, (x,y), 5)
-     gameDisplay.blit(hitmarker, (x - 5, y - 5))
-     pygame.display.update()
-     time.sleep(sleepTime)
+            button("", 190, 70, 250, 30, gray, gray)
+            fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
+            if int(scoreNum) >= upgradecost:
+                button(upgradelabel, 600, 90, 180, 50, green, bright_green, )
+                button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green, )
+            if int(scoreNum) < upgradecost:
+                button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red, )
+        elif gamemode == "practice":
+            hitNum += hitAdd
+            button("", 140, 70, 250, 30, gray, gray)
+            fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
+        #pygame.draw.circle(gameDisplay,red, (x,y), 5)
+        gameDisplay.blit(hitmarker, (x - 5, y - 5))
+        pygame.display.update()
+        time.sleep(sleepTime)
 
- return gun
+    return gun
 
 def akrust():
-  makeGunStart(AKPOS,.125)
+     makeGunStart(AKPOS,.125)
 
 def mp5rust():
-  makeGunStart(mp5pos,.125)
+     makeGunStart(mp5pos,.125)
 
 
 
 def upgradeall():
- global scoreNum
- global scoreAdd
- global upgradecost
- global upgradelabel
- while int(scoreNum) >= upgradecost:
-     scoreAdd += 1
-     scoreNum -= upgradecost
-     upgradecost = upgradecost * upgrademultiplier
-     upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
+    global scoreNum
+    global scoreAdd
+    global upgradecost
+    global upgradelabel
+    while int(scoreNum) >= upgradecost:
+        scoreAdd += 1
+        scoreNum -= upgradecost
+        upgradecost = upgradecost * upgrademultiplier
+        upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
 
 
 def upgradebase():
- global scoreNum
- global scoreAdd
- global upgradecost
- global upgradelabel
- if int(scoreNum) >= upgradecost:
-     scoreAdd += 1
-     scoreNum -= upgradecost
-     upgradecost = upgradecost * upgrademultiplier
-     upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
+    global scoreNum
+    global scoreAdd
+    global upgradecost
+    global upgradelabel
+    if int(scoreNum) >= upgradecost:
+        scoreAdd += 1
+        scoreNum -= upgradecost
+        upgradecost = upgradecost * upgrademultiplier
+        upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
 
 #def previousGamemode():
 
 def game_intro():
- # This is needed for the while loop
- intro = True
- while intro:
-     # Always put this so they can exit
-     for event in pygame.event.get():
-         if event.type == pygame.QUIT:
-             pygame.quit
-             quit()
+    # This is needed for the while loop
+    intro = True
+    while intro:
+        # Always put this so they can exit
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit
+                quit()
 
-     # This makes the game gray
-     gameDisplay.fill(gray)
-     fontlarge.render_to(gameDisplay, (220, 300), "Idle Shooter", (black))
+        # This makes the game gray
+        gameDisplay.fill(gray)
+        fontlarge.render_to(gameDisplay, (220, 300), "Idle Shooter", (black))
 
 
-     #pygame.mixer.music.play(-1)
-     # The two buttons on this page, remember not to put the () in the function being called
-     button("Play Game", 320, 450, 140, 50, green, bright_green, game_loop_idle)
-     button("Play Practice", 320, 510, 140, 50, green, bright_green, game_loop_practice)
-     button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
+        #pygame.mixer.music.play(-1)
+        # The two buttons on this page, remember not to put the () in the function being called
+        button("Play Game", 320, 450, 140, 50, green, bright_green, game_loop_idle)
+        button("Play Practice", 320, 510, 140, 50, green, bright_green, game_loop_practice)
+        button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
 
-     # Needed for the game to run
-     pygame.display.update()
-     clock.tick(15)
+        # Needed for the game to run
+        pygame.display.update()
+        clock.tick(15)
 
 def unpause():
- global pause
- pause = False
+    global pause
+    pause = False
 
 
 def paused():
- while pause:
-     # Always put this so they can exit
-     for event in pygame.event.get():
-         if event.type == pygame.QUIT:
-             pygame.quit
-             quit()
-     # This makes the game gray
-     gameDisplay.fill(gray)
-     fontlarge.render_to(gameDisplay, (150, 300), "You are Paused", (black))
+    while pause:
+        # Always put this so they can exit
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit
+                quit()
+        # This makes the game gray
+        gameDisplay.fill(gray)
+        fontlarge.render_to(gameDisplay, (150, 300), "You are Paused", (black))
 
-     # The two buttons on this page, remember not to put the () in the function being called
-     button("Continue", 320, 450, 150, 50, green, bright_green, unpause)
-     button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
-     # mouse = pygame.mouse.get_pos()
+        # The two buttons on this page, remember not to put the () in the function being called
+        button("Continue", 320, 450, 150, 50, green, bright_green, unpause)
+        button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
+        # mouse = pygame.mouse.get_pos()
 
-     # Needed for the game to run
-     pygame.display.update()
-     clock.tick(15)
+        # Needed for the game to run
+        pygame.display.update()
+        clock.tick(15)
 
 musicsound = Slider("", .5, 1, 0, 300,180)
 sensitivity = Slider("sens", .5,1,0,300,250)
@@ -523,128 +525,127 @@ def settings():
         clock.tick(60)
 
 def game_loop_practice():
- global pause
- global gamemode
- global x
- global y
- gamemode = "practice"
- while not gameExit:
-     for event in pygame.event.get():
-         if event.type == pygame.QUIT:
-             pygame.quit()
-             quit()
-         if event.type == pygame.KEYDOWN:
-             if event.key == pygame.K_l:
-                 pause = True
-                 paused()
+    global pause
+    global gamemode
+    global x
+    global y
+    gamemode = "practice"
+    while not gameExit:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    pause = True
+                    paused()
 
-         if event.type == pygame.MOUSEBUTTONDOWN:
-             if event.button == 1:
-                 button("", 600, 80, 80, 50, green, bright_green, changeGameDown)
-                 button("", 900, 80, 80, 50, green, bright_green, changeGameUp)
-                 if weaponSelectedPractice[0] == 1:
-                     button2(250, 150, 300, 300, base)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    button("", 600, 80, 80, 50, green, bright_green, changeGameDown)
+                    button("", 900, 80, 80, 50, green, bright_green, changeGameUp)
+                    if weaponSelectedPractice[0] == 1:
+                        button2(250, 150, 300, 300, base)
 
-     gameDisplay.fill(gray)
-     target(250, 150)
-     click = pygame.mouse.get_pressed()
-     fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
-     scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Hits:", black)
-     if weaponSelectedPractice[0] != 1:
-         button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
-     elif weaponSelectedPractice[0] == 1:
-         button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
-     button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
-     gameDisplay.blit(backarrow, (600, 80))
-     gameDisplay.blit(forwardsarrow, (900, 80))
-     x, y = pygame.mouse.get_pos()
-     gameDisplay.blit(gear, (250,650))
-     button2(250,650,50,50,settings)
-     if game == 0:
-         button("RUST", 700, 80, 180, 50, red, red)
+        gameDisplay.fill(gray)
+        target(250, 150)
+        click = pygame.mouse.get_pressed()
+        fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
+        scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Hits:", black)
+        if weaponSelectedPractice[0] != 1:
+            button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
+        elif weaponSelectedPractice[0] == 1:
+            button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
+        button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
+        gameDisplay.blit(backarrow, (600, 80))
+        gameDisplay.blit(forwardsarrow, (900, 80))
+        x, y = pygame.mouse.get_pos()
+        gameDisplay.blit(gear, (250,650))
+        button2(250,650,50,50,settings)
+        if game == 0:
+            button("RUST", 700, 80, 180, 50, red, red)
 
-         buttonstate2(weaponSelectedPractice[1], "AK Selected", "Select AK", 800, 150,
-                      180, 50, peach, peach, dark_peach, peach, akgunbuy)
-         buttonstate2(weaponSelectedPractice[2], "MP5 Selected", "Select MP5", 600, 210, 180, 50, peach, peach,
-                      dark_peach, peach, mp5gunbuy)
+            buttonstate2(weaponSelectedPractice[1], "AK Selected", "Select AK", 800, 150,
+                         180, 50, peach, peach, dark_peach, peach, akgunbuy)
+            buttonstate2(weaponSelectedPractice[2], "MP5 Selected", "Select MP5", 600, 210, 180, 50, peach, peach,
+                         dark_peach, peach, mp5gunbuy)
 
-         if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
-             if weaponSelectedPractice[1] == 1:
-                 akrust()
-             if weaponSelectedPractice[2] == 1:
-                 mp5rust()
+            if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
+                if weaponSelectedPractice[1] == 1:
+                    akrust()
+                if weaponSelectedPractice[2] == 1:
+                    mp5rust()
 
-     if game == 1:
-         button("CSGO", 700, 80, 180, 50, red, red)
+        if game == 1:
+            button("CSGO", 700, 80, 180, 50, red, red)
 
 
 
-     pygame.display.update()
-     clock.tick(144)
+        pygame.display.update()
+        clock.tick(144)
 
 
 def game_loop_idle():
- global pause
- global gamemode
- gamemode = "idle"
- while not gameExit:
-     for event in pygame.event.get():
-         if event.type == pygame.QUIT:
-             pygame.quit()
-             quit()
-         if event.type == pygame.KEYDOWN:
-             if event.key == pygame.K_l:
-                 pause = True
-                 paused()
+    global pause
+    global gamemode
+    gamemode = "idle"
+    while not gameExit:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_l:
+                    pause = True
+                    paused()
 
-         if event.type == pygame.MOUSEBUTTONDOWN:
-             if event.button == 1:
-                 if int(scoreNum) < upgradecost:
-                     button(upgradelabel, 600, 90, 180, 50, red, bright_red, upgradebase)
-                 elif int(scoreNum) >= upgradecost:
-                     button(upgradelabel, 600, 90, 180, 50, green, bright_green, upgradebase)
-                 if int(scoreNum) < upgradecost:
-                     button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red, upgradeall)
-                 elif int(scoreNum) >= upgradecost:
-                     button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green, upgradeall)
-                 if weaponSelectedIdle[0] == 1:
-                     button2(250, 150, 300, 300, base)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if int(scoreNum) < upgradecost:
+                        button(upgradelabel, 600, 90, 180, 50, red, bright_red, upgradebase)
+                    elif int(scoreNum) >= upgradecost:
+                        button(upgradelabel, 600, 90, 180, 50, green, bright_green, upgradebase)
+                    if int(scoreNum) < upgradecost:
+                        button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red, upgradeall)
+                    elif int(scoreNum) >= upgradecost:
+                        button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green, upgradeall)
+                    if weaponSelectedIdle[0] == 1:
+                        button2(250, 150, 300, 300, base)
 
-     gameDisplay.fill(gray)
-     target(250, 150)
-     click = pygame.mouse.get_pressed()
-     fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
-     scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Money : $", black)
+        gameDisplay.fill(gray)
+        target(250, 150)
+        click = pygame.mouse.get_pressed()
+        fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
+        scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Money : $", black)
 
-     if int(scoreNum) < upgradecost:
-         button(upgradelabel, 600, 90, 180, 50, red, bright_red)
-     elif int(scoreNum) >= upgradecost:
-         button(upgradelabel, 600, 90, 180, 50, green, bright_green)
-     if int(scoreNum) < upgradecost:
-         button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red)
-     elif int(scoreNum) >= upgradecost:
-         button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green)
+        if int(scoreNum) < upgradecost:
+            button(upgradelabel, 600, 90, 180, 50, red, bright_red)
+        elif int(scoreNum) >= upgradecost:
+            button(upgradelabel, 600, 90, 180, 50, green, bright_green)
+        if int(scoreNum) < upgradecost:
+            button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red)
+        elif int(scoreNum) >= upgradecost:
+            button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green)
 
-     buttonstate(weaponSelectedIdle[1], weaponbought[0], "AK Selected", "Select AK", "Buy AK ($100)",
-                 "Buy AK ($100)", ak.cost, 800, 150,
-                 180, 50, peach, peach, dark_peach, peach, red, bright_red, green, bright_green, akgunbuy)
+        buttonstate(weaponSelectedIdle[1], weaponbought[0], "AK Selected", "Select AK", "Buy AK ($100)",
+                    "Buy AK ($100)", ak.cost, 800, 150,
+                    180, 50, peach, peach, dark_peach, peach, red, bright_red, green, bright_green, akgunbuy)
 
-     if weaponSelectedIdle[0] != 1:
-         button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
-     elif weaponSelectedIdle[0] == 1:
-         button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
-     button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
+        if weaponSelectedIdle[0] != 1:
+            button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
+        elif weaponSelectedIdle[0] == 1:
+            button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
+        button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
 
-     x, y = pygame.mouse.get_pos()
-     if weaponSelectedIdle[1] == 1 and 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
-         akrust()
+        x, y = pygame.mouse.get_pos()
+        if weaponSelectedIdle[1] == 1 and 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
+            akrust()
 
-     pygame.display.update()
-     clock.tick(144)
+        pygame.display.update()
+        clock.tick(144)
 
 
 game_loop_practice()
-
 
 
 
