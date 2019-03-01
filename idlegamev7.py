@@ -43,25 +43,26 @@ game_font = pygame.freetype.Font(None, 24)
 upgradelabel = 'UPGRADE ($' + str(upgradecost) + ')'
 scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", (black))
 
-forwardsarrow = pygame.image.load(os.path.join("images","forwardsarrow.png"))
-backarrow = pygame.image.load(os.path.join('images','backwardsarrow.png'))
-targetimg = pygame.image.load(os.path.join('images','mp5.png'))
-hitmarker = pygame.image.load(os.path.join('images','hitmarker.png'))
-musicnote = pygame.image.load(os.path.join('images','musicnote.png'))
-gear = pygame.image.load(os.path.join('images','gear.png'))
+forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
+backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
+targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
+hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
+musicnote = pygame.image.load(os.path.join('images', 'musicnote.png'))
+gear = pygame.image.load(os.path.join('images', 'gear.png'))
+weaponFlash = pygame.image.load(os.path.join('images', 'weaponflash.png'))
 clock = pygame.time.Clock()
 gameDisplay.fill(gray)
-pygame.mixer.music.load(os.path.join('images','background.wav'))
+pygame.mixer.music.load(os.path.join('images', 'background.mp3'))
 font = pygame.font.SysFont("Verdana", 12)
-hitmarkerpos = []
+hitmarkers = []
 
 
 class gun(object):
-   def __init__(self, cost, gunSelectIdle, gunSelectPrac, gunBought):
-       self.cost = cost
-       self.gunSelectIdle = gunSelectIdle
-       self.gunSelectPrac = gunSelectPrac
-       self.gunBought = gunBought
+    def __init__(self, cost, gunSelectIdle, gunSelectPrac, gunBought):
+        self.cost = cost
+        self.gunSelectIdle = gunSelectIdle
+        self.gunSelectPrac = gunSelectPrac
+        self.gunBought = gunBought
 
 class Slider():
     def __init__(self, name, val, maxi, mini, xpos,ypos):
@@ -295,7 +296,9 @@ def base():
         scoreNum = int(scoreNum) + scoreAdd
     if gamemode == "practice":
         hitNum = int(hitNum) + hitAdd
-
+def clearHitmakers():
+    global hitmarkers
+    hitmarkers = []
 
 #Stops going left after 7 bullets, goes straight up for 1
 #goes right for 3
@@ -400,8 +403,12 @@ def make_gun(dx, dy,sleepTime):
             hitNum += hitAdd
             button("", 140, 70, 250, 30, gray, gray)
             fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
-        #pygame.draw.circle(gameDisplay,red, (x,y), 5)
-        gameDisplay.blit(hitmarker, (x - 5, y - 5))
+        button('',200,100,400,500,gray,gray)
+        gameDisplay.blit(targetimg, (250, 150))
+        gameDisplay.blit(weaponFlash, (x-12, y-12))
+        hitmarkers.append((x-5, y-5))
+        for x in range(len(hitmarkers)):
+            gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
         pygame.display.update()
         time.sleep(sleepTime)
 
@@ -520,7 +527,7 @@ def settings():
         button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
         sensitivity.draw('sens')
         musicsound.draw('')
-        fontsmall.render_to(gameDisplay, (400,180), str(musicsound.val* 100), (black))
+        fontsmall.render_to(gameDisplay, (400,180), str(round(musicsound.val* 100)), (black))
         pygame.display.update()
         clock.tick(60)
 
@@ -529,6 +536,7 @@ def game_loop_practice():
     global gamemode
     global x
     global y
+    global hitmarkers
     gamemode = "practice"
     while not gameExit:
         for event in pygame.event.get():
@@ -539,16 +547,19 @@ def game_loop_practice():
                 if event.key == pygame.K_l:
                     pause = True
                     paused()
+                if event.key == pygame.K_p:
 
+                    hitmarkers = []
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     button("", 600, 80, 80, 50, green, bright_green, changeGameDown)
                     button("", 900, 80, 80, 50, green, bright_green, changeGameUp)
-                    if weaponSelectedPractice[0] == 1:
-                        button2(250, 150, 300, 300, base)
+
 
         gameDisplay.fill(gray)
         target(250, 150)
+        for x in range(len(hitmarkers)):
+            gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
         click = pygame.mouse.get_pressed()
         fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
         scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Hits:", black)
@@ -557,6 +568,7 @@ def game_loop_practice():
         elif weaponSelectedPractice[0] == 1:
             button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
         button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
+        button("Clear Hitmarkers",350,650,170,50,green,bright_green,clearHitmakers)
         gameDisplay.blit(backarrow, (600, 80))
         gameDisplay.blit(forwardsarrow, (900, 80))
         x, y = pygame.mouse.get_pos()
@@ -646,8 +658,5 @@ def game_loop_idle():
 
 
 game_loop_practice()
-
-
-
 
 
