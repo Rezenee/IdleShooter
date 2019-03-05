@@ -52,7 +52,7 @@ gear = pygame.image.load(os.path.join('images', 'gear.png'))
 weaponFlash = pygame.image.load(os.path.join('images', 'weaponflash.png'))
 clock = pygame.time.Clock()
 gameDisplay.fill(gray)
-pygame.mixer.music.load(os.path.join('images', 'background.mp3'))
+pygame.mixer.music.load(os.path.join('images', 'background.wav'))
 font = pygame.font.SysFont("Verdana", 12)
 hitmarkers = []
 
@@ -139,8 +139,7 @@ def resetGraphics():
 
 def gunbuy(cost, weaponBoughtNum, idleNum, pracNum):
     global scoreNum
-    global gamemode
-    if gamemode == "idle":
+    if gamemode == "game_loop_idle":
         if int(scoreNum) >= 100 and weaponbought[weaponBoughtNum] == 0:
             weaponbought[weaponBoughtNum] = 1
             scoreNum -= ak.cost
@@ -148,7 +147,7 @@ def gunbuy(cost, weaponBoughtNum, idleNum, pracNum):
             for i in range(len(weaponSelectedIdle)):
                 weaponSelectedIdle[i] = 0
             weaponSelectedIdle[idleNum] = 1
-    if gamemode == "practice":
+    if gamemode == "game_loop_practice":
         for i in range(len(weaponSelectedPractice)):
             weaponSelectedPractice[i] = 0
         weaponSelectedPractice[pracNum] = 1
@@ -207,7 +206,7 @@ weaponSelectedPractice[2] = 1
 def button(msg, x, y, w, h, ic, ac, action=None):
     # this gets the mouse's position
     mouse = pygame.mouse.get_pos()
-   # This gets when the mouse clicks, it makes a tuple? like this: [1,1,1]
+    # This gets when the mouse clicks, it makes a list like this: [1,1,1]
     # left, middle, right, 1 is active, 0 is inactive
     click = pygame.mouse.get_pressed()
 
@@ -236,11 +235,11 @@ def button(msg, x, y, w, h, ic, ac, action=None):
 def baseselect2():
     global weaponSelectedIdle
     global weaponSelectedPractice
-    if gamemode == "idle":
+    if gamemode == "game_loop_idle":
         for i in range(len(weaponSelectedIdle)):
             weaponSelectedIdle[i] = 0
         weaponSelectedIdle[0] = 1
-    if gamemode == "practice":
+    if gamemode == "game_loop_practice":
         for i in range(len(weaponSelectedPractice)):
             weaponSelectedPractice[i] = 0
         weaponSelectedPractice[0] = 1
@@ -257,11 +256,11 @@ def changeGameUp():
     global weaponSelectedPractice
     global weaponSelectedIdle
     game += 1
-    if gamemode == "idle":
+    if gamemode == "game_loop_idle":
         for i in range(len(weaponSelectedIdle)):
             weaponSelectedIdle[i] = 0
         weaponSelectedIdle[0] = 1
-    if gamemode == "practice":
+    if gamemode == "game_loop_practice":
         for i in range(len(weaponSelectedPractice)):
             weaponSelectedPractice[i] = 0
         weaponSelectedPractice[0] = 1
@@ -275,11 +274,11 @@ def changeGameDown():
     global weaponSelectedPractice
     global weaponSelectedIdle
     game -= 1
-    if gamemode == "idle":
+    if gamemode == "game_loop_idle":
         for i in range(len(weaponSelectedIdle)):
             weaponSelectedIdle[i] = 0
         weaponSelectedIdle[0] = 1
-    if gamemode == "practice":
+    if gamemode == "game_loop_practice":
         for i in range(len(weaponSelectedPractice)):
             weaponSelectedPractice[i] = 0
         weaponSelectedPractice[0] = 1
@@ -292,9 +291,9 @@ def base():
     global hitNum
     global hitAdd
     global scoreAdd
-    if gamemode == "idle":
+    if gamemode == "game_loop_idle":
         scoreNum = int(scoreNum) + scoreAdd
-    if gamemode == "practice":
+    if gamemode == "game_loop_practice":
         hitNum = int(hitNum) + hitAdd
 def clearHitmakers():
     global hitmarkers
@@ -389,7 +388,7 @@ def make_gun(dx, dy,sleepTime):
         global hitNum
         x, y = pygame.mouse.get_pos()
         pygame.mouse.set_pos(x + dx, y + dy)
-        if gamemode == "idle":
+        if gamemode == "game_loop_idle":
             scoreNum += scoreAdd
 
             button("", 190, 70, 250, 30, gray, gray)
@@ -399,7 +398,7 @@ def make_gun(dx, dy,sleepTime):
                 button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green, )
             if int(scoreNum) < upgradecost:
                 button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red, )
-        elif gamemode == "practice":
+        elif gamemode == "game_loop_practice":
             hitNum += hitAdd
             button("", 140, 70, 250, 30, gray, gray)
             fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
@@ -448,8 +447,10 @@ def upgradebase():
 #def previousGamemode():
 
 def game_intro():
+    global gamemode
     # This is needed for the while loop
     intro = True
+    gamemode = 'game_intro'
     while intro:
         # Always put this so they can exit
         for event in pygame.event.get():
@@ -467,6 +468,8 @@ def game_intro():
         button("Play Game", 320, 450, 140, 50, green, bright_green, game_loop_idle)
         button("Play Practice", 320, 510, 140, 50, green, bright_green, game_loop_practice)
         button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
+        button2(250,650,50,50,settings)
+        gameDisplay.blit(gear, (250,650))
 
         # Needed for the game to run
         pygame.display.update()
@@ -510,6 +513,7 @@ def settings():
                 pygame.quit
                 quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                button2(100, 650, 100, 50, gamemodesDict[gamemode])
                 pos = pygame.mouse.get_pos()
                 for s in slides:
                     if s.button_rect.collidepoint(pos):
@@ -524,7 +528,7 @@ def settings():
         gameDisplay.fill(gray)
         fontlarge.render_to(gameDisplay, (80, 70), "Settings", (black))
         button("Music Volume", 200,200,0,0,gray,gray)
-        button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
+        button("Back", 100, 650, 100, 50, green, bright_green)
         sensitivity.draw('sens')
         musicsound.draw('')
         fontsmall.render_to(gameDisplay, (400,180), str(round(musicsound.val* 100)), (black))
@@ -537,7 +541,7 @@ def game_loop_practice():
     global x
     global y
     global hitmarkers
-    gamemode = "practice"
+    gamemode = "game_loop_practice"
     while not gameExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -554,7 +558,7 @@ def game_loop_practice():
                 if event.button == 1:
                     button("", 600, 80, 80, 50, green, bright_green, changeGameDown)
                     button("", 900, 80, 80, 50, green, bright_green, changeGameUp)
-
+                    button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
 
         gameDisplay.fill(gray)
         target(250, 150)
@@ -567,7 +571,7 @@ def game_loop_practice():
             button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
         elif weaponSelectedPractice[0] == 1:
             button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
-        button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
+        button("Back", 100, 650, 100, 50, green, bright_green)
         button("Clear Hitmarkers",350,650,170,50,green,bright_green,clearHitmakers)
         gameDisplay.blit(backarrow, (600, 80))
         gameDisplay.blit(forwardsarrow, (900, 80))
@@ -600,7 +604,7 @@ def game_loop_practice():
 def game_loop_idle():
     global pause
     global gamemode
-    gamemode = "idle"
+    gamemode = "game_loop_idle"
     while not gameExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -623,7 +627,7 @@ def game_loop_idle():
                         button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green, upgradeall)
                     if weaponSelectedIdle[0] == 1:
                         button2(250, 150, 300, 300, base)
-
+                    button2(100, 650, 100, 50, game_intro)
         gameDisplay.fill(gray)
         target(250, 150)
         click = pygame.mouse.get_pressed()
@@ -647,7 +651,7 @@ def game_loop_idle():
             button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
         elif weaponSelectedIdle[0] == 1:
             button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
-        button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
+        button("Back", 100, 650, 100, 50, green, bright_green)
 
         x, y = pygame.mouse.get_pos()
         if weaponSelectedIdle[1] == 1 and 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
@@ -655,8 +659,6 @@ def game_loop_idle():
 
         pygame.display.update()
         clock.tick(144)
-
+gamemodesDict = {"game_intro" : game_intro, "game_loop_idle" : game_loop_idle, "game_loop_practice" : game_loop_practice}
 
 game_loop_practice()
-
-
