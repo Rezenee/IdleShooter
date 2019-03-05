@@ -374,9 +374,11 @@ def makeGunStart(GUNPOS,sleepTime):
     global hitNum
     global hitmarkers
     click = pygame.mouse.get_pressed()
-    if click[0] == 1:
+    x, y = pygame.mouse.get_pos()
+    if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
         for dx, dy in GUNPOS:
             x,y = pygame.mouse.get_pos()
+            print(x -250,y -150)
             for event in pygame.event.get():
                 x,y = pygame.mouse.get_pos()
                 if event.type == pygame.KEYDOWN:
@@ -387,6 +389,8 @@ def makeGunStart(GUNPOS,sleepTime):
                         hitmarkers = []
 
             pygame.mouse.set_pos(x + dx, y + dy)
+            if 0 > x - 250 or x -250 > 300 or 0 > y -150 or y-150> 300:
+                break
             if gamemode == "game_loop_idle":
                 scoreNum += scoreAdd
                 button("", 190, 70, 250, 30, gray, gray)
@@ -585,11 +589,11 @@ def game_loop_practice():
             buttonstate2(weaponSelectedPractice[2], "MP5 Selected", "Select MP5", 600, 210, 180, 50, peach, peach,
                          dark_peach, peach, mp5gunbuy)
 
-            if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
-                if weaponSelectedPractice[1] == 1:
-                    akrust()
-                if weaponSelectedPractice[2] == 1:
-                    mp5rust()
+
+            if weaponSelectedPractice[1] == 1:
+                akrust()
+            if weaponSelectedPractice[2] == 1:
+                mp5rust()
 
         if game == 1:
             button("CSGO", 700, 80, 180, 50, red, red)
