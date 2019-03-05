@@ -370,48 +370,47 @@ AKPOS = (
  (0, 0),
 )
 def makeGunStart(GUNPOS,sleepTime):
-    for dx, dy in GUNPOS:
-        for event in pygame.event.get():
-            pygame.mouse.get_pos()
+    global scoreNum
+    global hitNum
+    global hitmarkers
+    click = pygame.mouse.get_pressed()
+    if click[0] == 1:
+        for dx, dy in GUNPOS:
+            x,y = pygame.mouse.get_pos()
+            for event in pygame.event.get():
+                x,y = pygame.mouse.get_pos()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_l:
+                        pause = True
+                        paused()
+                    if event.key == pygame.K_p:
+                        hitmarkers = []
 
-            button2(
-                250,
-                150,
-                300,
-                300,
-                make_gun(dx, dy,sleepTime)
-            )
-
-def make_gun(dx, dy,sleepTime):
-    def gun():
-        global scoreNum
-        global hitNum
-        x, y = pygame.mouse.get_pos()
-        pygame.mouse.set_pos(x + dx, y + dy)
-        if gamemode == "game_loop_idle":
-            scoreNum += scoreAdd
-
-            button("", 190, 70, 250, 30, gray, gray)
-            fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
-            if int(scoreNum) >= upgradecost:
-                button(upgradelabel, 600, 90, 180, 50, green, bright_green, )
-                button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green, )
-            if int(scoreNum) < upgradecost:
-                button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red, )
-        elif gamemode == "game_loop_practice":
-            hitNum += hitAdd
-            button("", 140, 70, 250, 30, gray, gray)
-            fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
-        button('',200,100,400,500,gray,gray)
-        gameDisplay.blit(targetimg, (250, 150))
-        gameDisplay.blit(weaponFlash, (x-12, y-12))
-        hitmarkers.append((x-5, y-5))
-        for x in range(len(hitmarkers)):
-            gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
-        pygame.display.update()
-        time.sleep(sleepTime)
-
-    return gun
+            pygame.mouse.set_pos(x + dx, y + dy)
+            if gamemode == "game_loop_idle":
+                scoreNum += scoreAdd
+                button("", 190, 70, 250, 30, gray, gray)
+                fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
+                if int(scoreNum) >= upgradecost:
+                    button(upgradelabel, 600, 90, 180, 50, green, bright_green, )
+                    button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green, )
+                if int(scoreNum) < upgradecost:
+                    button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red, )
+            elif gamemode == "game_loop_practice":
+                hitNum += hitAdd
+                button("", 140, 70, 250, 30, gray, gray)
+                fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
+            button('', 200, 100, 400, 500, gray, gray)
+            gameDisplay.blit(targetimg, (250, 150))
+            hitmarkers.append((x - 5, y - 5))
+            for z in range(len(hitmarkers)):
+                gameDisplay.blit(hitmarker, (hitmarkers[z][0], hitmarkers[z][1]))
+            gameDisplay.blit(weaponFlash, (x - 12, y - 12))
+            pygame.display.update()
+            time.sleep(sleepTime)
+            click = pygame.mouse.get_pressed()
+            if click[0] != 1:
+                break
 
 def akrust():
      makeGunStart(AKPOS,.125)
