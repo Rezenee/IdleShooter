@@ -1,3 +1,4 @@
+
 import pygame
 import pygame.freetype
 import time
@@ -378,7 +379,6 @@ def makeGunStart(GUNPOS,sleepTime):
     if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
         for dx, dy in GUNPOS:
             x,y = pygame.mouse.get_pos()
-            print(x -250,y -150)
             for event in pygame.event.get():
                 x,y = pygame.mouse.get_pos()
                 if event.type == pygame.KEYDOWN:
@@ -507,6 +507,22 @@ musicsound = Slider("", .5, 1, 0, 300,180)
 sensitivity = Slider("sens", .5,1,0,300,250)
 slides = [musicsound,sensitivity]
 
+def keyBindScreen():
+    keyBindScreen = True
+    while keyBindScreen:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit
+                quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                button2(100,650,100,50, settings)
+                button2(100, 650, 100, 50, settings)
+        gameDisplay.fill(gray)
+        fontsmall.render_to(gameDisplay, (80, 70), "Keybinds", (black))
+        button("Back", 100, 650, 100, 50, green, bright_green)
+        pygame.display.update()
+        clock.tick(60)
+
 
 def settings():
     settings = True
@@ -517,6 +533,8 @@ def settings():
                 quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 button2(100, 650, 100, 50, gamemodesDict[gamemode])
+                button2(250, 650, 100, 50, keyBindScreen)
+
                 pos = pygame.mouse.get_pos()
                 for s in slides:
                     if s.button_rect.collidepoint(pos):
@@ -529,9 +547,10 @@ def settings():
                 s.move()
                 pygame.mixer.music.set_volume(musicsound.val)
         gameDisplay.fill(gray)
-        fontlarge.render_to(gameDisplay, (80, 70), "Settings", (black))
+        fontsmall.render_to(gameDisplay, (80, 70), "Settings", (black))
         button("Music Volume", 200,200,0,0,gray,gray)
         button("Back", 100, 650, 100, 50, green, bright_green)
+        button("Keybinds", 250, 650, 100,50,green, bright_green)
         sensitivity.draw('sens')
         musicsound.draw('')
         fontsmall.render_to(gameDisplay, (400,180), str(round(musicsound.val* 100)), (black))
@@ -562,7 +581,7 @@ def game_loop_practice():
                     button("", 600, 80, 80, 50, green, bright_green, changeGameDown)
                     button("", 900, 80, 80, 50, green, bright_green, changeGameUp)
                     button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
-
+                    button2(250, 650, 50, 50, settings)
         gameDisplay.fill(gray)
         target(250, 150)
         for x in range(len(hitmarkers)):
@@ -580,7 +599,7 @@ def game_loop_practice():
         gameDisplay.blit(forwardsarrow, (900, 80))
         x, y = pygame.mouse.get_pos()
         gameDisplay.blit(gear, (250,650))
-        button2(250,650,50,50,settings)
+
         if game == 0:
             button("RUST", 700, 80, 180, 50, red, red)
 
