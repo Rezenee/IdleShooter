@@ -388,7 +388,6 @@ def makeGunStart(GUNPOS,sleepTime):
                     if event.key == pygame.K_p:
                         hitmarkers = []
 
-            pygame.mouse.set_pos(x + dx, y + dy)
             if 0 > x - 250 or x -250 > 300 or 0 > y -150 or y-150> 300:
                 break
             if gamemode == "game_loop_idle":
@@ -404,6 +403,10 @@ def makeGunStart(GUNPOS,sleepTime):
                 hitNum += hitAdd
                 button("", 140, 70, 250, 30, gray, gray)
                 fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
+            click = pygame.mouse.get_pressed()
+            if click[0] != 1:
+                break
+            pygame.mouse.set_pos(x + dx, y + dy)
             button('', 200, 100, 400, 500, gray, gray)
             gameDisplay.blit(targetimg, (250, 150))
             hitmarkers.append((x - 5, y - 5))
@@ -412,9 +415,7 @@ def makeGunStart(GUNPOS,sleepTime):
             gameDisplay.blit(weaponFlash, (x - 12, y - 12))
             pygame.display.update()
             time.sleep(sleepTime)
-            click = pygame.mouse.get_pressed()
-            if click[0] != 1:
-                break
+
 
 def akrust():
      makeGunStart(AKPOS,.125)
