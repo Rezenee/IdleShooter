@@ -5,6 +5,7 @@ import time
 import random
 import math
 import os
+from pygame.locals import *
 pygame.init()
 
 xres = 1024
@@ -53,10 +54,31 @@ gear = pygame.image.load(os.path.join('images', 'gear.png'))
 weaponFlash = pygame.image.load(os.path.join('images', 'weaponflash.png'))
 clock = pygame.time.Clock()
 gameDisplay.fill(gray)
-pygame.mixer.music.load(os.path.join('images', 'background.wav'))
+pygame.mixer.music.load(os.path.join('images', 'background.mp3'))
 font = pygame.font.SysFont("Verdana", 12)
 hitmarkers = []
 
+
+pauseKey = 108
+reloadKey = 112
+def get_key():
+  while 1:
+    event = pygame.event.poll()
+    if event.type == KEYDOWN:
+      return event.key
+    else:
+      pass
+
+
+def changeKeyBind():
+    global reloadKey
+    pressed = pygame.key.get_pressed()
+    inkey =  get_key()
+    while 1:
+        if inkey <= 500:
+            reloadKey = inkey
+            print(reloadKey)
+            break
 
 class gun(object):
     def __init__(self, cost, gunSelectIdle, gunSelectPrac, gunBought):
@@ -126,6 +148,7 @@ class Slider():
             self.val = self.maxi
 
 
+    check = 1
 
 # First variable = cost, second = selectIdle, third = selectprac, fourth = gunbought all the states of them, 0 at the start
 ak = gun(100, 0, 0, 0)
@@ -374,6 +397,7 @@ def makeGunStart(GUNPOS,sleepTime):
     global scoreNum
     global hitNum
     global hitmarkers
+
     click = pygame.mouse.get_pressed()
     x, y = pygame.mouse.get_pos()
     if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
@@ -382,13 +406,12 @@ def makeGunStart(GUNPOS,sleepTime):
             for event in pygame.event.get():
                 x,y = pygame.mouse.get_pos()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_l:
+                    if event.key == pauseKey:
                         pause = True
                         paused()
-                    if event.key == pygame.K_p:
+                    if event.key == reloadKey:
                         hitmarkers = []
 
-            pygame.mouse.set_pos(x + dx, y + dy)
             if 0 > x - 250 or x -250 > 300 or 0 > y -150 or y-150> 300:
                 break
             if gamemode == "game_loop_idle":
@@ -404,6 +427,10 @@ def makeGunStart(GUNPOS,sleepTime):
                 hitNum += hitAdd
                 button("", 140, 70, 250, 30, gray, gray)
                 fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
+            click = pygame.mouse.get_pressed()
+            if click[0] != 1:
+                break
+            pygame.mouse.set_pos(x + dx, y + dy)
             button('', 200, 100, 400, 500, gray, gray)
             gameDisplay.blit(targetimg, (250, 150))
             hitmarkers.append((x - 5, y - 5))
@@ -412,9 +439,7 @@ def makeGunStart(GUNPOS,sleepTime):
             gameDisplay.blit(weaponFlash, (x - 12, y - 12))
             pygame.display.update()
             time.sleep(sleepTime)
-            click = pygame.mouse.get_pressed()
-            if click[0] != 1:
-                break
+
 
 def akrust():
      makeGunStart(AKPOS,.125)
@@ -520,6 +545,7 @@ def keyBindScreen():
         gameDisplay.fill(gray)
         fontsmall.render_to(gameDisplay, (80, 70), "Keybinds", (black))
         button("Back", 100, 650, 100, 50, green, bright_green)
+        button(("Reload: " + chr(reloadKey)), 100,200, 100,50, green,bright_green,changeKeyBind)
         pygame.display.update()
         clock.tick(60)
 
@@ -570,10 +596,10 @@ def game_loop_practice():
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_l:
+                if event.key == pause:
                     pause = True
                     paused()
-                if event.key == pygame.K_p:
+                if event.key == reloadKey:
 
                     hitmarkers = []
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -633,7 +659,7 @@ def game_loop_idle():
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_l:
+                if event.key == pause:
                     pause = True
                     paused()
 
@@ -682,5 +708,6 @@ def game_loop_idle():
         pygame.display.update()
         clock.tick(144)
 gamemodesDict = {"game_intro" : game_intro, "game_loop_idle" : game_loop_idle, "game_loop_practice" : game_loop_practice}
+
 
 game_loop_practice()
