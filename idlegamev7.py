@@ -43,7 +43,7 @@ fontlarge = pygame.freetype.Font(None, 100)
 game_font = pygame.freetype.Font(None, 24)
 
 upgradelabel = 'UPGRADE ($' + str(upgradecost) + ')'
-scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", (black))
+scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
@@ -52,15 +52,18 @@ hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
 musicnote = pygame.image.load(os.path.join('images', 'musicnote.png'))
 gear = pygame.image.load(os.path.join('images', 'gear.png'))
 weaponFlash = pygame.image.load(os.path.join('images', 'weaponflash.png'))
+weaponFlash = pygame.transform.scale(weaponFlash,[25,25])
 clock = pygame.time.Clock()
 gameDisplay.fill(gray)
-pygame.mixer.music.load(os.path.join('images', 'background.mp3'))
+pygame.mixer.music.load(os.path.join('images', 'background.wav'))
 font = pygame.font.SysFont("Verdana", 12)
 hitmarkers = []
 
 
 pauseKey = 108
 reloadKey = 112
+keybindList = [pauseKey,reloadKey]
+
 def get_key():
   while 1:
     event = pygame.event.poll()
@@ -70,22 +73,27 @@ def get_key():
       pass
 
 
-def changeKeyBind():
-    global reloadKey
-    pressed = pygame.key.get_pressed()
-    inkey =  get_key()
+
+def changeKeyBind(keyIndex):
+    global keybindList
+    inkey = get_key()
     while 1:
         if inkey <= 500:
-            reloadKey = inkey
-            print(reloadKey)
+            keybindList[keyIndex] = inkey
             break
 
+def clear_decals_key():
+    changeKeyBind(1)
+
+def pause_hotkey():
+    changeKeyBind(0)
 class gun(object):
     def __init__(self, cost, gunSelectIdle, gunSelectPrac, gunBought):
         self.cost = cost
         self.gunSelectIdle = gunSelectIdle
         self.gunSelectPrac = gunSelectPrac
         self.gunBought = gunBought
+
 
 class Slider():
     def __init__(self, name, val, maxi, mini, xpos,ypos):
@@ -158,6 +166,8 @@ weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac]
 weaponbought = [ak.gunBought, mp5.gunBought]
 pygame.mixer.music.play(-1)
 initialrun = 0
+
+
 def resetGraphics():
     initialrun = 0
 
@@ -323,12 +333,14 @@ def clearHitmakers():
     global hitmarkers
     hitmarkers = []
 
-#Stops going left after 7 bullets, goes straight up for 1
-#goes right for 3
-#goes straight up for 1
-#goes left again for 5 bulltes
-#satys in about the same position for 3 bullets
-#moves right for the rust of the spray
+# Stops going left after 7 bullets, goes straight up for 1
+# goes right for 3
+# goes straight up for 1
+# goes left again for 5 bulltes
+# satys in about the same position for 3 bullets
+# moves right for the rust of the spray
+
+
 mp5pos = (
  (6, -19),
  (-5, -26),
@@ -409,7 +421,7 @@ def makeGunStart(GUNPOS,sleepTime):
                     if event.key == pauseKey:
                         pause = True
                         paused()
-                    if event.key == reloadKey:
+                    if event.key == keybindList[1]:
                         hitmarkers = []
 
             if 0 > x - 250 or x -250 > 300 or 0 > y -150 or y-150> 300:
@@ -472,7 +484,7 @@ def upgradebase():
         upgradecost = upgradecost * upgrademultiplier
         upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
 
-#def previousGamemode():
+# def previousGamemode():
 
 def game_intro():
     global gamemode
@@ -528,6 +540,7 @@ def paused():
         pygame.display.update()
         clock.tick(15)
 
+
 musicsound = Slider("", .5, 1, 0, 300,180)
 sensitivity = Slider("sens", .5,1,0,300,250)
 slides = [musicsound,sensitivity]
@@ -545,7 +558,8 @@ def keyBindScreen():
         gameDisplay.fill(gray)
         fontsmall.render_to(gameDisplay, (80, 70), "Keybinds", (black))
         button("Back", 100, 650, 100, 50, green, bright_green)
-        button(("Reload: " + chr(reloadKey)), 100,200, 100,50, green,bright_green,changeKeyBind)
+        button(("Reload: " + chr(keybindList[1])), 100,200, 100,50, green,bright_green,clear_decals_key)
+        button(("Pause: " + chr(keybindList[0])), 300,200, 100,50, green,bright_green, clear_decals_key)
         pygame.display.update()
         clock.tick(60)
 
@@ -599,7 +613,7 @@ def game_loop_practice():
                 if event.key == pause:
                     pause = True
                     paused()
-                if event.key == reloadKey:
+                if event.key == keybindList[1]:
 
                     hitmarkers = []
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -642,7 +656,6 @@ def game_loop_practice():
 
         if game == 1:
             button("CSGO", 700, 80, 180, 50, red, red)
-
 
 
         pygame.display.update()
