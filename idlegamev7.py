@@ -54,7 +54,7 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
 targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
-csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
+#csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
 musicnote = pygame.image.load(os.path.join('images', 'musicnote.png'))
@@ -64,6 +64,8 @@ weaponFlash = pygame.transform.scale(weaponFlash,[25,25])
 clock = pygame.time.Clock()
 gameDisplay.fill(gray)
 pygame.mixer.music.load(os.path.join('images', 'background.wav'))
+pygame.mixer.music.load(os.path.join('images', 'background2.mp3'))
+
 font = pygame.font.SysFont("Verdana", 12)
 hitmarkers = []
 
@@ -107,6 +109,7 @@ class gun(object):
         self.gunSelectIdle = gunSelectIdle
         self.gunSelectPrac = gunSelectPrac
         self.gunBought = gunBought
+
 
 
 class Slider():
@@ -511,7 +514,6 @@ def mp5rust():
      makeGunStart(mp5pos,.125)
 
 
-
 def upgradeall():
     global scoreNum
     global scoreAdd
@@ -708,8 +710,39 @@ def game_loop_practice():
         pygame.display.update()
         clock.tick(144)
 
+
+open_target_change = 0
+hitmarker_img_change = 0
+flash_img_change = 0
+sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change]
+
+def change_flash():
+    global sprite_change_list
+    if sprite_change_list[2] == 0:
+        sprite_change_list[2] = 1
+    else:
+        sprite_change_list[2] = 0
+    for i in range(2):
+        sprite_change_list[i] = 0
+    sprite_change_list[2] = 1
+def change_hitmarker():
+    global sprite_change_list
+    if sprite_change_list[1] == 0:
+        sprite_change_list[1] = 1
+    else:
+        sprite_change_list[1] = 0
+    for i in range(2):
+        sprite_change_list[i] = 0
+    sprite_change_list[1] = 1
 def change_target():
-    button("Target", 600, y_practice_value + 450, 180,50,dark_peach, peach)
+    global open_target_change
+    if sprite_change_list[0] == 0:
+        sprite_change_list[0] = 1
+    else:
+        sprite_change_list[0] = 0
+    for i in range(2):
+        sprite_change_list[i] = 0
+    sprite_change_list[0] = 1
 
 def game_loop_idle():
     global pause
@@ -769,6 +802,46 @@ def game_loop_idle():
         pygame.display.update()
         clock.tick(144)
 
+def make_flash_flash():
+    global weaponFlash, sprite_change_list
+    weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png'))
+    weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
+
+    sprite_change_list[2] = 0
+
+def make_flash_nothing():
+    global weaponFlash, sprite_change_list
+    weaponFlash = pygame.image.load(os.path.join('images', 'nothing.png'))
+
+    sprite_change_list[2] = 0
+def make_hitmarker_cod():
+    global hitmarker, sprite_change_list
+    hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
+
+    sprite_change_list[1] = 0
+
+
+def make_hitmarker_hole():
+    global hitmarker, sprite_change_list
+    hitmarker = pygame.image.load(os.path.join('images', 'bullethole2.png'))
+
+    sprite_change_list[1] = 0
+
+def make_target_target():
+    global targetimg, sprite_change_list
+    targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
+
+    sprite_change_list[0] = 0
+
+
+def make_target_CS():
+    global targetimg, sprite_change_list
+    targetimg = pygame.image.load(os.path.join('images', 'mp5.png'))
+    sprite_change_list[0] = 0
+
+
+
+
 def blit_labels_prac():
     fontsmall.render_to(gameDisplay, (140,72), str(int(hitNum)), black)
     fontsmall.render_to(gameDisplay, (80, 70), "Hits:", black)
@@ -788,7 +861,33 @@ def blit_labels_prac():
         button("Base Selected", 600, y_practice_value + 150, 180, 50, peach, peach, baseselect2)
     gameDisplay.blit(backarrow, (600, y_practice_value + 80))
     gameDisplay.blit(forwardsarrow, (900, y_practice_value + 80))
-    button("Target Type \/", 600, y_practice_value + 400, 180,50,dark_peach,peach,change_target)
+    button("Target Type \/", 600, y_practice_value + 400, 180, 50, dark_peach, peach)
+    button("Hitmarker Type \/", 800, y_practice_value + 400, 180, 50, dark_peach, peach)
+    button("Weapon Flash \/", 600, y_practice_value + 460, 180, 50, dark_peach, peach)
+
+
+    for event in pygame.event.get():
+        if event.type == pygame.MOUSEBUTTONDOWN:
+                button2(600, y_practice_value + 400, 180, 50,change_target)
+                button2(800, y_practice_value + 400, 180, 50, change_hitmarker)
+                button2(600, y_practice_value + 460, 180, 50, change_flash)
+
+    if sprite_change_list[0] == 1:
+        button("Target", 600, y_practice_value + 450, 180, 50, dark_peach, peach,make_target_target, black)
+        button("CSGO Model", 600, y_practice_value + 500, 180, 50, dark_peach, peach,make_target_CS,black)
+    if sprite_change_list[1] == 1:
+        button("COD Hitmarker", 800, y_practice_value + 450, 180, 50, dark_peach, peach, make_hitmarker_cod, black)
+        button("Bullet Hole", 800, y_practice_value + 500, 180, 50, dark_peach, peach, make_hitmarker_hole, black)
+
+    if sprite_change_list[2] == 1:
+        button("Realistic Flash", 600, y_practice_value + 510, 180, 50, dark_peach, peach, make_flash_flash, black)
+        button("Nothing", 600, y_practice_value + 560, 180, 50, dark_peach, peach, make_flash_nothing, black)
+
+
+
+
+
+
 gamemodesDict = {"game_intro": game_intro, "game_loop_idle": game_loop_idle, "game_loop_practice": game_loop_practice}
 
 
