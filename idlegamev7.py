@@ -54,7 +54,7 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
-targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
+targetimg = pygame.image.load(os.path.join('images', 'akspray.png'))
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
@@ -184,22 +184,22 @@ class Slider():
     check = 1
 
 # First variable = cost, second = selectIdle, third = selectprac, fourth = gunbought all the states of them, 0 at the start
+
+
 ak = gun(100, 0, 0, 0)
 mp5 = gun(100, 0, 0, 0)
-weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle]
-weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac]
-weaponbought = [ak.gunBought, mp5.gunBought]
+akcs = gun(100, 0, 0, 0)
+weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle]
+weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac]
+weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought]
 pygame.mixer.music.play(-1)
-initialrun = 0
 
 
-def resetGraphics():
-    initialrun = 0
 
 def gunbuy(cost, weaponBoughtNum, idleNum, pracNum):
     global scoreNum
     if gamemode == "game_loop_idle":
-        if int(scoreNum) >= 100 and weaponbought[weaponBoughtNum] == 0:
+        if int(scoreNum) >= cost and weaponbought[weaponBoughtNum] == 0:
             weaponbought[weaponBoughtNum] = 1
             scoreNum -= ak.cost
         if weaponbought[weaponBoughtNum] == 1:
@@ -211,12 +211,14 @@ def gunbuy(cost, weaponBoughtNum, idleNum, pracNum):
             weaponSelectedPractice[i] = 0
         weaponSelectedPractice[pracNum] = 1
 
-
 def mp5gunbuy():
-    gunbuy(mp5.cost,0,2,2)
+    gunbuy(mp5.cost, 0, 2, 2)
 
 def akgunbuy():
-   gunbuy(ak.cost, 0,1,1)
+    gunbuy(ak.cost, 0, 1, 1)
+
+def akcsgunbuy():
+    gunbuy(akcs.cost, 0, 3, 3)
 
 def target(xx, yy):
    gameDisplay.blit(targetimg, (xx, yy))
@@ -434,6 +436,39 @@ AKPOS = (
  (-17, -25),
  (0, 0),
 )
+
+AKPOSCS = (
+ (6, -10),
+ (-5, -26),
+ (4, -39),
+ (1, -42),
+ (-18, -44),
+ (-10, -38),
+ (-19, -28),
+ (22, -19),
+ (60, 4),
+ (29, -3),
+ (-19, -14),
+ (22, -8),
+ (40, 5),
+ (-3, 6),
+ (-52, -6),
+ (-26, -12),
+ (-18, -13),
+ (-38, 1),
+ (-44, 13),
+ (25, 3),
+ (-5, -5),
+ (8, -12),
+ (10, -4),
+ (-26, 2),
+ (-9, -6),
+ (30, 1),
+ (43, 4),
+ (64, 28),
+ (20, 0),
+ (0, 0),
+)
 def makeGunStart(GUNPOS,sleepTime):
     global scoreNum
     global hitNum
@@ -442,7 +477,8 @@ def makeGunStart(GUNPOS,sleepTime):
     global hit_percent, hit_percent_label
     click = pygame.mouse.get_pressed()
     x, y = pygame.mouse.get_pos()
-    if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
+    if click[0] == 1:
+        #0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 put this back when you want it tarrget only
         for dx, dy in GUNPOS:
             x,y = pygame.mouse.get_pos()
             for event in pygame.event.get():
@@ -513,7 +549,8 @@ def akrust():
 def mp5rust():
      makeGunStart(mp5pos,.125)
 
-
+def akcscall():
+    makeGunStart(AKPOSCS, .1)
 def upgradeall():
     global scoreNum
     global scoreAdd
@@ -689,7 +726,7 @@ def game_loop_practice():
 
         x, y = pygame.mouse.get_pos()
         if game == 0:
-            button("RUST", 700, y_practice_value+ 80, 180, 50, red, red,None,black)
+            button("RUST", 700, y_practice_value + 80, 180, 50, red, red, None, black)
 
             buttonstate2(weaponSelectedPractice[1], "AK Selected", "Select AK", 800, y_practice_value + 150,
                          180, 50, peach, peach, dark_peach, peach, akgunbuy, black)
@@ -697,14 +734,20 @@ def game_loop_practice():
             buttonstate2(weaponSelectedPractice[2], "MP5 Selected", "Select MP5", 600, y_practice_value + 210, 180, 50,
                          peach, peach, dark_peach, peach, mp5gunbuy, black)
 
-
+            # Checks if the weapon is selected if it is call the recoil for it.
             if weaponSelectedPractice[1] == 1:
                 akrust()
             if weaponSelectedPractice[2] == 1:
                 mp5rust()
 
         if game == 1:
-            button("CSGO", 700, y_practice_value+ 80, 180, 50, red, red)
+            button("CSGO", 700, y_practice_value+ 80, 180, 50, red, red, black)
+
+            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+
+            if weaponSelectedPractice[3] == 1:
+                akcscall()
 
 
         pygame.display.update()
@@ -745,6 +788,7 @@ def change_target():
     sprite_change_list[0] = 1
 
 def game_loop_idle():
+
     global pause
     global gamemode
     gamemode = "game_loop_idle"
@@ -802,13 +846,13 @@ def game_loop_idle():
         pygame.display.update()
         clock.tick(144)
 
+
 def make_flash_flash():
     global weaponFlash, sprite_change_list
     weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png'))
     weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
 
     sprite_change_list[2] = 0
-
 def make_flash_nothing():
     global weaponFlash, sprite_change_list
     weaponFlash = pygame.image.load(os.path.join('images', 'nothing.png'))
@@ -819,8 +863,6 @@ def make_hitmarker_cod():
     hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
 
     sprite_change_list[1] = 0
-
-
 def make_hitmarker_hole():
     global hitmarker, sprite_change_list
     hitmarker = pygame.image.load(os.path.join('images', 'bullethole.png'))
@@ -828,17 +870,15 @@ def make_hitmarker_hole():
 
 
     sprite_change_list[1] = 0
-
 def make_target_target():
     global targetimg, sprite_change_list
     targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
 
     sprite_change_list[0] = 0
-
-
+    time.sleep(1)
 def make_target_CS():
     global targetimg, sprite_change_list
-    targetimg = pygame.image.load(os.path.join('images', 'mp5.png'))
+    targetimg = pygame.image.load(os.path.join('images', 'akspray.png'))
     sprite_change_list[0] = 0
 
 
@@ -883,11 +923,6 @@ def blit_labels_prac():
     if sprite_change_list[2] == 1:
         button("Realistic Flash", 600, y_practice_value + 510, 180, 50, dark_peach, peach, make_flash_flash, black)
         button("Nothing", 600, y_practice_value + 560, 180, 50, dark_peach, peach, make_flash_nothing, black)
-
-
-
-
-
 
 
 gamemodesDict = {"game_intro": game_intro, "game_loop_idle": game_loop_idle, "game_loop_practice": game_loop_practice}
