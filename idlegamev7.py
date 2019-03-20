@@ -27,6 +27,7 @@ brown = (139,69,19)
 
 
 dark_gray = (100,100,100)
+darkish_peach = (210,110,61)
 dark_peach = (204, 104, 51)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
@@ -443,7 +444,6 @@ def makeGunStart(GUNPOS,sleepTime):
     x, y = pygame.mouse.get_pos()
     if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
         for dx, dy in GUNPOS:
-            button('', 25, 50, 170, 180, peach, peach, None, brown)
             x,y = pygame.mouse.get_pos()
             for event in pygame.event.get():
                 x,y = pygame.mouse.get_pos()
@@ -681,21 +681,21 @@ def game_loop_practice():
                 if event.button == 4: y_practice_value += 10
                 if event.button == 5: y_practice_value -= 10
         gameDisplay.fill(gray)
+        button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
         blit_labels_prac()
         for x in range(len(hitmarkers)):
             gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
         click = pygame.mouse.get_pressed()
 
         x, y = pygame.mouse.get_pos()
-
         if game == 0:
             button("RUST", 700, y_practice_value+ 80, 180, 50, red, red,None,black)
 
             buttonstate2(weaponSelectedPractice[1], "AK Selected", "Select AK", 800, y_practice_value + 150,
-                         180, 50, peach, peach, dark_peach, peach, akgunbuy)
+                         180, 50, peach, peach, dark_peach, peach, akgunbuy, black)
 
             buttonstate2(weaponSelectedPractice[2], "MP5 Selected", "Select MP5", 600, y_practice_value + 210, 180, 50,
-                         peach, peach, dark_peach, peach, mp5gunbuy)
+                         peach, peach, dark_peach, peach, mp5gunbuy, black)
 
 
             if weaponSelectedPractice[1] == 1:
@@ -788,7 +788,7 @@ def game_loop_idle():
 
         buttonstate(weaponSelectedIdle[1], weaponbought[0], "AK Selected", "Select AK", "Buy AK ($100)",
                     "Buy AK ($100)", ak.cost, 800, 150,
-                    180, 50, peach, peach, dark_peach, peach, red, bright_red, green, bright_green, akgunbuy)
+                    180, 50, peach, peach, dark_peach, peach, red, bright_red, green, bright_green, akgunbuy, black)
 
         if weaponSelectedIdle[0] != 1:
             button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
@@ -823,7 +823,7 @@ def make_hitmarker_cod():
 
 def make_hitmarker_hole():
     global hitmarker, sprite_change_list
-    hitmarker = pygame.image.load(os.path.join('images', 'nothing1.png'))
+    hitmarker = pygame.image.load(os.path.join('images', 'bullethole.png'))
     hitmarker = pygame.transform.scale(hitmarker, [15, 15])
 
 
@@ -854,19 +854,18 @@ def blit_labels_prac():
     button("Back", 100, 650, 100, 50, green, bright_green)
     button("Clear Hitmarkers", 350, 650, 170, 50, green, bright_green, clearHitmakers)
     gameDisplay.blit(targetimg, (250, 150))
-    button("", 580, 0, 8, 768, brown, brown)
     fontsmall.render_to(gameDisplay, (140, 100), str(int(miss_num)), black)
     fontsmall.render_to(gameDisplay, (140, 125), str(hit_percent_label), black)
-    button("Reset", 50, 175, 100, 50, green, bright_green, clear_stats)
+    button("Reset", 50, 165, 100, 50, darkish_peach, dark_peach, clear_stats,brown)
     if weaponSelectedPractice[0] != 1:
-        button("Select Base", 600, y_practice_value + 150, 180, 50, dark_peach, peach, baseselect2)
+        button("Select Base", 600, y_practice_value + 150, 180, 50, dark_peach, peach, baseselect2, black)
     elif weaponSelectedPractice[0] == 1:
-        button("Base Selected", 600, y_practice_value + 150, 180, 50, peach, peach, baseselect2)
+        button("Base Selected", 600, y_practice_value + 150, 180, 50, peach, peach, baseselect2, black)
     gameDisplay.blit(backarrow, (600, y_practice_value + 80))
     gameDisplay.blit(forwardsarrow, (900, y_practice_value + 80))
-    button("Target Type \/", 600, y_practice_value + 400, 180, 50, dark_peach, peach)
-    button("Hitmarker Type \/", 800, y_practice_value + 400, 180, 50, dark_peach, peach)
-    button("Weapon Flash \/", 600, y_practice_value + 460, 180, 50, dark_peach, peach)
+    button("Target Type \/", 600, y_practice_value + 400, 180, 50, dark_peach, peach, None, black)
+    button("Hitmarker Type \/", 800, y_practice_value + 400, 180, 50, dark_peach, peach, None,black)
+    button("Weapon Flash \/", 600, y_practice_value + 460, 180, 50, dark_peach, peach, None, black)
 
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -884,6 +883,7 @@ def blit_labels_prac():
     if sprite_change_list[2] == 1:
         button("Realistic Flash", 600, y_practice_value + 510, 180, 50, dark_peach, peach, make_flash_flash, black)
         button("Nothing", 600, y_practice_value + 560, 180, 50, dark_peach, peach, make_flash_nothing, black)
+
 
 
 
