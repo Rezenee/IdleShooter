@@ -443,6 +443,7 @@ def makeGunStart(GUNPOS,sleepTime):
     x, y = pygame.mouse.get_pos()
     if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
         for dx, dy in GUNPOS:
+            button('', 25, 50, 170, 180, peach, peach, None, brown)
             x,y = pygame.mouse.get_pos()
             for event in pygame.event.get():
                 x,y = pygame.mouse.get_pos()
@@ -471,8 +472,6 @@ def makeGunStart(GUNPOS,sleepTime):
                     scoreNum += scoreAdd
                     hit_percent = hitNum / (scoreNum + miss_num)
                     hit_percent_label = round(hit_percent,2)
-                    button("", 190, 70, 250, 30, gray, gray)
-                    fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
                     if int(scoreNum) >= upgradecost:
                         button(upgradelabel, 600, 90, 180, 50, green, bright_green)
                         button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green)
@@ -482,15 +481,11 @@ def makeGunStart(GUNPOS,sleepTime):
                     hitNum += hitAdd
                     hit_percent = hitNum / (hitNum + miss_num)
                     hit_percent_label = round(hit_percent,2)
-                    button("", 140, 70, 250, 30, gray, gray)
-                    fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
             else:
                 if gamemode == "game_loop_idle":
                     miss_num += 1
                     hit_percent = miss_num / (scoreNum + miss_num)
                     hit_percent_label = round(hit_percent,2)
-                    button("", 190, 70, 250, 30, gray, gray)
-                    fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
                     if int(scoreNum) >= upgradecost:
                         button(upgradelabel, 600, 90, 180, 50, green, bright_green)
                         button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green)
@@ -500,8 +495,6 @@ def makeGunStart(GUNPOS,sleepTime):
                     miss_num += 1
                     hit_percent = hitNum / (hitNum + miss_num)
                     hit_percent_label = round(hit_percent,2)
-                    button("", 140, 70, 250, 30, gray, gray)
-                    fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
 
             pygame.display.update()
             time.sleep(sleepTime)
@@ -818,7 +811,7 @@ def make_flash_flash():
 
 def make_flash_nothing():
     global weaponFlash, sprite_change_list
-    weaponFlash = pygame.image.load(os.path.join('images', 'hitmarker.png'))
+    weaponFlash = pygame.image.load(os.path.join('images', 'nothing.png'))
 
     sprite_change_list[2] = 0
 def make_hitmarker_cod():
@@ -830,7 +823,9 @@ def make_hitmarker_cod():
 
 def make_hitmarker_hole():
     global hitmarker, sprite_change_list
-    hitmarker = pygame.image.load(os.path.join('images', 'bullethole2.png'))
+    hitmarker = pygame.image.load(os.path.join('images', 'nothing1.png'))
+    hitmarker = pygame.transform.scale(hitmarker, [15, 15])
+
 
     sprite_change_list[1] = 0
 
@@ -850,6 +845,7 @@ def make_target_CS():
 
 
 def blit_labels_prac():
+    button('', 25, 50, 170, 180, peach, peach, None, brown)
     fontsmall.render_to(gameDisplay, (140,72), str(int(hitNum)), black)
     fontsmall.render_to(gameDisplay, (80, 70), "Hits:", black)
     fontsmall.render_to(gameDisplay, (46, 100), "Misses:", black)
@@ -871,7 +867,6 @@ def blit_labels_prac():
     button("Target Type \/", 600, y_practice_value + 400, 180, 50, dark_peach, peach)
     button("Hitmarker Type \/", 800, y_practice_value + 400, 180, 50, dark_peach, peach)
     button("Weapon Flash \/", 600, y_practice_value + 460, 180, 50, dark_peach, peach)
-
 
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
