@@ -92,6 +92,13 @@ def changeKeyBind(keyIndex):
             keybindList[keyIndex] = inkey
             print(inkey)
             break
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    keybindList[keyIndex] = event.button[1]
+                    break
+                print("u")
+
 
 
 def clear_decals_key():
@@ -722,7 +729,7 @@ def change_flash():
         sprite_change_list[2] = 1
     else:
         sprite_change_list[2] = 0
-    for i in range(2):
+    for i in range(3):
         sprite_change_list[i] = 0
     sprite_change_list[2] = 1
 def change_hitmarker():
@@ -731,7 +738,7 @@ def change_hitmarker():
         sprite_change_list[1] = 1
     else:
         sprite_change_list[1] = 0
-    for i in range(2):
+    for i in range(3):
         sprite_change_list[i] = 0
     sprite_change_list[1] = 1
 def change_target():
@@ -740,7 +747,7 @@ def change_target():
         sprite_change_list[0] = 1
     else:
         sprite_change_list[0] = 0
-    for i in range(2):
+    for i in range(3):
         sprite_change_list[i] = 0
     sprite_change_list[0] = 1
 
@@ -811,7 +818,7 @@ def make_flash_flash():
 
 def make_flash_nothing():
     global weaponFlash, sprite_change_list
-    weaponFlash = pygame.image.load(os.path.join('images', 'nothing.png'))
+    weaponFlash = pygame.image.load(os.path.join('images', 'hitmarker.png'))
 
     sprite_change_list[2] = 0
 def make_hitmarker_cod():
