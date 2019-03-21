@@ -54,7 +54,7 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
-targetimg = pygame.image.load(os.path.join('images', 'm1spray.png'))
+targetimg = pygame.image.load(os.path.join('images', 'galilspray.png'))
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
@@ -191,9 +191,14 @@ mp5 = gun(100, 0, 0, 0)
 akcs = gun(100, 0, 0, 0)
 m4cs = gun(100,0,0,0)
 m1cs = gun(100,0,0,0)
-weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle, m4cs.gunSelectIdle, m1cs.gunSelectIdle]
-weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac]
-weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought]
+famascs = gun(100,0,0,0)
+augcs = gun(100,0,0,0)
+galilcs = gun(100,0,0,0)
+weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle, m4cs.gunSelectIdle, m1cs.gunSelectIdle, famascs.gunSelectIdle
+                      , augcs.gunSelectIdle, galilcs.gunSelectIdle]
+weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
+                         , augcs.gunSelectPrac, galilcs.gunSelectPrac ]
+weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought]
 pygame.mixer.music.play(-1)
 
 
@@ -227,6 +232,9 @@ def m4csgunbuy():
 
 def m1csgunbuy():
     gunbuy(m1cs.cost,0,5,5)
+
+def famasgunbuy():
+    gunbuy(famascs.cost,0,6,6)
 def target(xx, yy):
    gameDisplay.blit(targetimg, (xx, yy))
 
@@ -519,20 +527,118 @@ M1POSCS = (
  (9, -47),
  (-27, -28),
  (-15, -24),
- (450, -12),
- (10, -21),
- (32, -12),
- (62, 9),
- (48, -1),
- (53, 12),
- (0, -9),
- (-18, -8),
- (20, -1),
- (30, 5),
- (-5, -3),
+ (-37, -10),
+ (8, -19),
+ (30, -10),
+ (48, 6),
+ (40, -2),
+ (42, 7),
+ (-2, -5),
+ (-15, -8),
+ (20, -2),
+ (17, 2),
+ (6, 3),
  (0, 0),
 )
 
+FAMASPOSCS = (
+ (9, -8),
+ (-2, -8),
+ (13, -20),
+ (3, -35),
+ (-2, -40),
+ (-28, -37),
+ (-33, -23),
+ (13, -23),
+ (39, -16),
+ (35, -11),
+ (25, -4),
+ (-11, -11),
+ (-45, -8),
+ (-24, -11),
+ (-39, 7),
+ (-10, -3),
+ (-30, -1),
+ (-6, -8),
+ (10, -4),
+ (48, 2),
+ (7, -7),
+ (-22, 1),
+ (-30, 13),
+ (-30, 23),
+ (0, 0),
+)
+
+AUGPOSCS = (
+ (-8, -12),
+ (0, -25),
+ (8, -45),
+ (14, -52),
+ (-11, -58),
+ (-17, -61),
+ (-27, -39),
+ (-13, -32),
+ (-27, -25),
+ (33, -22),
+ (10, -12),
+ (-29, -1),
+ (-2, -14),
+ (47, -7),
+ (74, 23),
+ (64, 26),
+ (4, -12),
+ (12, -12),
+ (16, 1),
+ (-48, -3),
+ (-65, -6),
+ (-18, -14),
+ (-11, 4),
+ (-23, 3),
+ (-58, 20),
+ (-38, 1),
+ (33, -10),
+ (42, -10),
+ (-10, 3),
+ (0, 0),
+)
+
+GALILPOSCS = (
+ (-8, -9),
+ (5, -9),
+ (-13, -21),
+ (-24, -28),
+ (2, -42),
+ (-3, -49),
+ (-13, -34),
+ (-22, -18),
+ (9, -27),
+ (44, -18),
+ (60, 8),
+ (59, 22),
+ (18, -13),
+ (24, -6),
+ (13, -2),
+ (-1, 2),
+ (-7, -17),
+ (-51, -14),
+ (-27, -7),
+ (500, -3),
+ (500, -6),
+ (500, -14),
+ (500, 4),
+ (500, 3),
+ (500, 20),
+ (500, 1),
+ (500, -10),
+ (500, -10),
+ (500, 3),
+ (500, 20),
+ (500, 1),
+ (500, -10),
+ (500, -10),
+ (500, 3),
+ (500, 0),
+)
 def makeGunStart(GUNPOS,sleepTime):
     global scoreNum
     global hitNum
@@ -555,7 +661,8 @@ def makeGunStart(GUNPOS,sleepTime):
                         hitmarkers = []
                     if event.key == keybindList[2]:
                         clear_stats()
-            if x -250 > 330:
+            # make teh 250 300 when done with guns
+            if x -300 > 330:
                 break
             button("", 0, 0, 580, 768, gray, gray)
             blit_labels_prac()
@@ -611,7 +718,7 @@ def akrust():
      makeGunStart(AKPOS,.125)
 
 def mp5rust():
-     makeGunStart(M1POSCS,.01)
+     makeGunStart(GALILPOSCS,.01)
 
 def akcscall():
     makeGunStart(AKPOSCS, .1)
@@ -621,6 +728,15 @@ def m4cscall():
 
 def m1cscall():
     makeGunStart(M1POSCS, .1)
+
+def famascscall():
+    makeGunStart(FAMASPOSCS, .1)
+
+def augcscall():
+    makeGunStart(AUGPOSCS, .1)
+
+def galilcscall():
+    makeGunStart(GALILPOSCS, .1)
 def upgradeall():
     global scoreNum
     global scoreAdd
