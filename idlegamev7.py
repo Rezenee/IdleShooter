@@ -54,7 +54,7 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
-targetimg = pygame.image.load(os.path.join('images', 'akspray.png'))
+targetimg = pygame.image.load(os.path.join('images', 'm1spray.png'))
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
@@ -189,9 +189,11 @@ class Slider():
 ak = gun(100, 0, 0, 0)
 mp5 = gun(100, 0, 0, 0)
 akcs = gun(100, 0, 0, 0)
-weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle]
-weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac]
-weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought]
+m4cs = gun(100,0,0,0)
+m1cs = gun(100,0,0,0)
+weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle, m4cs.gunSelectIdle, m1cs.gunSelectIdle]
+weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac]
+weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought]
 pygame.mixer.music.play(-1)
 
 
@@ -220,6 +222,11 @@ def akgunbuy():
 def akcsgunbuy():
     gunbuy(akcs.cost, 0, 3, 3)
 
+def m4csgunbuy():
+    gunbuy(m4cs.cost,0,4,4)
+
+def m1csgunbuy():
+    gunbuy(m1cs.cost,0,5,5)
 def target(xx, yy):
    gameDisplay.blit(targetimg, (xx, yy))
 
@@ -469,6 +476,63 @@ AKPOSCS = (
  (20, 0),
  (0, 0),
 )
+
+M4POSCS = (
+ (-3, -15),
+ (1, -17),
+ (9, -32),
+ (-11, -42),
+ (14, -48),
+ (10, -53),
+ (-31, -28),
+ (-20, -25),
+ (-45, -12),
+ (10, -21),
+ (32, -12),
+ (62, 9),
+ (48, -1),
+ (53, 12),
+ (0, -9),
+ (-18, -8),
+ (20, -1),
+ (30, 5),
+ (-5, -3),
+ (-69, -1),
+ (-18, -13),
+ (-55, -6),
+ (-18, -3),
+ (-22, -2),
+ (22, 2),
+ (-10, -10),
+ (-9, -9),
+ (-8, -2),
+ (-8, 2),
+ (0, 0),
+)
+
+M1POSCS = (
+ (-2, -10),
+ (2, -10),
+ (7, -28),
+ (-10, -36),
+ (11, -43),
+ (9, -47),
+ (-27, -28),
+ (-15, -24),
+ (450, -12),
+ (10, -21),
+ (32, -12),
+ (62, 9),
+ (48, -1),
+ (53, 12),
+ (0, -9),
+ (-18, -8),
+ (20, -1),
+ (30, 5),
+ (-5, -3),
+ (0, 0),
+)
+
 def makeGunStart(GUNPOS,sleepTime):
     global scoreNum
     global hitNum
@@ -547,10 +611,16 @@ def akrust():
      makeGunStart(AKPOS,.125)
 
 def mp5rust():
-     makeGunStart(mp5pos,.125)
+     makeGunStart(M1POSCS,.01)
 
 def akcscall():
     makeGunStart(AKPOSCS, .1)
+
+def m4cscall():
+    makeGunStart(M4POSCS, .1)
+
+def m1cscall():
+    makeGunStart(M1POSCS, .1)
 def upgradeall():
     global scoreNum
     global scoreAdd
@@ -872,7 +942,7 @@ def make_hitmarker_hole():
     sprite_change_list[1] = 0
 def make_target_target():
     global targetimg, sprite_change_list
-    targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
+    targetimg = pygame.image.load(os.path.join('images', 'm4spray.png'))
 
     sprite_change_list[0] = 0
     time.sleep(1)
