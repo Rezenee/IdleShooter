@@ -54,7 +54,7 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
-targetimg = pygame.image.load(os.path.join('images', 'mp7spray.png'))
+targetimg = pygame.image.load(os.path.join('images', 'p90sprayfinal.png'))
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
@@ -198,17 +198,17 @@ galilcs = gun(100,0,0,0)
 kreigcs = gun(100,0,0,0)
 umpcs = gun(100,0,0,0)
 mp7cs = gun(100,0,0,0)
-
+p90cs = gun(100,0,0,0)
 
 
 weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle, m4cs.gunSelectIdle, m1cs.gunSelectIdle, famascs.gunSelectIdle
                       , augcs.gunSelectIdle, galilcs.gunSelectIdle, augscopedcs.gunSelectIdle, kreigcs.gunSelectIdle, umpcs.gunSelectIdle
-                      , mp7cs.gunSelectIdle]
+                      , mp7cs.gunSelectIdle, p90cs.gunSelectIdle]
 weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
                          , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
-                          , mp7cs.gunSelectPrac]
+                          , mp7cs.gunSelectPrac, p90cs.gunSelectPrac]
 weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought,
-                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought]
+                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought]
 pygame.mixer.music.play(-1)
 
 
@@ -262,6 +262,9 @@ def umpgunbuy():
 
 def mp7gunbuy():
     gunbuy(umpcs.cost,0,12,12)
+
+def p90gunbuy():
+    gunbuy(p90cs.cost,0,13,13)
 
 def target(xx, yy):
    gameDisplay.blit(targetimg, (xx, yy))
@@ -794,6 +797,59 @@ MP7POSCS = (
     (500, 0),
 )
 
+
+P90POSCS = (
+   (6, -7),
+   (-1, -8),
+   (-4, -10),
+   (6, -23),
+   (22, -30),
+   (24, -24),
+   (20, -34),
+   (-17, -28),
+   (-20, -26),
+   (-4, -23),
+   (-6, -24),
+   (6, -14),
+   (25, -1),
+   (11, -6),
+   (14, -5),
+   (20, 0),
+   (-24, -3),
+   (-32, -2),
+   (-21, -3), #20
+   (-20, -2),
+   (-28, 2),
+   (-20, 7),
+   (-9, -1),
+   (0, 0), #25
+   (23, -1),
+   (29, 0),
+   (41, 4), #28
+   (5, -3),
+   (-11, -7),
+   (8, -3),
+   (6, -6),
+   (-9, -2),# 33
+   (-29, 1),
+   (-18, 2),
+   (800, -2),
+   (4, -1),
+   (24, 2), #38
+   (29, 4), #39
+   (-4, -4), #40
+   (-25, 0), #41
+   (-38, 9), #42
+   (-18, 3), #43
+   (-24, 1), #44
+   (-31, 6), #45
+   (-17, -2), #46
+   (-22, 8), #47
+   (8, -6), #48
+   (24, -6), #49
+   (-9, 3), #50
+   (500, 0),
+)
 dummypos = (
     (500, -8),
     (500, -7),
@@ -905,7 +961,7 @@ def akrust():
      makeGunStart(AKPOS,.125)
 
 def mp5rust():
-     makeGunStart(MP7POSCS,.1)
+     makeGunStart(P90POSCS,.5)
 
 def akcscall():
     makeGunStart(AKPOSCS, .1)
