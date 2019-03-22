@@ -54,7 +54,7 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
-targetimg = pygame.image.load(os.path.join('images', 'galilspray.png'))
+targetimg = pygame.image.load(os.path.join('images', 'mp7spray.png'))
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
@@ -193,12 +193,22 @@ m4cs = gun(100,0,0,0)
 m1cs = gun(100,0,0,0)
 famascs = gun(100,0,0,0)
 augcs = gun(100,0,0,0)
+augscopedcs = gun(100,0,0,0)
 galilcs = gun(100,0,0,0)
+kreigcs = gun(100,0,0,0)
+umpcs = gun(100,0,0,0)
+mp7cs = gun(100,0,0,0)
+
+
+
 weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle, m4cs.gunSelectIdle, m1cs.gunSelectIdle, famascs.gunSelectIdle
-                      , augcs.gunSelectIdle, galilcs.gunSelectIdle]
+                      , augcs.gunSelectIdle, galilcs.gunSelectIdle, augscopedcs.gunSelectIdle, kreigcs.gunSelectIdle, umpcs.gunSelectIdle
+                      , mp7cs.gunSelectIdle]
 weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
-                         , augcs.gunSelectPrac, galilcs.gunSelectPrac ]
-weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought]
+                         , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
+                          , mp7cs.gunSelectPrac]
+weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought,
+                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought]
 pygame.mixer.music.play(-1)
 
 
@@ -235,6 +245,24 @@ def m1csgunbuy():
 
 def famasgunbuy():
     gunbuy(famascs.cost,0,6,6)
+
+def auggunbuy():
+    gunbuy(augcs.cost,0,7,7)
+
+def augscopedgunbuy():
+    gunbuy(augscopedcs.cost,0,9,9)
+def galilgunbuy():
+    gunbuy(galilcs.cost,0,8,8)
+
+def kreiggunbuy():
+    gunbuy(galilcs.cost,0,10,10)
+
+def umpgunbuy():
+    gunbuy(umpcs.cost,0,11,11)
+
+def mp7gunbuy():
+    gunbuy(umpcs.cost,0,12,12)
+
 def target(xx, yy):
    gameDisplay.blit(targetimg, (xx, yy))
 
@@ -602,6 +630,39 @@ AUGPOSCS = (
  (0, 0),
 )
 
+AUGSCOPEDPOSCS = (
+ (-6, -8),
+ (3, -8),
+ (4, -11),
+ (5, -24),
+ (-5, -34),
+ (-9, -39),
+ (-15, -27),
+ (-7, -20),
+ (-15, -15),
+ (21, -15),
+ (4, -8),
+ (-18, -0),
+ (0, -10),
+ (29, -4),
+ (44, 15),
+ (34, 16),
+ (0, -9),
+ (6, -8),
+ (9, 1),
+ (-31, -2),
+ (-38, -3),
+ (-26, -4),
+ (11, -2),
+ (8, -2),
+ (-55, 20),
+ (-21, -1),
+ (23, -7),
+ (20, -3),
+ (3, -2),
+ (230, 0),
+)
+
 GALILPOSCS = (
  (-8, -9),
  (5, -9),
@@ -622,22 +683,148 @@ GALILPOSCS = (
  (-7, -17),
  (-51, -14),
  (-27, -7),
- (500, -3),
- (500, -6),
- (500, -14),
- (500, 4),
- (500, 3),
- (500, 20),
- (500, 1),
- (500, -10),
- (500, -10),
- (500, 3),
- (500, 20),
- (500, 1),
- (500, -10),
- (500, -10),
- (500, 3),
+ (-50, 7),
+ (-62, 16),
+ (-11, -5),
+ (23, -7),
+ (-25, 4),
+ (-21, 3),
+ (-31, 6),
+ (17, -9),
+ (64, 11),
+ (50, 5),
+ (27, -11),
+ (-12, -16),
+ (29, 7),
+ (47, 28),
+ (28, 3),
+ (0, 0),
+)
+KREIGPOSCS = (
+    (6, -12),
+    (21, -26),
+    (13, -39),
+    (11, -46),
+    (13, -52),
+    (10, -56),
+    (32, -23),
+    (-22, -27),
+    (13, -20),
+    (26, -12),
+    (8, -8),
+    (-9, -7),
+    (12, -11),
+    (-3, -17),
+    (22, 7),
+    (32, 29),
+    (28, 13),
+    (13, 5),
+    (-65, -6),
+    (-91, 9),
+    (-68, 1),
+    (-28, -15),
+    (-24, -15),
+    (-9, -10),
+    (-35, 5),
+    (-44, 5),
+    (10, -12),
+    (22, -8),
+    (62, 8),
+    (0, 0),
+)
+
+UMPPOSCS = (
+ (2, -13),
+ (7, -16),
+ (3, -34),
+ (9, -44),
+ (19, -45),
+ (5, -52),
+ (-22, -34),
+ (8, -24),
+ (-17, -26),
+ (-37, -17),
+ (-28, -9),
+ (1, -7),
+ (-9, -12),
+ (0, -11),
+ (-18, 6),
+ (-11, 5),
+ (25, -11),
+ (38, -4),
+ (-1, 4),
+ (-27, 12),
+ (-33, 4),
+ (8, -4),
+ (43, 2),
+ (7, 3),
  (500, 0),
+)
+
+MP7POSCS = (
+    (0, -8),
+    (2, -7),
+    (6, -6),
+    (11, -19),
+    (18, -28),
+    (-1, -34),
+    (19, -25),
+    (6, -26),
+    (21, -7),
+    (12, -7),
+    (-17, -17),
+    (-38, -8),
+    (-36, -3),
+    (-29, -1),
+    (-2, -10),
+    (12, -11),
+    (8, -1),
+    (7, -5),
+    (-7, -5),
+    (4, -8),
+    (30, 6),
+    (40, 19),
+    (8, 0),
+    (18, 4),
+    (-5, 5),
+    (3, 5),
+    (3, -5),
+    (7, -1),
+    (1, -6),
+    (500, 0),
+)
+
+dummypos = (
+    (500, -8),
+    (500, -7),
+    (500, -6),
+    (500, -46),
+    (500, -52),
+    (500, -56),
+    (500, -23),
+    (500, -27),
+    (500, -20),
+    (500, -12),
+    (500, -8),
+    (500, -7),
+    (500, -11),
+    (500, -17),
+    (500, 7),
+    (500, 29),
+    (500, 13),
+    (500, 5),
+    (500, -6),
+    (500, 9),
+    (500, 1),
+    (500, -15),
+    (500, -15),
+    (500, -10),
+    (500, 5),
+    (500, 5),
+    (500, -12),
+    (500, -8),
+    (500, 8),
+    (500, 0),
 )
 def makeGunStart(GUNPOS,sleepTime):
     global scoreNum
@@ -718,7 +905,7 @@ def akrust():
      makeGunStart(AKPOS,.125)
 
 def mp5rust():
-     makeGunStart(GALILPOSCS,.01)
+     makeGunStart(MP7POSCS,.1)
 
 def akcscall():
     makeGunStart(AKPOSCS, .1)
@@ -737,6 +924,16 @@ def augcscall():
 
 def galilcscall():
     makeGunStart(GALILPOSCS, .1)
+
+def kreigcscall():
+    makeGunStart(KREIGPOSCS, .1)
+
+def umpcscall():
+    makeGunStart(UMPPOSCS, .1)
+
+def mp7cscall():
+    makeGunStart(MP7POSCS, .1)
+
 def upgradeall():
     global scoreNum
     global scoreAdd
@@ -1068,8 +1265,6 @@ def make_target_CS():
     sprite_change_list[0] = 0
 
 
-
-
 def blit_labels_prac():
     button('', 25, 50, 170, 180, peach, peach, None, brown)
     fontsmall.render_to(gameDisplay, (140,72), str(int(hitNum)), black)
@@ -1079,7 +1274,7 @@ def blit_labels_prac():
     gameDisplay.blit(gear, (250, 650))
     button("Back", 100, 650, 100, 50, green, bright_green)
     button("Clear Hitmarkers", 350, 650, 170, 50, green, bright_green, clearHitmakers)
-    gameDisplay.blit(targetimg, (250, 150))
+    gameDisplay.blit(targetimg, (150, 150))
     fontsmall.render_to(gameDisplay, (140, 100), str(int(miss_num)), black)
     fontsmall.render_to(gameDisplay, (140, 125), str(hit_percent_label), black)
     button("Reset", 50, 165, 100, 50, darkish_peach, dark_peach, clear_stats,brown)
