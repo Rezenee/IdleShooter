@@ -54,7 +54,7 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
-targetimg = pygame.image.load(os.path.join('images', 'bizonspray2.gif'))
+targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
@@ -69,12 +69,23 @@ pygame.mixer.music.load(os.path.join('images', 'background2.mp3'))
 
 font = pygame.font.SysFont("Verdana", 12)
 hitmarkers = []
+games = ["rust", "csgo"]
+# This makes a variable that is called to check what game it is.
+game = 0
 
 
 pauseKey = 108
 reloadKey = 112
 resetStats = 121
 keybindList = [pauseKey,reloadKey, resetStats]
+open_target_change = 0
+hitmarker_img_change = 0
+flash_img_change = 0
+sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change]
+
+
+pygame.mixer.music.play(-1)
+
 
 def get_key():
       while 1:
@@ -102,15 +113,12 @@ def changeKeyBind(keyIndex):
 
 
 
-def clear_decals_key():
-    changeKeyBind(1)
+def clear_decals_key(): changeKeyBind(1)
 
 
-def pause_hotkey():
-    changeKeyBind(0)
+def pause_hotkey(): changeKeyBind(0)
 
-def reset_stats_hotkey():
-    changeKeyBind(2)
+def reset_stats_hotkey(): changeKeyBind(2)
 class gun(object):
     def __init__(self, cost, gunSelectIdle, gunSelectPrac, gunBought):
         self.cost = cost
@@ -118,7 +126,36 @@ class gun(object):
         self.gunSelectPrac = gunSelectPrac
         self.gunBought = gunBought
 
+# First variable = cost, second = selectIdle, third = selectprac, fourth = gunbought all the states of them, 0 at the start
 
+
+ak = gun(100, 0, 0, 0)
+mp5 = gun(100, 0, 0, 0)
+
+
+akcs = gun(100, 0, 0, 0)
+m4cs = gun(100,0,0,0)
+m1cs = gun(100,0,0,0)
+famascs = gun(100,0,0,0)
+augcs = gun(100,0,0,0)
+augscopedcs = gun(100,0,0,0)
+galilcs = gun(100,0,0,0)
+kreigcs = gun(100,0,0,0)
+umpcs = gun(100,0,0,0)
+mp7cs = gun(100,0,0,0)
+p90cs = gun(100,0,0,0)
+mac10cs = gun(100,0,0,0)
+bizoncs = gun(100,0,0,0)
+
+weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle, m4cs.gunSelectIdle, m1cs.gunSelectIdle, famascs.gunSelectIdle
+                      , augcs.gunSelectIdle, galilcs.gunSelectIdle, augscopedcs.gunSelectIdle, kreigcs.gunSelectIdle, umpcs.gunSelectIdle
+                      , mp7cs.gunSelectIdle, p90cs.gunSelectIdle, mac10cs.gunSelectIdle, bizoncs.gunSelectIdle]
+weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
+                         , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
+                          , mp7cs.gunSelectPrac, p90cs.gunSelectPrac, mac10cs.gunSelectPrac, bizoncs.gunSelectPrac]
+weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought,
+                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought, mac10cs.gunBought
+                , bizoncs.gunBought]
 
 class Slider():
     def __init__(self, name, val, maxi, mini, xpos,ypos):
@@ -183,37 +220,10 @@ class Slider():
 
     check = 1
 
-# First variable = cost, second = selectIdle, third = selectprac, fourth = gunbought all the states of them, 0 at the start
 
-
-ak = gun(100, 0, 0, 0)
-mp5 = gun(100, 0, 0, 0)
-
-
-akcs = gun(100, 0, 0, 0)
-m4cs = gun(100,0,0,0)
-m1cs = gun(100,0,0,0)
-famascs = gun(100,0,0,0)
-augcs = gun(100,0,0,0)
-augscopedcs = gun(100,0,0,0)
-galilcs = gun(100,0,0,0)
-kreigcs = gun(100,0,0,0)
-umpcs = gun(100,0,0,0)
-mp7cs = gun(100,0,0,0)
-p90cs = gun(100,0,0,0)
-mac10cs = gun(100,0,0,0)
-bizoncs = gun(100,0,0,0)
-
-weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle, m4cs.gunSelectIdle, m1cs.gunSelectIdle, famascs.gunSelectIdle
-                      , augcs.gunSelectIdle, galilcs.gunSelectIdle, augscopedcs.gunSelectIdle, kreigcs.gunSelectIdle, umpcs.gunSelectIdle
-                      , mp7cs.gunSelectIdle, p90cs.gunSelectIdle, mac10cs.gunSelectIdle, bizoncs.gunSelectIdle]
-weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
-                         , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
-                          , mp7cs.gunSelectPrac, p90cs.gunSelectPrac, mac10cs.gunSelectPrac, bizoncs.gunSelectPrac]
-weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought,
-                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought, mac10cs.gunBought
-                , bizoncs.gunBought]
-pygame.mixer.music.play(-1)
+musicsound = Slider("", .5, 1, 0, 300,180)
+sensitivity = Slider("sens", .5,1,0,300,250)
+slides = [musicsound,sensitivity]
 
 
 
@@ -337,11 +347,6 @@ def baseselect2():
         weaponSelectedPractice[0] = 1
 
 
-games = ["rust", "csgo"]
-# This makes a variable that is called to check what game it is.
-game = 0
-
-
 def changeGameUp():
     global game
     global games
@@ -387,6 +392,8 @@ def base():
         scoreNum = int(scoreNum) + scoreAdd
     if gamemode == "game_loop_practice":
         hitNum = int(hitNum) + hitAdd
+
+
 def clearHitmakers():
     global hitmarkers
     hitmarkers = []
@@ -974,7 +981,7 @@ def makeGunStart(GUNPOS,sleepTime):
     global hit_percent, hit_percent_label
     click = pygame.mouse.get_pressed()
     x, y = pygame.mouse.get_pos()
-    if click[0] == 1:
+    if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
         #0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 put this back when you want it tarrget only
         for dx, dy in GUNPOS:
             x,y = pygame.mouse.get_pos()
@@ -989,7 +996,7 @@ def makeGunStart(GUNPOS,sleepTime):
                     if event.key == keybindList[2]:
                         clear_stats()
             # make teh 250 300 when done with guns
-            if x -300 > 330:
+            if x - 250 > 330:
                 break
             button("", 0, 0, 580, 768, gray, gray)
             blit_labels_prac()
@@ -1043,16 +1050,17 @@ def clear_stats():
 
 
 def akrust(): makeGunStart(AKPOS,.125)
-def mp5rust(): makeGunStart(BIZONPOSCS,.1)
+def mp5rust(): makeGunStart(mp5pos,.1)
 def akcscall(): makeGunStart(AKPOSCS, .1)
-def m4cscall(): makeGunStart(M4POSCS, .1)
+def m4cscall(): makeGunStart(M4POSCS, .091)
 def m1cscall(): makeGunStart(M1POSCS, .1)
-def famascscall(): makeGunStart(FAMASPOSCS, .1)
-def augcscall(): makeGunStart(AUGPOSCS, .1)
+def famascscall(): makeGunStart(FAMASPOSCS, .091)
+def augcscall(): makeGunStart(AUGPOSCS, .091)
 def galilcscall(): makeGunStart(GALILPOSCS, .1)
-def kreigcscall(): makeGunStart(KREIGPOSCS, .1)
-def umpcscall(): makeGunStart(UMPPOSCS, .1)
-def mp7cscall(): makeGunStart(MP7POSCS, .1)
+def kreigcscall(): makeGunStart(KREIGPOSCS, .091)
+def umpcscall(): makeGunStart(UMPPOSCS, .091)
+def mp7cscall(): makeGunStart(MP7POSCS, .08)
+def p90cscall(): makeGunStart(P90POSCS, .07)
 def upgradeall():
     global scoreNum
     global scoreAdd
@@ -1076,7 +1084,6 @@ def upgradebase():
         upgradecost = upgradecost * upgrademultiplier
         upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
 
-# def previousGamemode():
 
 def game_intro():
     global gamemode
@@ -1095,7 +1102,6 @@ def game_intro():
         fontlarge.render_to(gameDisplay, (220, 300), "Idle Shooter", (black))
 
 
-        #pygame.mixer.music.play(-1)
         # The two buttons on this page, remember not to put the () in the function being called
         button("Play Game", 320, 450, 140, 50, green, bright_green, game_loop_idle)
         button("Play Practice", 320, 510, 140, 50, green, bright_green, game_loop_practice)
@@ -1133,9 +1139,6 @@ def paused():
         clock.tick(15)
 
 
-musicsound = Slider("", .5, 1, 0, 300,180)
-sensitivity = Slider("sens", .5,1,0,300,250)
-slides = [musicsound,sensitivity]
 
 def keyBindScreen():
     keyBindScreen = True
@@ -1193,38 +1196,36 @@ def settings():
 
 
 
-open_target_change = 0
-hitmarker_img_change = 0
-flash_img_change = 0
-sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change]
+
 
 def change_flash():
     global sprite_change_list
     if sprite_change_list[2] == 0:
+        for i in range(3):
+            sprite_change_list[i] = 0
         sprite_change_list[2] = 1
     else:
         sprite_change_list[2] = 0
-    for i in range(3):
-        sprite_change_list[i] = 0
-    sprite_change_list[2] = 1
+
 def change_hitmarker():
     global sprite_change_list
     if sprite_change_list[1] == 0:
+        for i in range(3):
+            sprite_change_list[i] = 0
         sprite_change_list[1] = 1
     else:
         sprite_change_list[1] = 0
-    for i in range(3):
-        sprite_change_list[i] = 0
-    sprite_change_list[1] = 1
+
 def change_target():
     global open_target_change
+
     if sprite_change_list[0] == 0:
+        for i in range(3):
+            sprite_change_list[i] = 0
         sprite_change_list[0] = 1
+
     else:
         sprite_change_list[0] = 0
-    for i in range(3):
-        sprite_change_list[i] = 0
-    sprite_change_list[0] = 1
 
 def make_flash_flash():
     global weaponFlash, sprite_change_list
@@ -1251,13 +1252,13 @@ def make_hitmarker_hole():
     sprite_change_list[1] = 0
 def make_target_target():
     global targetimg, sprite_change_list
-    targetimg = pygame.image.load(os.path.join('images', 'm4spray.png'))
+    targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
 
     sprite_change_list[0] = 0
     time.sleep(1)
 def make_target_CS():
     global targetimg, sprite_change_list
-    targetimg = pygame.image.load(os.path.join('images', 'akspray.png'))
+    targetimg = pygame.image.load(os.path.join('images', 'mp5.png'))
     sprite_change_list[0] = 0
 
 def game_loop_idle():
@@ -1344,6 +1345,11 @@ def game_loop_practice():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     button2(250, 650, 50, 50, settings)
+                    button2(600, y_practice_value + 400, 180, 50, change_target)
+                    button2(800, y_practice_value + 400, 180, 50, change_hitmarker)
+                    button2(600, y_practice_value + 460, 180, 50, change_flash)
+                    button2(600, y_practice_value + 80, 80, 50, changeGameDown)
+                    button2(900, y_practice_value + 80, 80, 50, changeGameUp)
                 if event.button == 4: y_practice_value += 10
                 if event.button == 5: y_practice_value -= 10
         gameDisplay.fill(gray)
@@ -1351,7 +1357,7 @@ def game_loop_practice():
         blit_labels_prac()
         for x in range(len(hitmarkers)):
             gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
-        click = pygame.mouse.get_pressed()
+        # click = pygame.mouse.get_pressed()
 
         x, y = pygame.mouse.get_pos()
         if game == 0:
@@ -1374,10 +1380,25 @@ def game_loop_practice():
 
             buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
                          180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+
+
 
             if weaponSelectedPractice[3] == 1:
                 akcscall()
-
 
         pygame.display.update()
         clock.tick(144)
@@ -1392,7 +1413,7 @@ def blit_labels_prac():
     gameDisplay.blit(gear, (250, 650))
     button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
     button("Clear Hitmarkers", 350, 650, 170, 50, green, bright_green, clearHitmakers)
-    gameDisplay.blit(targetimg, (150, 150))
+    gameDisplay.blit(targetimg, (200, 150))
     fontsmall.render_to(gameDisplay, (140, 100), str(int(miss_num)), black)
     fontsmall.render_to(gameDisplay, (140, 125), str(hit_percent_label), black)
     button("Reset", 50, 165, 100, 50, darkish_peach, dark_peach, clear_stats,brown)
@@ -1405,15 +1426,6 @@ def blit_labels_prac():
     button("Target Type \/", 600, y_practice_value + 400, 180, 50, dark_peach, peach, None, black)
     button("Hitmarker Type \/", 800, y_practice_value + 400, 180, 50, dark_peach, peach, None,black)
     button("Weapon Flash \/", 600, y_practice_value + 460, 180, 50, dark_peach, peach, None, black)
-
-    # for event in pygame.event.get():
-    #     if event.type == pygame.MOUSEBUTTONDOWN:
-    #             button2(600, y_practice_value + 400, 180, 50,change_target)
-    #             button2(800, y_practice_value + 400, 180, 50, change_hitmarker)
-    #             button2(600, y_practice_value + 460, 180, 50, change_flash)
-    #             button2(600, y_practice_value + 80, 80, 50, changeGameDown)
-    #             button2(900, y_practice_value + 80, 80, 50, changeGameUp)
-
     if sprite_change_list[0] == 1:
         button("Target", 600, y_practice_value + 450, 180, 50, dark_peach, peach,make_target_target, black)
         button("CSGO Model", 600, y_practice_value + 500, 180, 50, dark_peach, peach,make_target_CS,black)
