@@ -54,7 +54,7 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
-targetimg = pygame.image.load(os.path.join('images', 'p90sprayfinal.png'))
+targetimg = pygame.image.load(os.path.join('images', 'bizonspray2.gif'))
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
@@ -188,6 +188,8 @@ class Slider():
 
 ak = gun(100, 0, 0, 0)
 mp5 = gun(100, 0, 0, 0)
+
+
 akcs = gun(100, 0, 0, 0)
 m4cs = gun(100,0,0,0)
 m1cs = gun(100,0,0,0)
@@ -199,16 +201,18 @@ kreigcs = gun(100,0,0,0)
 umpcs = gun(100,0,0,0)
 mp7cs = gun(100,0,0,0)
 p90cs = gun(100,0,0,0)
-
+mac10cs = gun(100,0,0,0)
+bizoncs = gun(100,0,0,0)
 
 weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle, m4cs.gunSelectIdle, m1cs.gunSelectIdle, famascs.gunSelectIdle
                       , augcs.gunSelectIdle, galilcs.gunSelectIdle, augscopedcs.gunSelectIdle, kreigcs.gunSelectIdle, umpcs.gunSelectIdle
-                      , mp7cs.gunSelectIdle, p90cs.gunSelectIdle]
+                      , mp7cs.gunSelectIdle, p90cs.gunSelectIdle, mac10cs.gunSelectIdle, bizoncs.gunSelectIdle]
 weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
                          , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
-                          , mp7cs.gunSelectPrac, p90cs.gunSelectPrac]
+                          , mp7cs.gunSelectPrac, p90cs.gunSelectPrac, mac10cs.gunSelectPrac, bizoncs.gunSelectPrac]
 weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought,
-                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought]
+                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought, mac10cs.gunBought
+                , bizoncs.gunBought]
 pygame.mixer.music.play(-1)
 
 
@@ -228,51 +232,28 @@ def gunbuy(cost, weaponBoughtNum, idleNum, pracNum):
             weaponSelectedPractice[i] = 0
         weaponSelectedPractice[pracNum] = 1
 
-def mp5gunbuy():
-    gunbuy(mp5.cost, 0, 2, 2)
 
-def akgunbuy():
-    gunbuy(ak.cost, 0, 1, 1)
-
-def akcsgunbuy():
-    gunbuy(akcs.cost, 0, 3, 3)
-
-def m4csgunbuy():
-    gunbuy(m4cs.cost,0,4,4)
-
-def m1csgunbuy():
-    gunbuy(m1cs.cost,0,5,5)
-
-def famasgunbuy():
-    gunbuy(famascs.cost,0,6,6)
-
-def auggunbuy():
-    gunbuy(augcs.cost,0,7,7)
-
-def augscopedgunbuy():
-    gunbuy(augscopedcs.cost,0,9,9)
-def galilgunbuy():
-    gunbuy(galilcs.cost,0,8,8)
-
-def kreiggunbuy():
-    gunbuy(galilcs.cost,0,10,10)
-
-def umpgunbuy():
-    gunbuy(umpcs.cost,0,11,11)
-
-def mp7gunbuy():
-    gunbuy(umpcs.cost,0,12,12)
-
-def p90gunbuy():
-    gunbuy(p90cs.cost,0,13,13)
-
-def target(xx, yy):
-   gameDisplay.blit(targetimg, (xx, yy))
+def mp5gunbuy(): gunbuy(mp5.cost, 0, 2, 2)
+def akgunbuy(): gunbuy(ak.cost, 0, 1, 1)
+def akcsgunbuy(): gunbuy(akcs.cost, 0, 3, 3)
+def m4csgunbuy(): gunbuy(m4cs.cost,0,4,4)
+def m1csgunbuy(): gunbuy(m1cs.cost,0,5,5)
+def famasgunbuy(): gunbuy(famascs.cost,0,6,6)
+def auggunbuy(): gunbuy(augcs.cost,0,7,7)
+def augscopedgunbuy(): gunbuy(augscopedcs.cost,0,9,9)
+def galilgunbuy(): gunbuy(galilcs.cost,0,8,8)
+def kreiggunbuy(): gunbuy(galilcs.cost,0,10,10)
+def umpgunbuy(): gunbuy(umpcs.cost,0,11,11)
+def mp7gunbuy(): gunbuy(umpcs.cost,0,12,12)
+def p90gunbuy(): gunbuy(p90cs.cost,0,13,13)
+def mac10gunbuy(): gunbuy(mac10cs.cost,0,14,14)
+def bizongunbuy(): gunbuy(bizoncs.cost,0,15,15)
 
 
-def quitgame():
-    pygame.quit
-    quit()
+def target(xx, yy): gameDisplay.blit(targetimg, (xx, yy))
+
+
+def quitgame(): pygame.quit, quit()
 
 
 def text_objects(text, font):
@@ -413,7 +394,7 @@ def clearHitmakers():
 # Stops going left after 7 bullets, goes straight up for 1
 # goes right for 3
 # goes straight up for 1
-# goes left again for 5 bulltes
+# goes left again for 5 bulletsn
 # satys in about the same position for 3 bullets
 # moves right for the rust of the spray
 
@@ -817,39 +798,142 @@ P90POSCS = (
    (20, 0),
    (-24, -3),
    (-32, -2),
-   (-21, -3), #20
+   (-21, -3),
    (-20, -2),
    (-28, 2),
    (-20, 7),
    (-9, -1),
-   (0, 0), #25
+   (0, 0),
    (23, -1),
    (29, 0),
-   (41, 4), #28
+   (41, 4),
    (5, -3),
    (-11, -7),
    (8, -3),
    (6, -6),
-   (-9, -2),# 33
+   (-9, -2),
    (-29, 1),
    (-18, 2),
-   (800, -2),
+   (8, -2),
    (4, -1),
-   (24, 2), #38
-   (29, 4), #39
-   (-4, -4), #40
-   (-25, 0), #41
-   (-38, 9), #42
-   (-18, 3), #43
-   (-24, 1), #44
-   (-31, 6), #45
-   (-17, -2), #46
-   (-22, 8), #47
-   (8, -6), #48
-   (24, -6), #49
-   (-9, 3), #50
-   (500, 0),
+   (24, 2),
+   (24, 4),
+   (-4, -4),
+   (-25, 0),
+   (-38, 9),
+   (-18, 3),
+   (-24, 1),
+   (-31, 6),
+   (-17, -2),
+   (-22, 8),
+   (8, -6),
+   (24, -6),
+   (-9, 3),
+   (0, 0),
 )
+
+MAC10POSCS = (
+    (9, -6),
+    (3, -7),
+    (-6, -12),
+    (-8, -27), #5
+    (-20, -33),
+    (-23, -48),
+    (-17, -41),
+    (11, -34),
+    (-17, -20), #10
+    (-8,  -22), #11
+    (-9, -22), #12
+    (5, -15), #13
+    (4, -8), #14
+    (19, -6), #15
+    (41, -1), #16
+    (58, 13),
+    (3, 1),
+    (23, 7),
+    (-13, 0),
+    (12, 5),
+    (24, 1),
+    (21, -4),
+    (-32, -2),
+    (-26, -4),
+    (-31, -1),
+    (-43, 3),
+    (-5, -8),
+    (42, 10),
+    (-5, 2),
+    (0, 0),
+)
+
+BIZONPOSCS = (
+    (2, -9), #2
+    (5, -6), #3
+    (7, -15), #4
+    (15, -24), #5
+    (25, -29), #6
+    (-6, -39), #7
+    (-18, -38), #8
+    (-1, -33), #9
+    (-37, -11), #10
+    (-28, -10), #11
+    (-11, -17),
+    (-28, -4),
+    (13, -15),
+    (51, 2),
+    (0, -6),#16
+    (-25, 0),
+    (-12, 0),
+    (8, -6),
+    (-13, -11),
+    (-19, -4), #21
+    (500, 1),
+    (500, -15),
+    (500, -15),
+    (500, -10),
+    (500, 5), #26
+    (500, 5),
+    (500, -12),
+    (500, -8),
+    (500, 8),
+    (500, 0), #31
+    (500, -8),
+    (500, -7),
+    (500, -6),
+    (500, -46),
+    (500, -52), #36
+    (500, -56),
+    (500, -23),
+    (500, -27),
+    (500, -20),
+    (500, -12), #41
+    (500, -8),
+    (500, -7),
+    (500, -11),
+    (500, -17),
+    (500, 7),
+    (500, 29), #47
+    (500, 13),
+    (500, 5),
+    (500, -6),
+    (500, 9),
+    (500, 1), #52
+    (500, -15),
+    (500, -15),
+    (500, -10),
+    (500, 5),
+    (500, 5), #57
+    (500, -12), #58
+    (500, -8), #59
+    (500, 8), #60
+    (500, 0), #61
+    (500, -8), #62
+    (500, 8), #63
+    (500, 0), #64
+    (500, -8),
+
+)
+
+
 dummypos = (
     (500, -8),
     (500, -7),
@@ -957,39 +1041,18 @@ def clear_stats():
     hit_percent = 0
     hit_percent_label = 0
 
-def akrust():
-     makeGunStart(AKPOS,.125)
 
-def mp5rust():
-     makeGunStart(P90POSCS,.5)
-
-def akcscall():
-    makeGunStart(AKPOSCS, .1)
-
-def m4cscall():
-    makeGunStart(M4POSCS, .1)
-
-def m1cscall():
-    makeGunStart(M1POSCS, .1)
-
-def famascscall():
-    makeGunStart(FAMASPOSCS, .1)
-
-def augcscall():
-    makeGunStart(AUGPOSCS, .1)
-
-def galilcscall():
-    makeGunStart(GALILPOSCS, .1)
-
-def kreigcscall():
-    makeGunStart(KREIGPOSCS, .1)
-
-def umpcscall():
-    makeGunStart(UMPPOSCS, .1)
-
-def mp7cscall():
-    makeGunStart(MP7POSCS, .1)
-
+def akrust(): makeGunStart(AKPOS,.125)
+def mp5rust(): makeGunStart(BIZONPOSCS,.1)
+def akcscall(): makeGunStart(AKPOSCS, .1)
+def m4cscall(): makeGunStart(M4POSCS, .1)
+def m1cscall(): makeGunStart(M1POSCS, .1)
+def famascscall(): makeGunStart(FAMASPOSCS, .1)
+def augcscall(): makeGunStart(AUGPOSCS, .1)
+def galilcscall(): makeGunStart(GALILPOSCS, .1)
+def kreigcscall(): makeGunStart(KREIGPOSCS, .1)
+def umpcscall(): makeGunStart(UMPPOSCS, .1)
+def mp7cscall(): makeGunStart(MP7POSCS, .1)
 def upgradeall():
     global scoreNum
     global scoreAdd
@@ -1127,70 +1190,7 @@ def settings():
         pygame.display.update()
         clock.tick(60)
 
-def game_loop_practice():
-    global pause
-    global gamemode
-    global x
-    global y
-    global hitmarkers
-    global y_practice_value
-    gamemode = "game_loop_practice"
-    while not gameExit:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == keybindList[0]:
-                    pause = True
-                    paused()
-                if event.key == keybindList[1]:
-                    hitmarkers = []
-                if event.key == keybindList[2]:
-                    clear_stats()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    button2(600, y_practice_value + 80, 80, 50, changeGameDown)
-                    button2(900, y_practice_value + 80, 80, 50, changeGameUp)
-                    button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
-                    button2(250, 650, 50, 50, settings)
-                if event.button == 4: y_practice_value += 10
-                if event.button == 5: y_practice_value -= 10
-        gameDisplay.fill(gray)
-        button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
-        blit_labels_prac()
-        for x in range(len(hitmarkers)):
-            gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
-        click = pygame.mouse.get_pressed()
 
-        x, y = pygame.mouse.get_pos()
-        if game == 0:
-            button("RUST", 700, y_practice_value + 80, 180, 50, red, red, None, black)
-
-            buttonstate2(weaponSelectedPractice[1], "AK Selected", "Select AK", 800, y_practice_value + 150,
-                         180, 50, peach, peach, dark_peach, peach, akgunbuy, black)
-
-            buttonstate2(weaponSelectedPractice[2], "MP5 Selected", "Select MP5", 600, y_practice_value + 210, 180, 50,
-                         peach, peach, dark_peach, peach, mp5gunbuy, black)
-
-            # Checks if the weapon is selected if it is call the recoil for it.
-            if weaponSelectedPractice[1] == 1:
-                akrust()
-            if weaponSelectedPractice[2] == 1:
-                mp5rust()
-
-        if game == 1:
-            button("CSGO", 700, y_practice_value+ 80, 180, 50, red, red, black)
-
-            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
-                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
-
-            if weaponSelectedPractice[3] == 1:
-                akcscall()
-
-
-        pygame.display.update()
-        clock.tick(144)
 
 
 open_target_change = 0
@@ -1225,6 +1225,40 @@ def change_target():
     for i in range(3):
         sprite_change_list[i] = 0
     sprite_change_list[0] = 1
+
+def make_flash_flash():
+    global weaponFlash, sprite_change_list
+    weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png'))
+    weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
+
+    sprite_change_list[2] = 0
+def make_flash_nothing():
+    global weaponFlash, sprite_change_list
+    weaponFlash = pygame.image.load(os.path.join('images', 'nothing.png'))
+
+    sprite_change_list[2] = 0
+def make_hitmarker_cod():
+    global hitmarker, sprite_change_list
+    hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
+
+    sprite_change_list[1] = 0
+def make_hitmarker_hole():
+    global hitmarker, sprite_change_list
+    hitmarker = pygame.image.load(os.path.join('images', 'bullethole.png'))
+    hitmarker = pygame.transform.scale(hitmarker, [15, 15])
+
+
+    sprite_change_list[1] = 0
+def make_target_target():
+    global targetimg, sprite_change_list
+    targetimg = pygame.image.load(os.path.join('images', 'm4spray.png'))
+
+    sprite_change_list[0] = 0
+    time.sleep(1)
+def make_target_CS():
+    global targetimg, sprite_change_list
+    targetimg = pygame.image.load(os.path.join('images', 'akspray.png'))
+    sprite_change_list[0] = 0
 
 def game_loop_idle():
 
@@ -1286,39 +1320,67 @@ def game_loop_idle():
         clock.tick(144)
 
 
-def make_flash_flash():
-    global weaponFlash, sprite_change_list
-    weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png'))
-    weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
+def game_loop_practice():
+    global pause
+    global gamemode
+    global x
+    global y
+    global hitmarkers
+    global y_practice_value
+    gamemode = "game_loop_practice"
+    while not gameExit:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == keybindList[0]:
+                    pause = True
+                    paused()
+                if event.key == keybindList[1]:
+                    hitmarkers = []
+                if event.key == keybindList[2]:
+                    clear_stats()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    button2(250, 650, 50, 50, settings)
+                if event.button == 4: y_practice_value += 10
+                if event.button == 5: y_practice_value -= 10
+        gameDisplay.fill(gray)
+        button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
+        blit_labels_prac()
+        for x in range(len(hitmarkers)):
+            gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
+        click = pygame.mouse.get_pressed()
 
-    sprite_change_list[2] = 0
-def make_flash_nothing():
-    global weaponFlash, sprite_change_list
-    weaponFlash = pygame.image.load(os.path.join('images', 'nothing.png'))
+        x, y = pygame.mouse.get_pos()
+        if game == 0:
+            button("RUST", 700, y_practice_value + 80, 180, 50, red, red, None, black)
 
-    sprite_change_list[2] = 0
-def make_hitmarker_cod():
-    global hitmarker, sprite_change_list
-    hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
+            buttonstate2(weaponSelectedPractice[1], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akgunbuy, black)
 
-    sprite_change_list[1] = 0
-def make_hitmarker_hole():
-    global hitmarker, sprite_change_list
-    hitmarker = pygame.image.load(os.path.join('images', 'bullethole.png'))
-    hitmarker = pygame.transform.scale(hitmarker, [15, 15])
+            buttonstate2(weaponSelectedPractice[2], "MP5 Selected", "Select MP5", 600, y_practice_value + 210, 180, 50,
+                         peach, peach, dark_peach, peach, mp5gunbuy, black)
+
+            # Checks if the weapon is selected if it is call the recoil for it.
+            if weaponSelectedPractice[1] == 1:
+                akrust()
+            if weaponSelectedPractice[2] == 1:
+                mp5rust()
+
+        if game == 1:
+            button("CSGO", 700, y_practice_value+ 80, 180, 50, red, red, black)
+
+            buttonstate2(weaponSelectedPractice[3], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+
+            if weaponSelectedPractice[3] == 1:
+                akcscall()
 
 
-    sprite_change_list[1] = 0
-def make_target_target():
-    global targetimg, sprite_change_list
-    targetimg = pygame.image.load(os.path.join('images', 'm4spray.png'))
-
-    sprite_change_list[0] = 0
-    time.sleep(1)
-def make_target_CS():
-    global targetimg, sprite_change_list
-    targetimg = pygame.image.load(os.path.join('images', 'akspray.png'))
-    sprite_change_list[0] = 0
+        pygame.display.update()
+        clock.tick(144)
 
 
 def blit_labels_prac():
@@ -1328,7 +1390,7 @@ def blit_labels_prac():
     fontsmall.render_to(gameDisplay, (46, 100), "Misses:", black)
     fontsmall.render_to(gameDisplay, (38, 125), "Percent:", black)
     gameDisplay.blit(gear, (250, 650))
-    button("Back", 100, 650, 100, 50, green, bright_green)
+    button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
     button("Clear Hitmarkers", 350, 650, 170, 50, green, bright_green, clearHitmakers)
     gameDisplay.blit(targetimg, (150, 150))
     fontsmall.render_to(gameDisplay, (140, 100), str(int(miss_num)), black)
@@ -1344,11 +1406,13 @@ def blit_labels_prac():
     button("Hitmarker Type \/", 800, y_practice_value + 400, 180, 50, dark_peach, peach, None,black)
     button("Weapon Flash \/", 600, y_practice_value + 460, 180, 50, dark_peach, peach, None, black)
 
-    for event in pygame.event.get():
-        if event.type == pygame.MOUSEBUTTONDOWN:
-                button2(600, y_practice_value + 400, 180, 50,change_target)
-                button2(800, y_practice_value + 400, 180, 50, change_hitmarker)
-                button2(600, y_practice_value + 460, 180, 50, change_flash)
+    # for event in pygame.event.get():
+    #     if event.type == pygame.MOUSEBUTTONDOWN:
+    #             button2(600, y_practice_value + 400, 180, 50,change_target)
+    #             button2(800, y_practice_value + 400, 180, 50, change_hitmarker)
+    #             button2(600, y_practice_value + 460, 180, 50, change_flash)
+    #             button2(600, y_practice_value + 80, 80, 50, changeGameDown)
+    #             button2(900, y_practice_value + 80, 80, 50, changeGameUp)
 
     if sprite_change_list[0] == 1:
         button("Target", 600, y_practice_value + 450, 180, 50, dark_peach, peach,make_target_target, black)
