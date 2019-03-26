@@ -220,9 +220,10 @@ class Slider():
     check = 1
 
 
-musicsound = Slider("", .5, 1, 0, 300,180)
-sensitivity = Slider("sens", .5,1,0,300,250)
-slides = [musicsound,sensitivity]
+musicsound = Slider("", .5, 1, 0, 300, 180)
+recoilamp = Slider("", .5, 1, 0, 50, 350)
+sensitivity = Slider("sens", .5, 1, 0, 300, 250)
+slides = [musicsound,sensitivity, recoilamp]
 
 
 
@@ -1336,6 +1337,41 @@ def game_loop_idle():
         clock.tick(144)
 
 
+
+
+# def settings():
+#     settings = True
+#     while settings:
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 pygame.quit
+#                 quit()
+#             elif event.type == pygame.MOUSEBUTTONDOWN:
+#                 button2(100, 650, 100, 50, gamemodesDict[gamemode])
+#                 button2(250, 650, 100, 50, keyBindScreen)
+#
+#                 pos = pygame.mouse.get_pos()
+#                 for s in slides:
+#                     if s.button_rect.collidepoint(pos):
+#                         s.hit = True
+#             elif event.type == pygame.MOUSEBUTTONUP:
+#                 for s in slides:
+#                     s.hit = False
+#         for s in slides:
+#             if s.hit:
+#                 s.move()
+#                 pygame.mixer.music.set_volume(musicsound.val)
+#         gameDisplay.fill(gray)
+#         fontsmall.render_to(gameDisplay, (80, 70), "Settings", (black))
+#         button("Music Volume", 200,200,0,0,gray,gray)
+#         button("Back", 100, 650, 100, 50, green, bright_green)
+#         button("Keybinds", 250, 650, 100,50,green, bright_green)
+#         sensitivity.draw('sens')
+#         musicsound.draw('')
+#         fontsmall.render_to(gameDisplay, (400,180), str(round(musicsound.val* 100)), (black))
+#         pygame.display.update()
+#         clock.tick(60)
+
 def game_loop_practice():
     global pause
     global gamemode
@@ -1366,11 +1402,23 @@ def game_loop_practice():
                         button2(600, y_practice_value + 570, 180, 50, change_flash)
                     button2(600, y_practice_value + 80, 80, 50, changeGameDown)
                     button2(900, y_practice_value + 80, 80, 50, changeGameUp)
+                    pos = pygame.mouse.get_pos()
+                    for s in slides:
+                        if s.button_rect.collidepoint(pos):
+                            s.hit = True
                 if event.button == 4: y_practice_value += 10
                 if event.button == 5: y_practice_value -= 10
+            elif event.type == pygame.MOUSEBUTTONUP:
+                for s in slides:
+                    s.hit = False
+        for s in slides:
+            if s.hit:
+                s.move()
+                print(recoilamp.val)
         gameDisplay.fill(gray)
         button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
         blit_labels_prac()
+        recoilamp.draw('')
         for x in range(len(hitmarkers)):
             gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
 
@@ -1423,6 +1471,7 @@ def game_loop_practice():
                     csguncalldict[str(i)]()
                 else:
                     continue
+
         pygame.display.update()
         clock.tick(144)
 
@@ -1459,6 +1508,5 @@ def blit_labels_prac():
         button("Realistic Flash", 600, y_practice_value + 620, 180, 50, dark_peach, peach, make_flash_flash, black)
         button("Nothing", 600, y_practice_value + 670, 180, 50, dark_peach, peach, make_flash_nothing, black)
 
-
-gamemodesDict = {"game_intro": game_intro(), "game_loop_idle": game_loop_idle, "game_loop_practice": game_loop_practice}
-game_loop_practice()
+gamemodesDict = {"game_intro": game_intro, "game_loop_idle": game_loop_idle, "game_loop_practice": game_loop_practice}
+game_intro()
