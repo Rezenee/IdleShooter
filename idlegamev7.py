@@ -112,7 +112,6 @@ def changeKeyBind(keyIndex):
                 print("u")
 
 
-
 def clear_decals_key(): changeKeyBind(1)
 
 
@@ -1056,11 +1055,13 @@ def m4cscall(): makeGunStart(M4POSCS, .091)
 def m1cscall(): makeGunStart(M1POSCS, .1)
 def famascscall(): makeGunStart(FAMASPOSCS, .091)
 def augcscall(): makeGunStart(AUGPOSCS, .091)
-def galilcscall(): makeGunStart(GALILPOSCS, .1)
+def galilcscall(): makeGunStart(GALILPOSCS, .091)
 def kreigcscall(): makeGunStart(KREIGPOSCS, .091)
 def umpcscall(): makeGunStart(UMPPOSCS, .091)
 def mp7cscall(): makeGunStart(MP7POSCS, .08)
 def p90cscall(): makeGunStart(P90POSCS, .07)
+
+
 def upgradeall():
     global scoreNum
     global scoreAdd
@@ -1194,10 +1195,6 @@ def settings():
         clock.tick(60)
 
 
-
-
-
-
 def change_flash():
     global sprite_change_list
     if sprite_change_list[2] == 0:
@@ -1216,14 +1213,15 @@ def change_hitmarker():
     else:
         sprite_change_list[1] = 0
 
+check_in_dropdown = 0
 def change_target():
     global open_target_change
-
+    global trueCheck
+    trueCheck = 1
     if sprite_change_list[0] == 0:
         for i in range(3):
             sprite_change_list[i] = 0
         sprite_change_list[0] = 1
-
     else:
         sprite_change_list[0] = 0
 
@@ -1260,6 +1258,7 @@ def make_target_CS():
     global targetimg, sprite_change_list
     targetimg = pygame.image.load(os.path.join('images', 'mp5.png'))
     sprite_change_list[0] = 0
+
 
 def game_loop_idle():
 
@@ -1357,7 +1356,6 @@ def game_loop_practice():
         blit_labels_prac()
         for x in range(len(hitmarkers)):
             gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
-        # click = pygame.mouse.get_pressed()
 
         x, y = pygame.mouse.get_pos()
         if game == 0:
@@ -1424,7 +1422,7 @@ def blit_labels_prac():
     gameDisplay.blit(backarrow, (600, y_practice_value + 80))
     gameDisplay.blit(forwardsarrow, (900, y_practice_value + 80))
     button("Target Type \/", 600, y_practice_value + 400, 180, 50, dark_peach, peach, None, black)
-    button("Hitmarker Type \/", 800, y_practice_value + 400, 180, 50, dark_peach, peach, None,black)
+    button("Hitmarker Type \/", 800, y_practice_value + 400, 180, 50, dark_peach, peach, None, black)
     button("Weapon Flash \/", 600, y_practice_value + 460, 180, 50, dark_peach, peach, None, black)
     if sprite_change_list[0] == 1:
         button("Target", 600, y_practice_value + 450, 180, 50, dark_peach, peach,make_target_target, black)
