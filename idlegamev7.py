@@ -151,7 +151,7 @@ weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.
                       , mp7cs.gunSelectIdle, p90cs.gunSelectIdle, mac10cs.gunSelectIdle, bizoncs.gunSelectIdle]
 weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
                          , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
-                          , mp7cs.gunSelectPrac, p90cs.gunSelectPrac, mac10cs.gunSelectPrac, bizoncs.gunSelectPrac]
+                          , mp7cs.gunSelectPrac, p90cs.gunSelectPrac, mac10cs.gunSelectPrac]
 weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought,
                 augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought, mac10cs.gunBought
                 , bizoncs.gunBought]
@@ -650,7 +650,7 @@ AUGSCOPEDPOSCS = (
  (23, -7),
  (20, -3),
  (3, -2),
- (230, 0),
+ (0, 0),
 )
 
 GALILPOSCS = (
@@ -748,7 +748,7 @@ UMPPOSCS = (
  (8, -4),
  (43, 2),
  (7, 3),
- (500, 0),
+ (0, 0),
 )
 
 MP7POSCS = (
@@ -781,7 +781,7 @@ MP7POSCS = (
     (3, -5),
     (7, -1),
     (1, -6),
-    (500, 0),
+    (0, 0),
 )
 
 P90POSCS = (
@@ -841,18 +841,18 @@ MAC10POSCS = (
     (9, -6),
     (3, -7),
     (-6, -12),
-    (-8, -27), #5
+    (-8, -27),
     (-20, -33),
     (-23, -48),
     (-17, -41),
     (11, -34),
-    (-17, -20), #10
-    (-8,  -22), #11
-    (-9, -22), #12
-    (5, -15), #13
-    (4, -8), #14
-    (19, -6), #15
-    (41, -1), #16
+    (-17, -20),
+    (-8,  -22),
+    (-9, -22),
+    (5, -15),
+    (4, -8),
+    (19, -6),
+    (41, -1),
     (58, 13),
     (3, 1),
     (23, 7),
@@ -937,7 +937,6 @@ BIZONPOSCS = (
     (500, -8),
 
 )
-
 
 dummypos = (
     (500, -8),
@@ -1063,10 +1062,10 @@ def p90cscall(): makeGunStart(P90POSCS, .07)
 def mac10cscall(): makeGunStart(MAC10POSCS, .075)
 
 
-csguncalldict = {'akcs': akcscall(), 'm4cs': m4cscall(), 'm1cs': m1cscall(), 'famascs': famascscall(), 'augcs': augcscall(),
-             'galilcs': galilcscall(), 'augscoped': augscopedcscall(), 'kreigcs': kreigcscall(), 'upmcs': umpcscall(),
-             'mp7cs': mp7cscall(), 'p90cs': p90cscall(), 'mac10cs': mac10cscall()}
-
+csguncalldict = {'0': akcscall, '1': m4cscall, '2': m1cscall, '3': famascscall, '4': augcscall,
+             '5': galilcscall, '6': augscopedcscall, '7': kreigcscall, '8': umpcscall,
+             '9': mp7cscall, '10': p90cscall, '11': mac10cscall}
+print(csguncalldict)
 # csguncall = [akcscall(), m4cscall(), m1cscall(), famascscall(), augcscall(), galilcscall(), augscopedcscall(),kreigcscall(),
 #              umpcscall(), mp7cscall(), p90cscall(), mac10cscall()]
 
@@ -1419,10 +1418,11 @@ def game_loop_practice():
             buttonstate2(weaponSelectedPractice[11], "UMP Selected", "Select UMP", 800, y_practice_value + 450,
                          180, 50, peach, peach, dark_peach, peach, umpgunbuy, black)
 
-            for i in range(len(weaponSelectedPractice)-2):
-
-                if weaponSelectedPractice[i + 1] == 1:
-                    print(csguncalldict)
+            for i in range(12):
+                if weaponSelectedPractice[i + 3] == 1:
+                    csguncalldict[str(i)]()
+                else:
+                    continue
         pygame.display.update()
         clock.tick(144)
 
@@ -1460,7 +1460,5 @@ def blit_labels_prac():
         button("Nothing", 600, y_practice_value + 670, 180, 50, dark_peach, peach, make_flash_nothing, black)
 
 
-gamemodesDict = {"game_intro": game_intro, "game_loop_idle": game_loop_idle, "game_loop_practice": game_loop_practice}
-
-
+gamemodesDict = {"game_intro": game_intro(), "game_loop_idle": game_loop_idle, "game_loop_practice": game_loop_practice}
 game_loop_practice()
