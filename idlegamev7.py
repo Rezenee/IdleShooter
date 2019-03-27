@@ -156,6 +156,7 @@ weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs
                 augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought, mac10cs.gunBought
                 , bizoncs.gunBought]
 
+
 class Slider():
     def __init__(self, name, val, maxi, mini, xpos,ypos):
         self.val = val  # start value
@@ -221,7 +222,7 @@ class Slider():
 
 
 musicsound = Slider("", .5, 1, 0, 300, 180)
-recoilamp = Slider("", .5, 1, 0, 50, 350)
+recoilamp = Slider("", .5, 1, 0, 15, 350)
 sensitivity = Slider("sens", .5, 1, 0, 300, 250)
 slides = [musicsound,sensitivity, recoilamp]
 
@@ -267,7 +268,7 @@ def quitgame(): pygame.quit, quit()
 
 
 def text_objects(text, font):
-    textSurface = font.render(text, True, black)
+    textSurface = font.render(str(text), True, black)
     return textSurface, textSurface.get_rect()
 
 
@@ -972,16 +973,15 @@ dummypos = (
     (500, 0),
 )
 def makeGunStart(GUNPOS,sleepTime):
-    global scoreNum
-    global hitNum
-    global hitmarkers
-    global miss_num
-    global hit_percent, hit_percent_label
+    global scoreNum, hitNum, hitmarkers, miss_num, hit_percent, hit_percent_label
     click = pygame.mouse.get_pressed()
     x, y = pygame.mouse.get_pos()
     if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
         #0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 put this back when you want it tarrget only
         for dx, dy in GUNPOS:
+            recoilchange = recoilamp.val * 2
+            dx *= recoilchange
+            dy *= recoilchange
             x,y = pygame.mouse.get_pos()
             for event in pygame.event.get():
                 x,y = pygame.mouse.get_pos()
@@ -1049,7 +1049,7 @@ def clear_stats():
 
 def akrust(): makeGunStart(AKPOS,.125)
 def mp5rust(): makeGunStart(mp5pos,.1)
-def akcscall(): makeGunStart(AKPOSCS, .1)
+def akcscall(): makeGunStart(AKPOSCS, .0)
 def m4cscall(): makeGunStart(M4POSCS, .091)
 def m1cscall(): makeGunStart(M1POSCS, .1)
 def famascscall(): makeGunStart(FAMASPOSCS, .091)
@@ -1066,9 +1066,7 @@ def mac10cscall(): makeGunStart(MAC10POSCS, .075)
 csguncalldict = {'0': akcscall, '1': m4cscall, '2': m1cscall, '3': famascscall, '4': augcscall,
              '5': galilcscall, '6': augscopedcscall, '7': kreigcscall, '8': umpcscall,
              '9': mp7cscall, '10': p90cscall, '11': mac10cscall}
-print(csguncalldict)
-# csguncall = [akcscall(), m4cscall(), m1cscall(), famascscall(), augcscall(), galilcscall(), augscopedcscall(),kreigcscall(),
-#              umpcscall(), mp7cscall(), p90cscall(), mac10cscall()]
+
 
 
 def upgradeall():
@@ -1172,6 +1170,7 @@ def keyBindScreen():
 def settings():
     settings = True
     while settings:
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit
@@ -1181,9 +1180,10 @@ def settings():
                 button2(250, 650, 100, 50, keyBindScreen)
 
                 pos = pygame.mouse.get_pos()
-                for s in slides:
-                    if s.button_rect.collidepoint(pos):
-                        s.hit = True
+                if musicsound.button_rect.collidepoint(pos):
+                    musicsound.hit = True
+                if sensitivity.button_rect.collidepoint(pos):
+                    sensitivity.hit = True
             elif event.type == pygame.MOUSEBUTTONUP:
                 for s in slides:
                     s.hit = False
@@ -1235,35 +1235,30 @@ def change_target():
         sprite_change_list[0] = 1
     else:
         sprite_change_list[0] = 0
-
 def make_flash_flash():
     global weaponFlash, sprite_change_list, check_in_dropdown
     weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png'))
     weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
     sprite_change_list[2] = 0
     check_in_dropdown = 0
-
 def make_flash_nothing():
     global weaponFlash, sprite_change_list, check_in_dropdown
     weaponFlash = pygame.image.load(os.path.join('images', 'nothing.png'))
 
     sprite_change_list[2] = 0
     check_in_dropdown = 0
-
 def make_hitmarker_cod():
     global hitmarker, sprite_change_list, check_in_dropdown
     hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
 
     sprite_change_list[1] = 0
     check_in_dropdown = 0
-
 def make_hitmarker_hole():
     global hitmarker, sprite_change_list, check_in_dropdown
     hitmarker = pygame.image.load(os.path.join('images', 'bullethole.png'))
     hitmarker = pygame.transform.scale(hitmarker, [15, 15])
     sprite_change_list[1] = 0
     check_in_dropdown = 0
-
 def make_target_target():
     global targetimg, sprite_change_list, check_in_dropdown
     targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
@@ -1338,49 +1333,11 @@ def game_loop_idle():
 
 
 
-
-# def settings():
-#     settings = True
-#     while settings:
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 pygame.quit
-#                 quit()
-#             elif event.type == pygame.MOUSEBUTTONDOWN:
-#                 button2(100, 650, 100, 50, gamemodesDict[gamemode])
-#                 button2(250, 650, 100, 50, keyBindScreen)
-#
-#                 pos = pygame.mouse.get_pos()
-#                 for s in slides:
-#                     if s.button_rect.collidepoint(pos):
-#                         s.hit = True
-#             elif event.type == pygame.MOUSEBUTTONUP:
-#                 for s in slides:
-#                     s.hit = False
-#         for s in slides:
-#             if s.hit:
-#                 s.move()
-#                 pygame.mixer.music.set_volume(musicsound.val)
-#         gameDisplay.fill(gray)
-#         fontsmall.render_to(gameDisplay, (80, 70), "Settings", (black))
-#         button("Music Volume", 200,200,0,0,gray,gray)
-#         button("Back", 100, 650, 100, 50, green, bright_green)
-#         button("Keybinds", 250, 650, 100,50,green, bright_green)
-#         sensitivity.draw('sens')
-#         musicsound.draw('')
-#         fontsmall.render_to(gameDisplay, (400,180), str(round(musicsound.val* 100)), (black))
-#         pygame.display.update()
-#         clock.tick(60)
-
 def game_loop_practice():
-    global pause
-    global gamemode
-    global x
-    global y
-    global hitmarkers
-    global y_practice_value
+    global pause, gamemode,hitmarkers, y_practice_value, recoilamp
     gamemode = "game_loop_practice"
     while not gameExit:
+        print(clock.get_fps())
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1403,9 +1360,8 @@ def game_loop_practice():
                     button2(600, y_practice_value + 80, 80, 50, changeGameDown)
                     button2(900, y_practice_value + 80, 80, 50, changeGameUp)
                     pos = pygame.mouse.get_pos()
-                    for s in slides:
-                        if s.button_rect.collidepoint(pos):
-                            s.hit = True
+                    if recoilamp.button_rect.collidepoint(pos):
+                        recoilamp.hit = True
                 if event.button == 4: y_practice_value += 10
                 if event.button == 5: y_practice_value -= 10
             elif event.type == pygame.MOUSEBUTTONUP:
@@ -1414,7 +1370,6 @@ def game_loop_practice():
         for s in slides:
             if s.hit:
                 s.move()
-                print(recoilamp.val)
         gameDisplay.fill(gray)
         button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
         blit_labels_prac()
@@ -1422,7 +1377,6 @@ def game_loop_practice():
         for x in range(len(hitmarkers)):
             gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
 
-        x, y = pygame.mouse.get_pos()
         if game == 0:
             button("RUST", 700, y_practice_value + 80, 180, 50, red, red, None, black)
 
@@ -1479,6 +1433,9 @@ def game_loop_practice():
 def blit_labels_prac():
     button('', 25, 50, 170, 180, peach, peach, None, brown)
     fontsmall.render_to(gameDisplay, (140,72), str(int(hitNum)), black)
+    fontsmall.render_to(gameDisplay, (120,360), str(round(recoilamp.val * 100)), black)
+    recoilamp.draw('')
+    fontsmall.render_to(gameDisplay, (20, 320), "Recoil Scale", black)
     fontsmall.render_to(gameDisplay, (80, 70), "Hits:", black)
     fontsmall.render_to(gameDisplay, (46, 100), "Misses:", black)
     fontsmall.render_to(gameDisplay, (38, 125), "Percent:", black)
