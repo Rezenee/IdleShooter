@@ -85,7 +85,7 @@ sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change
 
 
 pygame.mixer.music.play(-1)
-
+global_time = 0
 
 def get_key():
       while 1:
@@ -102,14 +102,12 @@ def changeKeyBind(keyIndex):
     while 1:
         if inkey <= 500:
             keybindList[keyIndex] = inkey
-            print(inkey)
             break
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     keybindList[keyIndex] = event.button[1]
                     break
-                print("u")
 
 
 def clear_decals_key(): changeKeyBind(1)
@@ -1113,6 +1111,7 @@ def game_intro():
         # The two buttons on this page, remember not to put the () in the function being called
         button("Play Game", 320, 450, 140, 50, green, bright_green, game_loop_idle)
         button("Play Practice", 320, 510, 140, 50, green, bright_green, game_loop_practice)
+        button('Flick Practice', 320, 570, 140, 50, green, bright_green, game_loop_flickPractice)
         button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
         button2(250,650,50,50,settings)
         gameDisplay.blit(gear, (250,650))
@@ -1332,12 +1331,10 @@ def game_loop_idle():
         clock.tick(144)
 
 
-
 def game_loop_practice():
-    global pause, gamemode,hitmarkers, y_practice_value, recoilamp
+    global pause, gamemode,hitmarkers, y_practice_value, recoilamp, global_time
     gamemode = "game_loop_practice"
     while not gameExit:
-        print(clock.get_fps())
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1428,6 +1425,14 @@ def game_loop_practice():
 
         pygame.display.update()
         clock.tick(144)
+
+def game_loop_flickPractice():
+    global gamemode
+    gamemode = 'game_loop_flickPractice'
+    while not gameExit:
+        gameDisplay.fill(gray)
+        button('',30,30,964,500,brown, brown, None, black)
+        pygame.display.update()
 
 
 def blit_labels_prac():
