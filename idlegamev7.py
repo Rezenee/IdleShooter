@@ -1430,34 +1430,61 @@ def game_loop_practice():
         pygame.display.update()
         clock.tick(144)
 
+
+global_time = 0
+
 def game_loop_flickPractice():
-    global gamemode
+    global gamemode, targets, misses, hits, global_time
     gamemode = 'game_loop_flickPractice'
     target_time = 250
     target_reset = 0
     gameDisplay.fill(gray)
-    button('', 30, 30, 964, 470, brown, brown, None, black)
+    targets = []
+    misses = 0
+    hits = 0
     while not gameExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i in range(len(targets) - 1):
+                    xpos, ypos = pygame.mouse.get_pos()
+                    if targets[i][0] + 75 > xpos > targets[i][0] and targets[i][1] + 75 > ypos > targets[i][1]:
+                        targets.remove(targets[i])
+                        hits += 1
+                        break
+                    if i >= len(targets) - 2:
+                        misses += 1
         if target_reset >= target_time:
-            x = random.randint(30, 920)
-            y = random.randint(30, 425)
-            gameDisplay.blit(rainbow_target, (x, y))
-
+            x = random.randint(32, 918)
+            y = random.randint(30, 424)
+            targets.append((x, y))
             pygame.display.update()
             target_reset = 0
+
+
+
+
+
+
         blit_labels_flick()
         pygame.display.update()
         dt = clock.tick(60)
         target_reset += dt
+        global_time += dt
 
 
 def blit_labels_flick():
+    gameDisplay.fill(gray)
     button("Back", 30, 700, 100, 50, green, bright_green, game_intro)
+    button('', 30, 30, 964, 470, brown, brown, None, black)
+    fontsmall.render_to(gameDisplay, (100, 650), str(misses), black)
+    fontsmall.render_to(gameDisplay, (150, 650), str(hits), black)
+
+    for i in range(len(targets)):
+        gameDisplay.blit(rainbow_target, (targets[i][0],targets[i][1]))
+
 
 def blit_labels_prac():
     button('', 25, 50, 170, 180, peach, peach, None, brown)
