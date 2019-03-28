@@ -54,6 +54,10 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
+rainbow_target = pygame.image.load(os.path.join('images', 'target_colors.png'))
+rainbow_target = pygame.transform.scale(rainbow_target,[75,75])
+
+
 targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 
@@ -1429,11 +1433,31 @@ def game_loop_practice():
 def game_loop_flickPractice():
     global gamemode
     gamemode = 'game_loop_flickPractice'
+    target_time = 250
+    target_reset = 0
+    gameDisplay.fill(gray)
+    button('', 30, 30, 964, 470, brown, brown, None, black)
     while not gameExit:
-        gameDisplay.fill(gray)
-        button('',30,30,964,500,brown, brown, None, black)
-        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
 
+        if target_reset >= target_time:
+            x = random.randint(30, 920)
+            y = random.randint(30, 425)
+            gameDisplay.blit(rainbow_target, (x, y))
+
+            pygame.display.update()
+            target_reset = 0
+        blit_labels_flick()
+        pygame.display.update()
+        dt = clock.tick(60)
+        target_reset += dt
+
+
+def blit_labels_flick():
+    button("Back", 30, 700, 100, 50, green, bright_green, game_intro)
 
 def blit_labels_prac():
     button('', 25, 50, 170, 180, peach, peach, None, brown)
