@@ -55,7 +55,6 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
 rainbow_target = pygame.image.load(os.path.join('images', 'target_colors.png'))
-rainbow_target = pygame.transform.scale(rainbow_target,[75,75])
 
 
 targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
@@ -1434,10 +1433,12 @@ def game_loop_practice():
 global_time = 0
 
 def game_loop_flickPractice():
-    global gamemode, targets, misses, hits, global_time
+    global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic
     gamemode = 'game_loop_flickPractice'
     target_time = 250
     target_reset = 0
+    target_shape = 1
+    target_shape_reset = 0
     gameDisplay.fill(gray)
     targets = []
     misses = 0
@@ -1450,7 +1451,7 @@ def game_loop_flickPractice():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i in range(len(targets) - 1):
                     xpos, ypos = pygame.mouse.get_pos()
-                    if targets[i][0] + 75 > xpos > targets[i][0] and targets[i][1] + 75 > ypos > targets[i][1]:
+                    if targets[i][0] + targets[i][2] > xpos > targets[i][0] and targets[i][1] + targets[i][2] > ypos > targets[i][1]:
                         targets.remove(targets[i])
                         hits += 1
                         break
@@ -1459,19 +1460,25 @@ def game_loop_flickPractice():
         if target_reset >= target_time:
             x = random.randint(32, 918)
             y = random.randint(30, 424)
-            targets.append((x, y))
+            targets.append([x, y, 0,0])
             pygame.display.update()
             target_reset = 0
+        if target_shape_reset >= target_shape:
+            for i in range(len(targets) - 1):
+                targets[i][2] += 1
+                print(i)
+                targets[i][3] = pygame.transform.scale(rainbow_target, [targets[i][2], targets[i][2])
+                #weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
 
-
-
-
-
+                if targets[i][2] > 75:
+                    targets[i][2] = 1
+            target_shape_reset = 0
 
         blit_labels_flick()
         pygame.display.update()
         dt = clock.tick(60)
         target_reset += dt
+        target_shape_reset += dt
         global_time += dt
 
 
@@ -1483,7 +1490,7 @@ def blit_labels_flick():
     fontsmall.render_to(gameDisplay, (150, 650), str(hits), black)
 
     for i in range(len(targets)):
-        gameDisplay.blit(rainbow_target, (targets[i][0],targets[i][1]))
+        gameDisplay.blit(targets[i][3])
 
 
 def blit_labels_prac():
