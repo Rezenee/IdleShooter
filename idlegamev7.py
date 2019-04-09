@@ -1435,10 +1435,10 @@ global_time = 0
 def game_loop_flickPractice():
     global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic
     gamemode = 'game_loop_flickPractice'
-    target_time = 1000
+    target_time = 350
     target_reset = 0
-    target_shape_reset = 5
-    target_shape = 50
+    target_shape_reset = 0
+    target_shape = 0
     gameDisplay.fill(gray)
     targets = []
     misses = 0
@@ -1452,10 +1452,7 @@ def game_loop_flickPractice():
                 for i in range(len(targets) - 1):
                     xpos, ypos = pygame.mouse.get_pos()
                     print(targets[i][0], targets[i][2], 'xpos', xpos)
-
-                    #time.sleep(1)
-                    if targets[i][0] + targets[i][2] > xpos > targets[i][0] - targets[i][2] and targets[i][1] + targets[i][2] > ypos > targets[i][1]-targets[i][2]:
-                    #if targets[i][0] + targets[i][2] > xpos > targets[i][0] and targets[i][1] + targets[i][2] > ypos > targets[i][1]:
+                    if targets[i][0] + targets[i][2]/2 > xpos > targets[i][0] - targets[i][2]/2 and targets[i][1] + targets[i][2]/2 > ypos > targets[i][1]-targets[i][2]/2:
                         del targets[i]
 
                         hits += 1
@@ -1463,18 +1460,24 @@ def game_loop_flickPractice():
                     if i >= len(targets) - 2:
                         misses += 1
         if target_reset >= target_time:
-            x = random.randint(32, 918)
-            y = random.randint(30, 424)
-            targets.append([x, y, 0,0])
+            x = random.randint(69, 956)
+            y = random.randint(68, 424)
+            targets.append([x, y, 0, 0, 0])
             pygame.display.update()
             target_reset = 0
-        if target_shape_reset >= target_shape:
-            for i in range(len(targets) - 1):
+        for i in range(len(targets) - 1):
+            if targets[i][4] == 0:
                 targets[i][2] += 1
                 targets[i][3] = pygame.transform.scale(rainbow_target, [targets[i][2], targets[i][2]])
                 if targets[i][2] > 75:
+                    targets[i][4] = 1
+            else:
+                targets[i][2] -= 1
+                targets[i][3] = pygame.transform.scale(rainbow_target, [targets[i][2], targets[i][2]])
+                if targets[i][2] < 1:
                     del targets[i]
-            target_shape_reset = 0
+
+        target_shape_reset = 0
 
         blit_labels_flick()
         pygame.display.update()
