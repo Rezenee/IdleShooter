@@ -85,8 +85,8 @@ start_tick = 600
 current_tick = start_tick
 end_tick = 200
 ticks_per_decrease = 1
-
-valList = [start_tick, current_tick, end_tick, ticks_per_decrease]
+lives = 3
+valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
 
 
 
@@ -1168,6 +1168,7 @@ def changeVal(keyIndex):
 def change_start_tick(): changeVal(0)
 def change_end_tick(): changeVal(2)
 def change_tick_interval(): changeVal(3)
+def change_live_count(): changeVal(4)
 def changeKeyBind(keyIndex):
     global keybindList
     inkey = get_key()
@@ -1478,6 +1479,7 @@ def game_loop_flickPractice():
     targets = []
     misses = 0
     hits = 0
+    lives = valList[4]
     while not gameExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -1501,6 +1503,8 @@ def game_loop_flickPractice():
             pygame.display.update()
             target_reset = 0
         for i in range(len(targets) - 1):
+            print(i, 'i')
+            print(len(targets), 'targ')
             if targets[i][4] == 0:
                 targets[i][2] += 1
                 targets[i][3] = pygame.transform.scale(rainbow_target, [targets[i][2], targets[i][2]])
@@ -1511,7 +1515,9 @@ def game_loop_flickPractice():
                 targets[i][3] = pygame.transform.scale(rainbow_target, [targets[i][2], targets[i][2]])
                 if targets[i][2] < target_min_size:
                     del targets[i]
-
+                    lives -= 1
+                    if lives <= 0:
+                        quitgame()
         target_shape_reset = 0
         if tick_reset >= tick_sub:
             if target_time > valList[2]:
@@ -1526,6 +1532,7 @@ def game_loop_flickPractice():
         tick_reset += dt
         target_shape_reset += dt
         global_time += dt
+        valList[4] = lives
         valList[3] = tick_sub
         valList[1] = target_time
 def blit_labels_flick():
@@ -1536,8 +1543,10 @@ def blit_labels_flick():
     button(("End Tick: " + str(valList[2])), 200, 520, 160, 50, green, bright_green, change_end_tick)
     button(("Tick Interval: " + str(valList[3])), 200, 580, 160, 50, green, bright_green, change_tick_interval)
     button('Tick: ' + str(int(valList[1])), 30, 580, 160, 50, green, bright_green)
-    fontsmall.render_to(gameDisplay, (100, 650), str(misses), black)
-    fontsmall.render_to(gameDisplay, (150, 650), str(hits), black)
+    button('Lives: ' + str(valList[4]), 370, 520, 160, 50, green, bright_green, change_live_count)
+    button("Hits: " + str(hits), 540, 520,160,50, green,bright_green)
+    button("Misses: " + str(misses), 710, 520, 160, 50, green, bright_green)
+
 
     for i in range(len(targets)):
         try:
