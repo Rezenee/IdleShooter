@@ -1138,22 +1138,20 @@ def changeVal(keyIndex):
     global valList
     tempstr = str(valList[keyIndex])
     while True:
-        for event in pygame.event.get():
-            keys = pygame.key.get_pressed()
-            if keys[K_BACKSPACE]:
-                tempstr = tempstr[:-1]
-                print(tempstr)
-            if keys[K_RETURN]:
-                valList[keyIndex] = tempstr
-                print(valList)
-                keyBindScreen()
-            if event.type == pygame.KEYDOWN:
-                for i in range(10):
-                    if keys[dictKeys[i]]:
-                        tempstr += chr(dictKeys[i])
-                        print(tempstr)
+        inkey = get_key()
+        if inkey == K_BACKSPACE:
+            tempstr = tempstr[:-1]
 
-
+        elif inkey == K_RETURN:
+            game_loop_flickPractice()
+        elif inkey > 47 and inkey < 58:
+            tempstr += chr(inkey)
+        try:
+            valList[keyIndex] = int(tempstr)
+        except ValueError:
+            valList[keyIndex]= 0
+        print(valList)
+        blit_labels_flick()
 
 
 def changeKeyBind(keyIndex):
@@ -1188,7 +1186,6 @@ def keyBindScreen():
         button(("Clear Decals: " + chr(keybindList[1])), 50,140, 160,50, green,bright_green, clear_decals_key)
         button(("Pause: " + chr(keybindList[0])), 50,200, 160,50, green,bright_green, pause_hotkey)
         button(("Clear Stats: " + chr(keybindList[2])), 50, 260, 160,50, green, bright_green, reset_stats_hotkey)
-        button((": " + str(start_tick)), 50, 400, 160, 50, green, bright_green, change_start_tick)
 
         pygame.display.update()
         clock.tick(60)
@@ -1505,7 +1502,6 @@ def game_loop_flickPractice():
             target_time -= .05
         #print(target_time)
         blit_labels_flick()
-        pygame.display.update()
         dt = clock.tick(60)
         target_reset += dt
         target_shape_reset += dt
@@ -1515,6 +1511,8 @@ def blit_labels_flick():
     gameDisplay.fill(gray)
     button("Back", 30, 700, 100, 50, green, bright_green, game_intro)
     button('', 30, 30, 964, 470, brown, brown, None, black)
+    button(("Start Tick: " + str(valList[0])), 30, 550, 160, 50, green, bright_green, change_start_tick)
+
     fontsmall.render_to(gameDisplay, (100, 650), str(misses), black)
     fontsmall.render_to(gameDisplay, (150, 650), str(hits), black)
 
@@ -1525,7 +1523,7 @@ def blit_labels_flick():
 
         except TypeError:
             pass
-
+    pygame.display.update()
 
 
 def blit_labels_prac():
