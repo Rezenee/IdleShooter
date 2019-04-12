@@ -80,7 +80,7 @@ game = 0
 pauseKey = 108
 reloadKey = 112
 resetStats = 121
-keybindList = [pauseKey,reloadKey, resetStats]
+start_tick = 600
 open_target_change = 0
 hitmarker_img_change = 0
 flash_img_change = 0
@@ -99,26 +99,7 @@ def get_key():
               pass
 
 
-def changeKeyBind(keyIndex):
-    global keybindList
-    inkey = get_key()
-    while 1:
-        if inkey <= 500:
-            keybindList[keyIndex] = inkey
-            break
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    keybindList[keyIndex] = event.button[1]
-                    break
 
-
-def clear_decals_key(): changeKeyBind(1)
-
-
-def pause_hotkey(): changeKeyBind(0)
-
-def reset_stats_hotkey(): changeKeyBind(2)
 class gun(object):
     def __init__(self, cost, gunSelectIdle, gunSelectPrac, gunBought):
         self.cost = cost
@@ -151,7 +132,7 @@ weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.
                       , augcs.gunSelectIdle, galilcs.gunSelectIdle, augscopedcs.gunSelectIdle, kreigcs.gunSelectIdle, umpcs.gunSelectIdle
                       , mp7cs.gunSelectIdle, p90cs.gunSelectIdle, mac10cs.gunSelectIdle, bizoncs.gunSelectIdle]
 weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
-                         , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
+                          , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
                           , mp7cs.gunSelectPrac, p90cs.gunSelectPrac, mac10cs.gunSelectPrac]
 weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought,
                 augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought, mac10cs.gunBought
@@ -1050,7 +1031,7 @@ def clear_stats():
 
 def akrust(): makeGunStart(AKPOS,.125)
 def mp5rust(): makeGunStart(mp5pos,.1)
-def akcscall(): makeGunStart(AKPOSCS, .0)
+def akcscall(): makeGunStart(AKPOSCS, .091)
 def m4cscall(): makeGunStart(M4POSCS, .091)
 def m1cscall(): makeGunStart(M1POSCS, .1)
 def famascscall(): makeGunStart(FAMASPOSCS, .091)
@@ -1149,6 +1130,48 @@ def paused():
         clock.tick(15)
 
 
+keybindList = [pauseKey, reloadKey, resetStats]
+valList = [start_tick]
+dictKeys = {0: K_0, 1: K_1, 2: K_2, 3: K_3, 4: K_4, 5: K_5, 6: K_6, 7: K_7, 8: K_8, 9: K_9}
+
+def changeVal(keyIndex):
+    global valList
+    tempstr = str(valList[keyIndex])
+    while True:
+        for event in pygame.event.get():
+            keys = pygame.key.get_pressed()
+            if keys[K_BACKSPACE]:
+                tempstr = tempstr[:-1]
+                print(tempstr)
+            if keys[K_RETURN]:
+                valList[keyIndex] = tempstr
+                print(valList)
+                keyBindScreen()
+            if event.type == pygame.KEYDOWN:
+                for i in range(10):
+                    if keys[dictKeys[i]]:
+                        tempstr += chr(dictKeys[i])
+                        print(tempstr)
+
+
+
+
+def changeKeyBind(keyIndex):
+    global keybindList
+    inkey = get_key()
+    while 1:
+        if inkey <= 500:
+            keybindList[keyIndex] = inkey
+            print(inkey)
+            break
+
+
+def reset_stats_hotkey(): changeKeyBind(2)
+def clear_decals_key(): changeKeyBind(1)
+def pause_hotkey(): changeKeyBind(0)
+
+def change_start_tick(): changeVal(0)
+
 def keyBindScreen():
     keyBindScreen = True
     while keyBindScreen:
@@ -1160,11 +1183,13 @@ def keyBindScreen():
                 button2(100,650,100,50, settings)
                 button2(100, 650, 100, 50, settings)
         gameDisplay.fill(gray)
-        fontsmall.render_to(gameDisplay, (80, 70), "Keybinds", (black))
+        fontsmall.render_to(gameDisplay, (80, 70), "Keybinds", black)
         button("Back", 100, 650, 100, 50, green, bright_green)
         button(("Clear Decals: " + chr(keybindList[1])), 50,140, 160,50, green,bright_green, clear_decals_key)
         button(("Pause: " + chr(keybindList[0])), 50,200, 160,50, green,bright_green, pause_hotkey)
         button(("Clear Stats: " + chr(keybindList[2])), 50, 260, 160,50, green, bright_green, reset_stats_hotkey)
+        button((": " + str(start_tick)), 50, 400, 160, 50, green, bright_green, change_start_tick)
+
         pygame.display.update()
         clock.tick(60)
 
@@ -1435,10 +1460,8 @@ global_time = 0
 def game_loop_flickPractice():
     global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic
     gamemode = 'game_loop_flickPractice'
-    target_time = 350
+    target_time = 600
     target_reset = 0
-    target_shape_reset = 0
-    target_shape = 0
     gameDisplay.fill(gray)
     targets = []
     misses = 0
@@ -1451,8 +1474,8 @@ def game_loop_flickPractice():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i in range(len(targets) - 1):
                     xpos, ypos = pygame.mouse.get_pos()
-                    print(targets[i][0], targets[i][2], 'xpos', xpos)
-                    if targets[i][0] + targets[i][2]/2 > xpos > targets[i][0] - targets[i][2]/2 and targets[i][1] + targets[i][2]/2 > ypos > targets[i][1]-targets[i][2]/2:
+                    if targets[i][0] + targets[i][2]/2 > xpos > targets[i][0] - targets[i][2]/2 \
+                            and targets[i][1] + targets[i][2]/2 > ypos > targets[i][1]-targets[i][2]/2:
                         del targets[i]
 
                         hits += 1
@@ -1478,7 +1501,9 @@ def game_loop_flickPractice():
                     del targets[i]
 
         target_shape_reset = 0
-
+        if target_time > 200:
+            target_time -= .05
+        #print(target_time)
         blit_labels_flick()
         pygame.display.update()
         dt = clock.tick(60)
