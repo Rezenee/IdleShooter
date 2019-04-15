@@ -1161,7 +1161,6 @@ def changeVal(keyIndex):
             valList[keyIndex] = int(tempstr)
         except ValueError:
             valList[keyIndex]= 0
-        print(valList)
         blit_labels_flick()
 
 
@@ -1175,7 +1174,6 @@ def changeKeyBind(keyIndex):
     while 1:
         if inkey <= 500:
             keybindList[keyIndex] = inkey
-            print(inkey)
             break
 
 
@@ -1406,10 +1404,12 @@ def game_loop_practice():
             if s.hit:
                 s.move()
         gameDisplay.fill(gray)
+        button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
         blit_labels_prac()
         recoilamp.draw('')
         for x in range(len(hitmarkers)):
             gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
+
 
         if game == 0:
             button("RUST", 700, y_practice_value + 80, 180, 50, red, red, None, black)
@@ -1463,16 +1463,26 @@ def game_loop_practice():
         pygame.display.update()
         clock.tick(144)
 
-
-global_time = 0
-
+def makePlay():
+    global play
+    play = 1
+    game_loop_flickPractice()
+def makeStop():
+    global play
+    play = 0
+    game_loop_flickPractice()
+play = 0
 def game_loop_flickPractice():
-    global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic, valList
+    global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic, valList, play
+    # valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
+
     gamemode = 'game_loop_flickPractice'
+    global_time = 0
     target_time = valList[0]
     target_reset = 0
     tick_sub = valList[3]
     tick_reset = 0
+    target_shape_reset = 0
     target_min_size = 1
     target_max_size = 75
     gameDisplay.fill(gray)
@@ -1486,6 +1496,9 @@ def game_loop_flickPractice():
                 pygame.quit()
                 quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
+                button2(540, 580, 160, 50, makePlay)
+                button2(710, 580, 160, 50, makeStop)
+
                 for i in range(len(targets) - 1):
                     xpos, ypos = pygame.mouse.get_pos()
                     if targets[i][0] + targets[i][2]/2 > xpos > targets[i][0] - targets[i][2]/2 \
@@ -1496,58 +1509,65 @@ def game_loop_flickPractice():
                         break
                     if i >= len(targets) - 2:
                         misses += 1
-        if target_reset >= target_time:
-            x = random.randint(69, 956)
-            y = random.randint(68, 424)
-            targets.append([x, y, target_min_size, 0, 0])
-            pygame.display.update()
-            target_reset = 0
-        for i in range(len(targets) - 1):
-            print(i, 'i')
-            print(len(targets), 'targ')
-            if targets[i][4] == 0:
-                targets[i][2] += 1
-                targets[i][3] = pygame.transform.scale(rainbow_target, [targets[i][2], targets[i][2]])
-                if targets[i][2] > target_max_size:
-                    targets[i][4] = 1
-            else:
-                targets[i][2] -= 1
-                targets[i][3] = pygame.transform.scale(rainbow_target, [targets[i][2], targets[i][2]])
-                if targets[i][2] < target_min_size:
-                    del targets[i]
-                    lives -= 1
-                    if lives <= 0:
-                        quitgame()
-        target_shape_reset = 0
-        if tick_reset >= tick_sub:
-            if target_time > valList[2]:
-                target_time -= .05
-            tick_reset = 0
+        if play == 1:
+            if target_reset >= target_time:
+                x = random.randint(69, 956)
+                y = random.randint(68, 424)
+                targets.append([x, y, target_min_size, 0, 0])
+                pygame.display.update()
+                target_reset = 0
+            for i in range(len(targets) - 1):
+                if targets[i][4] == 0:
+                    targets[i][2] += 1
+                    targets[i][3] = pygame.transform.scale(rainbow_target, [targets[i][2], targets[i][2]])
+                    if targets[i][2] > target_max_size:
+                        targets[i][4] = 1
+                else:
+                    targets[i][2] -= 1
+                    targets[i][3] = pygame.transform.scale(rainbow_target, [targets[i][2], targets[i][2]])
+                    if targets[i][2] < target_min_size:
+                        del targets[i]
+                        lives -= 1
+                        if lives <= 0:
+                            quitgame()
+            if tick_reset >= tick_sub:
+                if target_time > valList[2]:
+                    target_time -= .05
+                tick_reset = 0
+
         #if it gets faster than this it will crash
-        if target_time <= 20:
-            target_time = 20
+            if target_time <= 20:
+                target_time = 20
+            dt = clock.tick(60)
+            target_reset += dt
+            tick_reset += dt
+            target_shape_reset += dt
+            global_time += dt/1000
+
+            valList[4] = lives
+            valList[3] = tick_sub
+            valList[1] = target_time
         blit_labels_flick()
-        dt = clock.tick(60)
-        target_reset += dt
-        tick_reset += dt
-        target_shape_reset += dt
-        global_time += dt
-        valList[4] = lives
-        valList[3] = tick_sub
-        valList[1] = target_time
+
 def blit_labels_flick():
+    time_second = int(global_time % 60)
+    time_minute = int(global_time//60)
     gameDisplay.fill(gray)
+    time_secondstr = str(time_second)
+    if time_second < 10:
+        time_secondstr = '0' + str(time_second)
     button("Back", 30, 700, 100, 50, green, bright_green, game_intro)
     button('', 30, 30, 964, 470, brown, brown, None, black)
     button(("Start Tick: " + str(valList[0])), 30, 520, 160, 50, green, bright_green, change_start_tick)
     button(("End Tick: " + str(valList[2])), 200, 520, 160, 50, green, bright_green, change_end_tick)
-    button(("Tick Interval: " + str(valList[3])), 200, 580, 160, 50, green, bright_green, change_tick_interval)
-    button('Tick: ' + str(int(valList[1])), 30, 580, 160, 50, green, bright_green)
+    button(("Tick Interval: " + str(valList[3])), 30, 580, 160, 50, green, bright_green, change_tick_interval)
+    button('Tick: ' + str(int(valList[1])), 200, 580, 160, 50, green, bright_green)
     button('Lives: ' + str(valList[4]), 370, 520, 160, 50, green, bright_green, change_live_count)
     button("Hits: " + str(hits), 540, 520,160,50, green,bright_green)
     button("Misses: " + str(misses), 710, 520, 160, 50, green, bright_green)
-
-
+    button('Time ' + str(time_minute) + ':' + str(time_secondstr) , 370, 580 , 160, 50, green, bright_green)
+    button("Start", 540, 580, 160, 50, green, bright_green)
+    button("End", 710, 580, 160, 50, green, bright_green)
     for i in range(len(targets)):
         try:
             #gameDisplay.blit(targets[i][3], [targets[i][0], targets[i][1]])
@@ -1559,7 +1579,6 @@ def blit_labels_flick():
 
 
 def blit_labels_prac():
-    button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
     button('', 25, 50, 170, 180, peach, peach, None, brown)
     fontsmall.render_to(gameDisplay, (140,72), str(int(hitNum)), black)
     fontsmall.render_to(gameDisplay, (120,360), str(round(recoilamp.val * 100)), black)
