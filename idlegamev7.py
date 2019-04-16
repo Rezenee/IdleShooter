@@ -55,10 +55,18 @@ scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
 rainbow_target = pygame.image.load(os.path.join('images', 'target_colors.png'))
-stick_img = pygame.image.load(os.path.join('images', 'stick.png'))
+stick_img = pygame.image.load(os.path.join('images', 'homescreen.jpg'))
 
 targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
+grassfield = pygame.image.load(os.path.join('images', 'grass.jpg'))
+grassfield = pygame.transform.scale(grassfield, [934,440])
+homescreen = pygame.image.load(os.path.join('images', 'homescreen.jpg'))
+homescreen = pygame.transform.scale(homescreen, [1024,768])
+brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg'))
+brick_wall = pygame.transform.scale(brick_wall, [1024,768])
+
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
+# button('', 30, 30, 964, 470, brown, brown, None, black)
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
 musicnote = pygame.image.load(os.path.join('images', 'musicnote.png'))
@@ -1100,15 +1108,14 @@ def game_intro():
 
         # This makes the game gray
         #gameDisplay.fill(gray)
-        gameDisplay.blit(stick_img,(0,0))
-        fontlarge.render_to(gameDisplay, (220, 300), "Idle Shooter", (black))
+        gameDisplay.blit(homescreen,(0,0))
 
 
         # The two buttons on this page, remember not to put the () in the function being called
-        button("Play Game", 320, 450, 140, 50, green, bright_green, game_loop_idle)
-        button("Play Practice", 320, 510, 140, 50, green, bright_green, game_loop_practice)
-        button('Flick Practice', 320, 570, 140, 50, green, bright_green, game_loop_flickPractice)
-        button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
+        button("Play Game", 80, 530, 140, 50, green, bright_green, game_loop_idle)
+        button("Play Practice", 80, 590, 140, 50, green, bright_green, game_loop_practice)
+        button('Flick Practice', 80, 650, 140, 50, green, bright_green, game_loop_flickPractice)
+        #button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
         button2(250,650,50,50,settings)
         gameDisplay.blit(gear, (250,650))
 
@@ -1490,7 +1497,9 @@ def game_loop_flickPractice():
     misses = 0
     hits = 0
     lives = valList[4]
+    clock.tick(0)
     while not gameExit:
+        blit_labels_flick()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1543,36 +1552,33 @@ def game_loop_flickPractice():
             tick_reset += dt
             target_shape_reset += dt
             global_time += dt/1000
-
             valList[4] = lives
             valList[3] = tick_sub
             valList[1] = target_time
-        blit_labels_flick()
-
 def blit_labels_flick():
     time_second = int(global_time % 60)
     time_minute = int(global_time//60)
-    gameDisplay.fill(gray)
+    gameDisplay.blit(brick_wall,(0,0))
+    # gameDisplay.fill(gray)
     time_secondstr = str(time_second)
     if time_second < 10:
         time_secondstr = '0' + str(time_second)
     button("Back", 30, 700, 100, 50, green, bright_green, game_intro)
-    button('', 30, 30, 964, 470, brown, brown, None, black)
+    gameDisplay.blit(grassfield, (30,30))
+    # button('', 30, 30, 964, 470, brown, brown, None, black)
     button(("Start Tick: " + str(valList[0])), 30, 520, 160, 50, green, bright_green, change_start_tick)
     button(("End Tick: " + str(valList[2])), 200, 520, 160, 50, green, bright_green, change_end_tick)
     button(("Tick Interval: " + str(valList[3])), 30, 580, 160, 50, green, bright_green, change_tick_interval)
     button('Tick: ' + str(int(valList[1])), 200, 580, 160, 50, green, bright_green)
     button('Lives: ' + str(valList[4]), 370, 520, 160, 50, green, bright_green, change_live_count)
-    button("Hits: " + str(hits), 540, 520,160,50, green,bright_green)
+    button("Hits: " + str(hits), 540, 520, 160, 50, green,bright_green)
     button("Misses: " + str(misses), 710, 520, 160, 50, green, bright_green)
-    button('Time ' + str(time_minute) + ':' + str(time_secondstr) , 370, 580 , 160, 50, green, bright_green)
+    button('Time ' + str(time_minute) + ':' + str(time_secondstr), 370, 580, 160, 50, green, bright_green)
     button("Start", 540, 580, 160, 50, green, bright_green)
     button("End", 710, 580, 160, 50, green, bright_green)
     for i in range(len(targets)):
         try:
-            #gameDisplay.blit(targets[i][3], [targets[i][0], targets[i][1]])
             gameDisplay.blit(targets[i][3], [targets[i][0] - targets[i][2] / 2, targets[i][1] - targets[i][2]/ 2])
-
         except TypeError:
             pass
     pygame.display.update()
