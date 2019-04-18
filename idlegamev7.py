@@ -58,13 +58,14 @@ rainbow_target = pygame.image.load(os.path.join('images', 'target_colors.png'))
 stick_img = pygame.image.load(os.path.join('images', 'homescreen.jpg'))
 
 targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
-grassfield = pygame.image.load(os.path.join('images', 'grass.jpg'))
-grassfield = pygame.transform.scale(grassfield, [934,440])
+range = pygame.image.load(os.path.join('images', 'range.jpg'))
+range = pygame.transform.scale(range, [934,440])
 homescreen = pygame.image.load(os.path.join('images', 'homescreen.jpg'))
 homescreen = pygame.transform.scale(homescreen, [1024,768])
 brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg'))
 brick_wall = pygame.transform.scale(brick_wall, [1024,768])
-
+deathscreen = pygame.image.load(os.path.join('images', 'deathscreen.jpg'))
+deathscreen = pygame.transform.scale(deathscreen, [1024, 768])
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 # button('', 30, 30, 964, 470, brown, brown, None, black)
 
@@ -299,7 +300,6 @@ def buttonstate(gunselect, gunbought, selectedmsg, boughtmsg, buyingmsg, brokems
         button(brokemsg, x, y, w, h, icbroke, acbroke, action,bordercolor)
     elif gunbought == 0 and int(scoreNum) >= guncost:
         button(buyingmsg, x, y, w, h, icbuying, acbuying, action,bordercolor)
-
 
 for i in range(len(weaponSelectedPractice)):
     weaponSelectedPractice[i] = 0
@@ -1093,6 +1093,23 @@ def upgradebase():
         upgradecost = upgradecost * upgrademultiplier
         upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
 
+# valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
+
+def deathScreen():
+    global valList, play
+    while 1:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        gameDisplay.blit(deathscreen,(0,0))
+        valList[4] = 3
+        valList[1] = valList[0]
+        play = 0
+        button2(243,415,565,55, game_loop_flickPractice)
+        button2(243,488,565,55, game_intro)
+        pygame.display.update()
+
 
 def game_intro():
     global gamemode
@@ -1107,15 +1124,16 @@ def game_intro():
                 quit()
 
         # This makes the game gray
-        #gameDisplay.fill(gray)
+        # gameDisplay.fill(gray)
         gameDisplay.blit(homescreen,(0,0))
+
 
 
         # The two buttons on this page, remember not to put the () in the function being called
         button("Play Game", 80, 530, 140, 50, green, bright_green, game_loop_idle)
         button("Play Practice", 80, 590, 140, 50, green, bright_green, game_loop_practice)
         button('Flick Practice', 80, 650, 140, 50, green, bright_green, game_loop_flickPractice)
-        #button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
+        button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
         button2(250,650,50,50,settings)
         gameDisplay.blit(gear, (250,650))
 
@@ -1479,6 +1497,8 @@ def makeStop():
     play = 0
     game_loop_flickPractice()
 play = 0
+
+
 def game_loop_flickPractice():
     global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic, valList, play
     # valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
@@ -1538,7 +1558,7 @@ def game_loop_flickPractice():
                         del targets[i]
                         lives -= 1
                         if lives <= 0:
-                            quitgame()
+                            deathScreen()
             if tick_reset >= tick_sub:
                 if target_time > valList[2]:
                     target_time -= .05
@@ -1564,7 +1584,7 @@ def blit_labels_flick():
     if time_second < 10:
         time_secondstr = '0' + str(time_second)
     button("Back", 30, 700, 100, 50, green, bright_green, game_intro)
-    gameDisplay.blit(grassfield, (30,30))
+    gameDisplay.blit(range, (30,30))
     # button('', 30, 30, 964, 470, brown, brown, None, black)
     button(("Start Tick: " + str(valList[0])), 30, 520, 160, 50, green, bright_green, change_start_tick)
     button(("End Tick: " + str(valList[2])), 200, 520, 160, 50, green, bright_green, change_end_tick)
