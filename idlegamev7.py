@@ -58,14 +58,15 @@ rainbow_target = pygame.image.load(os.path.join('images', 'target_colors.png'))
 stick_img = pygame.image.load(os.path.join('images', 'homescreen.jpg'))
 
 targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
-range = pygame.image.load(os.path.join('images', 'range.jpg'))
-range = pygame.transform.scale(range, [934,440])
+rangeimg = pygame.image.load(os.path.join('images', 'range.jpg'))
+rangeimg = pygame.transform.scale(rangeimg, [934,440])
 homescreen = pygame.image.load(os.path.join('images', 'homescreen.jpg'))
 homescreen = pygame.transform.scale(homescreen, [1024,768])
-brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg'))
-brick_wall = pygame.transform.scale(brick_wall, [1024,768])
 deathscreen = pygame.image.load(os.path.join('images', 'deathscreen.jpg'))
 deathscreen = pygame.transform.scale(deathscreen, [1024, 768])
+brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg'))
+brick_wall = pygame.transform.scale(brick_wall, [1024,768])
+
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 # button('', 30, 30, 964, 470, brown, brown, None, black)
 
@@ -96,10 +97,6 @@ end_tick = 200
 ticks_per_decrease = 1
 lives = 3
 valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
-
-
-
-
 
 open_target_change = 0
 hitmarker_img_change = 0
@@ -1133,7 +1130,7 @@ def game_intro():
         button("Play Game", 80, 530, 140, 50, green, bright_green, game_loop_idle)
         button("Play Practice", 80, 590, 140, 50, green, bright_green, game_loop_practice)
         button('Flick Practice', 80, 650, 140, 50, green, bright_green, game_loop_flickPractice)
-        button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
+        # button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
         button2(250,650,50,50,settings)
         gameDisplay.blit(gear, (250,650))
 
@@ -1584,7 +1581,7 @@ def blit_labels_flick():
     if time_second < 10:
         time_secondstr = '0' + str(time_second)
     button("Back", 30, 700, 100, 50, green, bright_green, game_intro)
-    gameDisplay.blit(range, (30,30))
+    gameDisplay.blit(rangeimg, (30,30))
     # button('', 30, 30, 964, 470, brown, brown, None, black)
     button(("Start Tick: " + str(valList[0])), 30, 520, 160, 50, green, bright_green, change_start_tick)
     button(("End Tick: " + str(valList[2])), 200, 520, 160, 50, green, bright_green, change_end_tick)
