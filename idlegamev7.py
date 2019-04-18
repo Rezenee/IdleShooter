@@ -67,6 +67,10 @@ deathscreen = pygame.transform.scale(deathscreen, [1024, 768])
 brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg'))
 brick_wall = pygame.transform.scale(brick_wall, [1024,768])
 
+minecraft_button = pygame.image.load(os.path.join('images', 'minecraft_button.jpg'))
+minecraft_button = pygame.transform.scale(minecraft_button, [160, 50])
+minecraft_buttonLarge = pygame.image.load(os.path.join('images', 'minecraft_button.jpg'))
+minecraft_buttonLarge = pygame.transform.scale(minecraft_buttonLarge, [166, 54])
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 # button('', 30, 30, 964, 470, brown, brown, None, black)
 
@@ -301,6 +305,36 @@ def buttonstate(gunselect, gunbought, selectedmsg, boughtmsg, buyingmsg, brokems
 for i in range(len(weaponSelectedPractice)):
     weaponSelectedPractice[i] = 0
 weaponSelectedPractice[2] = 1
+
+def buttonMc(msg, x, y,action=None, minecraft = None ):
+    # this gets the mouse's position
+    mouse = pygame.mouse.get_pos()
+    # This gets when the mouse clicks, it makes a list like this: [1,1,1]
+    # left, middle, right, 1 is active, 0 is inactive
+    click = pygame.mouse.get_pressed()
+    # If mouse[0] or left click is between the box then draw the active color
+    if x + 160 > mouse[0] > x and y + 50 > mouse[1] > y:
+        #gameDisplay.blit(deathscreen,(x,y))
+        gameDisplay.blit(minecraft_buttonLarge, (x-3,y-2))
+        # If the click is left then do the action that is called
+        if click[0] == 1 and action != None:
+            action()
+    # If not draw the box with  the inactive color.
+    else:
+        gameDisplay.blit(minecraft_button, (x,y))
+
+   # This calls a small text. It goes the font then font size
+    if minecraft == 1:
+        smallText = pygame.font.Font("Minecraft.ttf", 20)
+    else:
+        smallText = pygame.font.Font("freesansbold.ttf", 20)
+
+    # no clue just do it
+    textSurf, textRect = text_objects(msg, smallText)
+    # This makes the text in the center of the button
+    textRect.center = ((x + (160 / 2)), (y + (50 / 2)))
+    # Draws something on screen
+    gameDisplay.blit(textSurf, textRect)
 
 
 def button(msg, x, y, w, h, ic, ac, action=None, bordercolor = None):
@@ -1580,19 +1614,19 @@ def blit_labels_flick():
     time_secondstr = str(time_second)
     if time_second < 10:
         time_secondstr = '0' + str(time_second)
-    button("Back", 30, 700, 100, 50, green, bright_green, game_intro)
+    buttonMc("Back", 30, 700, game_intro)
     gameDisplay.blit(rangeimg, (30,30))
     # button('', 30, 30, 964, 470, brown, brown, None, black)
-    button(("Start Tick: " + str(valList[0])), 30, 520, 160, 50, green, bright_green, change_start_tick)
-    button(("End Tick: " + str(valList[2])), 200, 520, 160, 50, green, bright_green, change_end_tick)
-    button(("Tick Interval: " + str(valList[3])), 30, 580, 160, 50, green, bright_green, change_tick_interval)
-    button('Tick: ' + str(int(valList[1])), 200, 580, 160, 50, green, bright_green)
-    button('Lives: ' + str(valList[4]), 370, 520, 160, 50, green, bright_green, change_live_count)
-    button("Hits: " + str(hits), 540, 520, 160, 50, green,bright_green)
-    button("Misses: " + str(misses), 710, 520, 160, 50, green, bright_green)
-    button('Time ' + str(time_minute) + ':' + str(time_secondstr), 370, 580, 160, 50, green, bright_green)
-    button("Start", 540, 580, 160, 50, green, bright_green)
-    button("End", 710, 580, 160, 50, green, bright_green)
+    buttonMc(("Start Tick: " + str(valList[0])), 30, 520, change_start_tick)
+    buttonMc(("End Tick: " + str(valList[2])), 200, 520,change_end_tick)
+    buttonMc(("Tick Interval: " + str(valList[3])), 30, 580,change_tick_interval)
+    buttonMc('Tick: ' + str(int(valList[1])), 200, 580)
+    buttonMc('Lives: ' + str(valList[4]), 370, 520,change_live_count)
+    buttonMc("Hits: " + str(hits), 540, 520, 160)
+    buttonMc("Misses: " + str(misses), 710, 520)
+    buttonMc('Time ' + str(time_minute) + ':' + str(time_secondstr), 370, 580)
+    buttonMc("Start", 540, 580)
+    buttonMc("End", 710, 580)
     for i in range(len(targets)):
         try:
             gameDisplay.blit(targets[i][3], [targets[i][0] - targets[i][2] / 2, targets[i][1] - targets[i][2]/ 2])
