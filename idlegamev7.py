@@ -70,6 +70,13 @@ brick_wall = pygame.transform.scale(brick_wall, [1024,768])
 minecraft_button = pygame.image.load(os.path.join('images', 'minecraft_button.jpg'))
 minecraft_button = pygame.transform.scale(minecraft_button, [160, 50])
 minecraft_buttonLarge = pygame.image.load(os.path.join('images', 'minecraft_button.jpg'))
+minecraft_button_resp = pygame.image.load(os.path.join('images', '1.jpg'))
+minecraft_button_title = pygame.image.load(os.path.join('images', 'deathscreen2.jpg'))
+minecraft_button_resp = pygame.transform.scale(minecraft_button_resp, [1024, 768])
+minecraft_button_title = pygame.transform.scale(minecraft_button_title, [1024, 768])
+
+# button2(243, 415, 565, 55, game_loop_flickPractice)
+
 minecraft_buttonLarge = pygame.transform.scale(minecraft_buttonLarge, [166, 54])
 #csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 # button('', 30, 30, 964, 470, brown, brown, None, black)
@@ -1125,6 +1132,36 @@ def upgradebase():
         upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
 
 # valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
+def button(msg, x, y, w, h, ic, ac, action=None, bordercolor = None):
+    # this gets the mouse's position
+    mouse = pygame.mouse.get_pos()
+    # This gets when the mouse clicks, it makes a list like this: [1,1,1]
+    # left, middle, right, 1 is active, 0 is inactive
+    click = pygame.mouse.get_pressed()
+
+    # If mouse[0] or left click is between the box then draw the active color
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        pygame.draw.rect(gameDisplay, ac, (x, y, w, h))
+
+        # If the click is left then do the action that is called
+        if click[0] == 1 and action != None:
+            action()
+    # If not draw the box with  the inactive color.
+    else:
+        pygame.draw.rect(gameDisplay, ic, (x, y, w, h))
+
+   # This calls a small text. It goes the font then font size
+    smallText = pygame.font.Font("freesansbold.ttf", 20)
+
+    # no clue just do it
+    textSurf, textRect = text_objects(msg, smallText)
+    # This makes the text in the center of the button
+    textRect.center = ((x + (w / 2)), (y + (h / 2)))
+    # Draws something on screen
+    gameDisplay.blit(textSurf, textRect)
+    if bordercolor != None:
+        pygame.draw.rect(gameDisplay,bordercolor,(x,y,w,h),2)
+
 
 def deathScreen():
     global valList, play
@@ -1137,8 +1174,17 @@ def deathScreen():
         valList[4] = 3
         valList[1] = valList[0]
         play = 0
+        mouse = pygame.mouse.get_pos()
+
+        if 243 + 565 > mouse[0] > 243 and 414 + 55 > mouse[1] > 414:
+            gameDisplay.blit(minecraft_button_resp, (0,0))
+        if 243 + 565 > mouse[0] > 243 and 488 + 55 > mouse[1] > 488:
+            gameDisplay.blit(minecraft_button_title, (0,0))
+
+
         button2(243,415,565,55, game_loop_flickPractice)
         button2(243,488,565,55, game_intro)
+        print(clock.get_fps())
         pygame.display.update()
 
 
@@ -1549,8 +1595,9 @@ def game_loop_flickPractice():
     hits = 0
     lives = valList[4]
     clock.tick(0)
+    blit_labels_flick()
     while not gameExit:
-        blit_labels_flick()
+        pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -1570,6 +1617,16 @@ def game_loop_flickPractice():
                     if i >= len(targets) - 2:
                         misses += 1
         if play == 1:
+            # gameDisplay.blit(rangeimg, (30, 30))
+            # blit_labels_flick()
+            #
+            # for i in range(len(targets)):
+            #     try:
+            #         gameDisplay.blit(targets[i][3],
+            #                          [targets[i][0] - targets[i][2] / 2, targets[i][1] - targets[i][2] / 2])
+            #     except TypeError:
+            #         pass
+
             if target_reset >= target_time:
                 x = random.randint(69, 956)
                 y = random.randint(68, 424)
@@ -1595,10 +1652,11 @@ def game_loop_flickPractice():
                     target_time -= .05
                 tick_reset = 0
 
-        #if it gets faster than this it will crash
+
+            #if it gets faster than this it will crash
             if target_time <= 20:
                 target_time = 20
-            dt = clock.tick(60)
+            dt = clock.tick(0)
             target_reset += dt
             tick_reset += dt
             target_shape_reset += dt
@@ -1606,10 +1664,14 @@ def game_loop_flickPractice():
             valList[4] = lives
             valList[3] = tick_sub
             valList[1] = target_time
+            print(clock.get_fps())
+        else:
+            print(clock.get_fps())
+
 def blit_labels_flick():
     time_second = int(global_time % 60)
     time_minute = int(global_time//60)
-    gameDisplay.blit(brick_wall,(0,0))
+    gameDisplay.blit(brick_wall, (0, 0))
     # gameDisplay.fill(gray)
     time_secondstr = str(time_second)
     if time_second < 10:
@@ -1627,12 +1689,7 @@ def blit_labels_flick():
     buttonMc('Time ' + str(time_minute) + ':' + str(time_secondstr), 370, 580)
     buttonMc("Start", 540, 580)
     buttonMc("End", 710, 580)
-    for i in range(len(targets)):
-        try:
-            gameDisplay.blit(targets[i][3], [targets[i][0] - targets[i][2] / 2, targets[i][1] - targets[i][2]/ 2])
-        except TypeError:
-            pass
-    pygame.display.update()
+
 
 
 def blit_labels_prac():
