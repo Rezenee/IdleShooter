@@ -45,40 +45,44 @@ miss_num = 0
 hit_percent = 0
 hit_percent_label = 0
 y_practice_value = 0
+
+minercaft_font = pygame.font.Font("Minecraft.ttf", 20)
+
 fontsmall = pygame.freetype.Font(None, 24)
 fontlarge = pygame.freetype.Font(None, 100)
 game_font = pygame.freetype.Font(None, 24)
+fontminecraft = pygame.freetype.Font("Minecraft.ttf", 20)
 
 upgradelabel = 'UPGRADE ($' + str(upgradecost) + ')'
 scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
 
-forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png"))
-backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png'))
+forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png")).convert
+backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png')).convert()
 rainbow_target = pygame.image.load(os.path.join('images', 'target_colors.png'))
-stick_img = pygame.image.load(os.path.join('images', 'homescreen.jpg'))
+stick_img = pygame.image.load(os.path.join('images', 'homescreen.jpg')).convert()
 
 targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
-rangeimg = pygame.image.load(os.path.join('images', 'range.jpg'))
+rangeimg = pygame.image.load(os.path.join('images', 'range.jpg')).convert()
 rangeimg = pygame.transform.scale(rangeimg, [934,440])
-homescreen = pygame.image.load(os.path.join('images', 'homescreen.jpg'))
+homescreen = pygame.image.load(os.path.join('images', 'homescreen.jpg')).convert()
 homescreen = pygame.transform.scale(homescreen, [1024,768])
-deathscreen = pygame.image.load(os.path.join('images', 'deathscreen.jpg'))
+deathscreen = pygame.image.load(os.path.join('images', 'deathscreen.jpg')).convert()
 deathscreen = pygame.transform.scale(deathscreen, [1024, 768])
-brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg'))
-brick_wall = pygame.transform.scale(brick_wall, [1024,768])
+brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg')).convert()
+brick_wall = pygame.transform.scale(brick_wall, [1024, 768])
 
-minecraft_button = pygame.image.load(os.path.join('images', 'minecraft_button.jpg'))
+minecraft_button = pygame.image.load(os.path.join('images', 'minecraft_button.jpg')).convert()
 minecraft_button = pygame.transform.scale(minecraft_button, [160, 50])
-minecraft_buttonLarge = pygame.image.load(os.path.join('images', 'minecraft_button.jpg'))
-minecraft_button_resp = pygame.image.load(os.path.join('images', '1.jpg'))
-minecraft_button_title = pygame.image.load(os.path.join('images', 'deathscreen2.jpg'))
+minecraft_buttonLarge = pygame.image.load(os.path.join('images', 'minecraft_button.jpg')).convert()
+minecraft_button_resp = pygame.image.load(os.path.join('images', '1.jpg')).convert()
+minecraft_button_title = pygame.image.load(os.path.join('images', 'deathscreen2.jpg')).convert()
 minecraft_button_resp = pygame.transform.scale(minecraft_button_resp, [1024, 768])
 minecraft_button_title = pygame.transform.scale(minecraft_button_title, [1024, 768])
 
 # button2(243, 415, 565, 55, game_loop_flickPractice)
 
 minecraft_buttonLarge = pygame.transform.scale(minecraft_buttonLarge, [166, 54])
-#csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
+# csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 # button('', 30, 30, 964, 470, brown, brown, None, black)
 
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
@@ -92,6 +96,7 @@ pygame.mixer.music.load(os.path.join('images', 'background.wav'))
 pygame.mixer.music.load(os.path.join('images', 'background2.mp3'))
 
 font = pygame.font.SysFont("Verdana", 12)
+
 hitmarkers = []
 games = ["rust", "csgo"]
 # This makes a variable that is called to check what game it is.
@@ -1166,25 +1171,27 @@ def button(msg, x, y, w, h, ic, ac, action=None, bordercolor = None):
 def deathScreen():
     global valList, play
     while 1:
+        mouse = pygame.mouse.get_pos()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
-        gameDisplay.blit(deathscreen,(0,0))
+        gameDisplay.blit(deathscreen ,(0, 0))
+        if 243 + 565 > mouse[0] > 243 and 414 + 55 > mouse[1] > 414:
+            gameDisplay.blit(minecraft_button_resp, (0, 0))
+        if 243 + 565 > mouse[0] > 243 and 488 + 55 > mouse[1] > 488:
+            gameDisplay.blit(minecraft_button_title, (0, 0))
         valList[4] = 3
         valList[1] = valList[0]
         play = 0
-        mouse = pygame.mouse.get_pos()
-
-        if 243 + 565 > mouse[0] > 243 and 414 + 55 > mouse[1] > 414:
-            gameDisplay.blit(minecraft_button_resp, (0,0))
-        if 243 + 565 > mouse[0] > 243 and 488 + 55 > mouse[1] > 488:
-            gameDisplay.blit(minecraft_button_title, (0,0))
+        fontminecraft.render_to(gameDisplay, (570, 340),  str(time_minute) + ':' + str(time_secondstr), white)
+        fontminecraft.render_to(gameDisplay, (480, 340), "Time:", white)
+        fontminecraft.render_to(gameDisplay, (570, 310), str(hits), white)
 
 
-        button2(243,415,565,55, game_loop_flickPractice)
-        button2(243,488,565,55, game_intro)
-        print(clock.get_fps())
+        button2(243, 415, 565, 55, game_loop_flickPractice)
+        button2(243, 488, 565, 55, game_intro)
         pygame.display.update()
 
 
@@ -1204,8 +1211,11 @@ def game_intro():
         # gameDisplay.fill(gray)
         gameDisplay.blit(homescreen,(0,0))
 
+       # fontsmall.render_to(gameDisplay, (140, 125), str(hit_percent_label), black)
 
 
+
+       # minecraft_font.render_to(gameDisplay, (100,100), "hi", black)
         # The two buttons on this page, remember not to put the () in the function being called
         button("Play Game", 80, 530, 140, 50, green, bright_green, game_loop_idle)
         button("Play Practice", 80, 590, 140, 50, green, bright_green, game_loop_practice)
@@ -1256,7 +1266,7 @@ def changeVal(keyIndex):
             tempstr = tempstr[:-1]
 
         elif inkey == K_RETURN:
-            game_loop_flickPractice()
+            game_intro()
         elif inkey > 47 and inkey < 58:
             tempstr += chr(inkey)
         try:
@@ -1617,15 +1627,15 @@ def game_loop_flickPractice():
                     if i >= len(targets) - 2:
                         misses += 1
         if play == 1:
-            # gameDisplay.blit(rangeimg, (30, 30))
-            # blit_labels_flick()
-            #
-            # for i in range(len(targets)):
-            #     try:
-            #         gameDisplay.blit(targets[i][3],
-            #                          [targets[i][0] - targets[i][2] / 2, targets[i][1] - targets[i][2] / 2])
-            #     except TypeError:
-            #         pass
+            gameDisplay.blit(rangeimg, (30, 30))
+            blit_labels_flick()
+
+            for i in range(len(targets)):
+                try:
+                    gameDisplay.blit(targets[i][3],
+                                     [targets[i][0] - targets[i][2] / 2, targets[i][1] - targets[i][2] / 2])
+                except TypeError:
+                    pass
 
             if target_reset >= target_time:
                 x = random.randint(69, 956)
@@ -1652,8 +1662,6 @@ def game_loop_flickPractice():
                     target_time -= .05
                 tick_reset = 0
 
-
-            #if it gets faster than this it will crash
             if target_time <= 20:
                 target_time = 20
             dt = clock.tick(0)
@@ -1666,9 +1674,10 @@ def game_loop_flickPractice():
             valList[1] = target_time
             print(clock.get_fps())
         else:
-            print(clock.get_fps())
+            blit_labels_flick()
 
 def blit_labels_flick():
+    global time_minute, time_secondstr
     time_second = int(global_time % 60)
     time_minute = int(global_time//60)
     gameDisplay.blit(brick_wall, (0, 0))
@@ -1689,6 +1698,24 @@ def blit_labels_flick():
     buttonMc('Time ' + str(time_minute) + ':' + str(time_secondstr), 370, 580)
     buttonMc("Start", 540, 580)
     buttonMc("End", 710, 580)
+
+def blit_labels_flickopti():
+    global time_minute, time_secondstr
+    time_second = int(global_time % 60)
+    time_minute = int(global_time//60)
+    # gameDisplay.fill(gray)
+    #gameDisplay.blit(brick_wall, (0, 0))
+
+    time_secondstr = str(time_second)
+    if time_second < 10:
+        time_secondstr = '0' + str(time_second)
+    gameDisplay.blit(rangeimg, (30,30))
+    # button('', 30, 30, 964, 470, brown, brown, None, black)
+    buttonMc('Tick: ' + str(int(valList[1])), 200, 580)
+    buttonMc('Lives: ' + str(valList[4]), 370, 520,change_live_count)
+    buttonMc("Hits: " + str(hits), 540, 520, 160)
+    buttonMc("Misses: " + str(misses), 710, 520)
+    buttonMc('Time ' + str(time_minute) + ':' + str(time_secondstr), 370, 580)
 
 
 
