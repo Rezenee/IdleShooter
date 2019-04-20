@@ -71,9 +71,18 @@ deathscreen = pygame.transform.scale(deathscreen, [1024, 768])
 brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg')).convert()
 brick_wall = pygame.transform.scale(brick_wall, [1024, 768])
 
+mossy_button = pygame.image.load(os.path.join('images', 'mossy_button.jpg')).convert()
+mossy_button_large = mossy_button
+mossy_button = pygame.transform.scale(mossy_button, [160, 50])
+mossy_button_large = pygame.transform.scale(mossy_button_large, [166, 54])
+
+
 minecraft_button = pygame.image.load(os.path.join('images', 'minecraft_button.jpg')).convert()
-minecraft_button = pygame.transform.scale(minecraft_button, [160, 50])
 minecraft_buttonLarge = pygame.image.load(os.path.join('images', 'minecraft_button.jpg')).convert()
+
+minecraft_button = pygame.transform.scale(minecraft_button, [160, 50])
+minecraft_buttonLarge = pygame.transform.scale(minecraft_buttonLarge, [166, 54])
+
 minecraft_button_resp = pygame.image.load(os.path.join('images', '1.jpg')).convert()
 minecraft_button_title = pygame.image.load(os.path.join('images', 'deathscreen2.jpg')).convert()
 minecraft_button_resp = pygame.transform.scale(minecraft_button_resp, [1024, 768])
@@ -81,7 +90,6 @@ minecraft_button_title = pygame.transform.scale(minecraft_button_title, [1024, 7
 
 # button2(243, 415, 565, 55, game_loop_flickPractice)
 
-minecraft_buttonLarge = pygame.transform.scale(minecraft_buttonLarge, [166, 54])
 # csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 # button('', 30, 30, 964, 470, brown, brown, None, black)
 
@@ -317,28 +325,36 @@ for i in range(len(weaponSelectedPractice)):
     weaponSelectedPractice[i] = 0
 weaponSelectedPractice[2] = 1
 
-def buttonMc(msg, x, y,action=None, minecraft = None ):
+def buttonMc(msg, x, y,action=None, block_type = 'stone'):
     # this gets the mouse's position
     mouse = pygame.mouse.get_pos()
     # This gets when the mouse clicks, it makes a list like this: [1,1,1]
     # left, middle, right, 1 is active, 0 is inactive
     click = pygame.mouse.get_pressed()
     # If mouse[0] or left click is between the box then draw the active color
-    if x + 160 > mouse[0] > x and y + 50 > mouse[1] > y:
-        #gameDisplay.blit(deathscreen,(x,y))
-        gameDisplay.blit(minecraft_buttonLarge, (x-3,y-2))
-        # If the click is left then do the action that is called
-        if click[0] == 1 and action != None:
-            action()
-    # If not draw the box with  the inactive color.
-    else:
-        gameDisplay.blit(minecraft_button, (x,y))
+    if block_type == 'mossy':
+        if x + 160 > mouse[0] > x and y + 50 > mouse[1] > y:
+            #gameDisplay.blit(deathscreen,(x,y))
+            gameDisplay.blit(mossy_button_large, (x-3,y-2))
+            # If the click is left then do the action that is called
+            if click[0] == 1 and action != None:
+                action()
+        # If not draw the box with  the inactive color.
+        else:
+            gameDisplay.blit(mossy_button, (x,y))
+    if block_type == 'stone':
+        if x + 160 > mouse[0] > x and y + 50 > mouse[1] > y:
+            #gameDisplay.blit(deathscreen,(x,y))
+            gameDisplay.blit(minecraft_buttonLarge, (x-3,y-2))
+            # If the click is left then do the action that is called
+            if click[0] == 1 and action != None:
+                action()
+        # If not draw the box with  the inactive color.
+        else:
+            gameDisplay.blit(minecraft_button, (x,y))
 
    # This calls a small text. It goes the font then font size
-    if minecraft == 1:
-        smallText = pygame.font.Font("Minecraft.ttf", 20)
-    else:
-        smallText = pygame.font.Font("freesansbold.ttf", 20)
+    smallText = pygame.font.Font("freesansbold.ttf", 20)
 
     # no clue just do it
     textSurf, textRect = text_objects(msg, smallText)
@@ -1195,7 +1211,8 @@ def deathScreen():
 
 
 def game_intro():
-    global gamemode
+    global gamemode, gameDisplay, fullscreen_check
+    fullscreen_check = 0
     # This is needed for the while loop
     intro = True
     gamemode = 'game_intro'
@@ -1209,15 +1226,22 @@ def game_intro():
                 button2(80, 530, 140, 50, game_loop_idle)
                 button2(80, 590, 140, 50, game_loop_practice)
                 button2(80, 650, 140, 50, game_loop_flickPractice)
-
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
 
         gameDisplay.blit(homescreen,(0,0))
 
         button2(250,650,50,50,settings)
         gameDisplay.blit(gear, (250,650))
-        button("Play Game", 80, 530, 140, 50, green, bright_green)
-        button("Play Practice", 80, 590, 140, 50, green, bright_green)
-        button('Flick Practice', 80, 650, 140, 50, green, bright_green)
+        buttonMc("Play Game", 80, 530, None, 'mossy')
+        buttonMc("Play Practice", 80, 590, None, 'mossy')
+        buttonMc('Flick Practice', 80, 650, None, 'mossy')
         pygame.display.update()
         clock.tick(15)
 
@@ -1233,6 +1257,14 @@ def paused():
             if event.type == pygame.QUIT:
                 pygame.quit
                 quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
         # This makes the game gray
         gameDisplay.fill(gray)
         fontlarge.render_to(gameDisplay, (150, 300), "You are Paused", (black))
@@ -1297,6 +1329,14 @@ def keyBindScreen():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 button2(100,650,100,50, settings)
                 button2(100, 650, 100, 50, settings)
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
         gameDisplay.fill(gray)
         fontsmall.render_to(gameDisplay, (80, 70), "Keybinds", black)
         button("Back", 100, 650, 100, 50, green, bright_green)
@@ -1328,6 +1368,14 @@ def settings():
             elif event.type == pygame.MOUSEBUTTONUP:
                 for s in slides:
                     s.hit = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
         for s in slides:
             if s.hit:
                 s.move()
@@ -1363,6 +1411,16 @@ def change_hitmarker():
         sprite_change_list[1] = 1
     else:
         sprite_change_list[1] = 0
+
+def makePlay():
+    global play
+    play = 1
+    game_loop_flickPractice()
+def makeStop():
+    global play
+    play = 0
+    game_loop_flickPractice()
+play = 0
 
 check_in_dropdown = 0
 def change_target():
@@ -1427,7 +1485,13 @@ def game_loop_idle():
                 if event.key == keybindList[0]:
                     pause = True
                     paused()
-
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if int(scoreNum) < upgradecost:
@@ -1441,36 +1505,18 @@ def game_loop_idle():
                     if weaponSelectedIdle[0] == 1:
                         button2(250, 150, 300, 300, base)
                     button2(100, 650, 100, 50, game_intro)
-        gameDisplay.fill(gray)
-        target(250, 150)
+
         click = pygame.mouse.get_pressed()
-        fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
-        scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Money : $", black)
 
-        if int(scoreNum) < upgradecost:
-            button(upgradelabel, 600, 90, 180, 50, red, bright_red)
-        elif int(scoreNum) >= upgradecost:
-            button(upgradelabel, 600, 90, 180, 50, green, bright_green)
-        if int(scoreNum) < upgradecost:
-            button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red)
-        elif int(scoreNum) >= upgradecost:
-            button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green)
 
-        buttonstate(weaponSelectedIdle[1], weaponbought[0], "AK Selected", "Select AK", "Buy AK ($100)",
-                    "Buy AK ($100)", ak.cost, 800, 150,
-                    180, 50, peach, peach, dark_peach, peach, red, bright_red, green, bright_green, akgunbuy, black)
 
-        if weaponSelectedIdle[0] != 1:
-            button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
-        elif weaponSelectedIdle[0] == 1:
-            button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
-        button("Back", 100, 650, 100, 50, green, bright_green)
+
+
         x, y = pygame.mouse.get_pos()
         if weaponSelectedIdle[1] == 1 and 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
             akrust()
-
-        pygame.display.update()
-        clock.tick(144)
+        blit_labels_idle()
+        clock.tick(60)
 
 
 def game_loop_practice():
@@ -1489,6 +1535,13 @@ def game_loop_practice():
                     hitmarkers = []
                 if event.key == keybindList[2]:
                     clear_stats()
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     button2(250, 650, 50, 50, settings)
@@ -1570,17 +1623,6 @@ def game_loop_practice():
         pygame.display.update()
         clock.tick(144)
 
-def makePlay():
-    global play
-    play = 1
-    game_loop_flickPractice()
-def makeStop():
-    global play
-    play = 0
-    game_loop_flickPractice()
-play = 0
-
-
 def game_loop_flickPractice():
     global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic, valList, play
     # valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
@@ -1624,6 +1666,14 @@ def game_loop_flickPractice():
                                 break
                             if i >= len(targets) - 2:
                                 misses += 1
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
         if play == 1:
             gameDisplay.blit(rangeimg, (30, 30))
             blit_labels_flick()
@@ -1673,6 +1723,7 @@ def game_loop_flickPractice():
         else:
             blit_labels_flick()
 
+
 def blit_labels_flick():
     global time_minute, time_secondstr
     time_second = int(global_time % 60)
@@ -1683,7 +1734,7 @@ def blit_labels_flick():
         time_secondstr = '0' + str(time_second)
     buttonMc("Back", 30, 700, game_intro)
     gameDisplay.blit(rangeimg, (30,30))
-    buttonMc(("Start Tick: " + str(valList[0])), 30, 520, change_start_tick)
+    buttonMc(("Start Tick: " + str(valList[0])), 30, 520, change_start_tick, 'mossy')
     buttonMc(("End Tick: " + str(valList[2])), 200, 520,change_end_tick)
     buttonMc(("Tick Interval: " + str(valList[3])), 30, 580,change_tick_interval)
     buttonMc('Tick: ' + str(int(valList[1])), 200, 580)
@@ -1712,6 +1763,29 @@ def blit_labels_flickopti():
     buttonMc("Misses: " + str(misses), 710, 520)
     buttonMc('Time ' + str(time_minute) + ':' + str(time_secondstr), 370, 580)
 
+def blit_labels_idle():
+    gameDisplay.fill(gray)
+    target(250, 150)
+    fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
+    fontsmall.render_to(gameDisplay, (80, 70), "Money : $", black)
+
+    if int(scoreNum) < upgradecost:
+        button(upgradelabel, 600, 90, 180, 50, red, bright_red)
+    elif int(scoreNum) >= upgradecost:
+        button(upgradelabel, 600, 90, 180, 50, green, bright_green)
+    if int(scoreNum) < upgradecost:
+        button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red)
+    elif int(scoreNum) >= upgradecost:
+        button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green)
+    buttonstate(weaponSelectedIdle[1], weaponbought[0], "AK Selected", "Select AK", "Buy AK ($100)",
+                "Buy AK ($100)", ak.cost, 800, 150,
+                180, 50, peach, peach, dark_peach, peach, red, bright_red, green, bright_green, akgunbuy, black)
+    if weaponSelectedIdle[0] != 1:
+        button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
+    elif weaponSelectedIdle[0] == 1:
+        button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
+    button("Back", 100, 650, 100, 50, green, bright_green)
+    pygame.display.update()
 
 def blit_labels_prac():
     button('', 25, 50, 170, 180, peach, peach, None, brown)
@@ -1747,6 +1821,7 @@ def blit_labels_prac():
     if sprite_change_list[2] == 1:
         button("Realistic Flash", 600, y_practice_value + 620, 180, 50, dark_peach, peach, make_flash_flash, black)
         button("Nothing", 600, y_practice_value + 670, 180, 50, dark_peach, peach, make_flash_nothing, black)
+
 
 gamemodesDict = {"game_intro": game_intro, "game_loop_idle": game_loop_idle, "game_loop_practice": game_loop_practice}
 game_intro()
