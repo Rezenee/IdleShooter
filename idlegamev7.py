@@ -1184,7 +1184,7 @@ def button(msg, x, y, w, h, ic, ac, action=None, bordercolor = None):
 
 
 def deathScreen():
-    global valList, play
+    global valList, play, gameDisplay, fullscreen_check
     while 1:
         mouse = pygame.mouse.get_pos()
 
@@ -1192,6 +1192,14 @@ def deathScreen():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
         gameDisplay.blit(deathscreen,(0, 0))
         if 243 + 565 > mouse[0] > 243 and 414 + 55 > mouse[1] > 414:
             gameDisplay.blit(minecraft_button_resp, (0, 0))
@@ -1251,6 +1259,7 @@ def unpause():
 
 
 def paused():
+    global gameDisplay,fullscreen_check
     while pause:
         # Always put this so they can exit
         for event in pygame.event.get():
@@ -1320,6 +1329,7 @@ def clear_decals_key(): changeKeyBind(1)
 def pause_hotkey(): changeKeyBind(0)
 
 def keyBindScreen():
+    global gameDisplay, fullscreen_check
     keyBindScreen = True
     while keyBindScreen:
         for event in pygame.event.get():
@@ -1349,6 +1359,7 @@ def keyBindScreen():
 
 
 def settings():
+    global gameDisplay, fullscreen_check
     settings = True
     while settings:
 
@@ -1472,7 +1483,7 @@ def make_target_CS():
 
 
 def game_loop_idle():
-
+    global gameDisplay, fullscreen_check
     global pause
     global gamemode
     gamemode = "game_loop_idle"
@@ -1520,7 +1531,7 @@ def game_loop_idle():
 
 
 def game_loop_practice():
-    global pause, gamemode,hitmarkers, y_practice_value, recoilamp, global_time
+    global pause, gamemode,hitmarkers, y_practice_value, recoilamp, global_time, gameDisplay, fullscreen_check
     gamemode = "game_loop_practice"
     while not gameExit:
         for event in pygame.event.get():
@@ -1624,7 +1635,7 @@ def game_loop_practice():
         clock.tick(144)
 
 def game_loop_flickPractice():
-    global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic, valList, play
+    global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic, valList, play, gameDisplay, fullscreen_check
     # valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
 
     gamemode = 'game_loop_flickPractice'
