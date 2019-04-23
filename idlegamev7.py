@@ -100,10 +100,23 @@ weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png'))
 weaponFlash = pygame.transform.scale(weaponFlash,[25,25])
 clock = pygame.time.Clock()
 gameDisplay.fill(gray)
-pygame.mixer.music.load(os.path.join('images', 'background.wav'))
-pygame.mixer.music.load(os.path.join('images', 'background2.mp3'))
-
+musicjazz = pygame.mixer.music.load(os.path.join('images', 'background.wav'))
+musicfire = pygame.mixer.music.load(os.path.join('images', 'background2.mp3'))
+music_list = ['background.wav', 'background2.mp3']
+music_val = 1
+pygame.mixer.music.play(-1)
 font = pygame.font.SysFont("Verdana", 12)
+def music_change():
+    global music_val
+    print(music_val)
+    print(len(music_list))
+    if music_val < len(music_list) -1:
+        music_val += 1
+    else:
+        music_val = 0
+    pygame.mixer.music.load(os.path.join('images', music_list[music_val]))
+    pygame.mixer.music.play(-1)
+
 
 hitmarkers = []
 games = ["rust", "csgo"]
@@ -128,7 +141,6 @@ flash_img_change = 0
 sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change]
 
 
-pygame.mixer.music.play(-1)
 global_time = 0
 
 def get_key():
@@ -243,10 +255,9 @@ class Slider():
     check = 1
 
 
-musicsound = Slider("", .5, 1, 0, 300, 180)
+musicsound = Slider("", .5, 1, 0, 60, 190)
 recoilamp = Slider("", .5, 1, 0, 15, 350)
-sensitivity = Slider("sens", .5, 1, 0, 300, 250)
-slides = [musicsound,sensitivity, recoilamp]
+slides = [musicsound,recoilamp]
 
 
 
@@ -1369,13 +1380,12 @@ def settings():
                 quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 button2(100, 650, 100, 50, gamemodesDict[gamemode])
-                button2(250, 650, 100, 50, keyBindScreen)
+                button2(300, 650, 100, 50, keyBindScreen)
+                button2(200, 190, 100, 50, music_change)
 
                 pos = pygame.mouse.get_pos()
                 if musicsound.button_rect.collidepoint(pos):
                     musicsound.hit = True
-                if sensitivity.button_rect.collidepoint(pos):
-                    sensitivity.hit = True
             elif event.type == pygame.MOUSEBUTTONUP:
                 for s in slides:
                     s.hit = False
@@ -1391,14 +1401,14 @@ def settings():
             if s.hit:
                 s.move()
                 pygame.mixer.music.set_volume(musicsound.val)
-        gameDisplay.fill(gray)
+        gameDisplay.blit(brick_wall,(0,0))
         fontsmall.render_to(gameDisplay, (80, 70), "Settings", (black))
-        button("Music Volume", 200,200,0,0,gray,gray)
-        button("Back", 100, 650, 100, 50, green, bright_green)
-        button("Keybinds", 250, 650, 100,50,green, bright_green)
-        sensitivity.draw('sens')
+        fontsmall.render_to(gameDisplay, (17, 148), "Music Volume: ")
+        buttonMc("Back", 100, 650)
+        buttonMc("Keybinds", 300, 650)
+        buttonMc("Change Song", 200, 190)
         musicsound.draw('')
-        fontsmall.render_to(gameDisplay, (400,180), str(round(musicsound.val* 100)), (black))
+        fontsmall.render_to(gameDisplay, (190,150), str(round(musicsound.val* 100)), (black))
         pygame.display.update()
         clock.tick(60)
 
@@ -1412,7 +1422,6 @@ def change_flash():
         sprite_change_list[2] = 1
     else:
         sprite_change_list[2] = 0
-
 def change_hitmarker():
     global sprite_change_list, check_in_dropdown
     check_in_dropdown = 1
@@ -1661,8 +1670,8 @@ def game_loop_flickPractice():
                 pygame.quit()
                 quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                button2(540, 580, 160, 50, makePlay)
-                button2(710, 580, 160, 50, makeStop)
+                button2(540, 520, 160, 50, makePlay)
+                button2(710, 520, 160, 50, makeStop)
                 click = pygame.mouse.get_pressed()
                 mouse = pygame.mouse.get_pos()
                 if click[0] == 1:
@@ -1745,34 +1754,19 @@ def blit_labels_flick():
         time_secondstr = '0' + str(time_second)
     buttonMc("Back", 30, 700, game_intro)
     gameDisplay.blit(rangeimg, (30,30))
-    buttonMc(("Start Tick: " + str(valList[0])), 30, 520, change_start_tick, 'mossy')
-    buttonMc(("End Tick: " + str(valList[2])), 200, 520,change_end_tick)
-    buttonMc(("Tick Interval: " + str(valList[3])), 30, 580,change_tick_interval)
-    buttonMc('Tick: ' + str(int(valList[1])), 200, 580)
-    buttonMc('Lives: ' + str(valList[4]), 370, 520,change_live_count)
-    buttonMc("Hits: " + str(hits), 540, 520, 160)
-    buttonMc("Misses: " + str(misses), 710, 520)
-    buttonMc('Time ' + str(time_minute) + ':' + str(time_secondstr), 370, 580)
-    buttonMc("Start", 540, 580)
-    buttonMc("End", 710, 580)
-
-def blit_labels_flickopti():
-    global time_minute, time_secondstr
-    time_second = int(global_time % 60)
-    time_minute = int(global_time//60)
-    # gameDisplay.fill(gray)
-    #gameDisplay.blit(brick_wall, (0, 0))
-
-    time_secondstr = str(time_second)
-    if time_second < 10:
-        time_secondstr = '0' + str(time_second)
-    gameDisplay.blit(rangeimg, (30,30))
-    # button('', 30, 30, 964, 470, brown, brown, None, black)
-    buttonMc('Tick: ' + str(int(valList[1])), 200, 580)
-    buttonMc('Lives: ' + str(valList[4]), 370, 520,change_live_count)
-    buttonMc("Hits: " + str(hits), 540, 520, 160)
-    buttonMc("Misses: " + str(misses), 710, 520)
-    buttonMc('Time ' + str(time_minute) + ':' + str(time_secondstr), 370, 580)
+    buttonMc(("Start Tick: " + str(valList[0])), 30, 520, change_start_tick)
+    buttonMc(("End Tick: " + str(valList[2])), 200, 520, change_end_tick)
+    buttonMc(("Tick Interval: " + str(valList[3])), 30, 580, change_tick_interval)
+    buttonMc('Lives: ' + str(valList[4]), 370, 520, change_live_count)
+    buttonMc("Start", 540, 520)
+    buttonMc("End", 710, 520)
+    xlist = [200,370,540,710]
+    for x in xlist:
+        gameDisplay.blit(minecraft_button, (x, 580))
+    fontminecraft.render_to(gameDisplay, (540, 580), "Hits: " + str(hits), black)
+    fontminecraft.render_to(gameDisplay, (200, 580), 'Tick: ' + str(int(valList[1])), black)
+    fontminecraft.render_to(gameDisplay, (710, 580), "Misses: " + str(misses), black)
+    fontminecraft.render_to(gameDisplay, (370, 580), 'Time ' + str(time_minute) + ':' + str(time_secondstr), black)
 
 def blit_labels_idle():
     gameDisplay.fill(gray)
