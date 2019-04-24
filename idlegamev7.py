@@ -47,8 +47,7 @@ hit_percent_label = 0
 y_practice_value = 0
 
 # minercaft_font = pygame.font.Font("Minecraft.ttf", 305)
-
-fontsmall = pygame.freetype.Font(None, 24)
+fontsmall = pygame.freetype.Font(None, 20)
 fontlarge = pygame.freetype.Font(None, 100)
 game_font = pygame.freetype.Font(None, 24)
 fontminecraft = pygame.freetype.Font("Minecraft.ttf", 24)
@@ -68,6 +67,8 @@ homescreen = pygame.image.load(os.path.join('images', 'homescreen.jpg')).convert
 homescreen = pygame.transform.scale(homescreen, [1024,768])
 deathscreen = pygame.image.load(os.path.join('images', 'deathscreen.jpg')).convert()
 deathscreen = pygame.transform.scale(deathscreen, [1024, 768])
+brick_wall_section = pygame.image.load(os.path.join('images', 'brick_wall.jpg')).convert()
+brick_wall_section = pygame.transform.scale(brick_wall_section, [1024, 768])
 brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg')).convert()
 brick_wall = pygame.transform.scale(brick_wall, [1024, 768])
 
@@ -1066,7 +1067,7 @@ def makeGunStart(GUNPOS,sleepTime):
             # make teh 250 300 when done with guns
             if x - 250 > 330:
                 break
-            button("", 0, 0, 580, 768, gray, gray)
+            gameDisplay.blit(brick_wall, (0,0))
             blit_labels_prac()
             click = pygame.mouse.get_pressed()
             if click[0] != 1:
@@ -1339,36 +1340,6 @@ def reset_stats_hotkey(): changeKeyBind(2)
 def clear_decals_key(): changeKeyBind(1)
 def pause_hotkey(): changeKeyBind(0)
 
-def keyBindScreen():
-    global gameDisplay, fullscreen_check
-    keyBindScreen = True
-    while keyBindScreen:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit
-                quit()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                button2(100,650,100,50, settings)
-                button2(100, 650, 100, 50, settings)
-            if event.type == pygame.KEYDOWN:
-                if event.key == K_F11:
-                    if fullscreen_check == 1:
-                        gameDisplay = pygame.display.set_mode((xres, yres))
-                        fullscreen_check = 0
-                    else:
-                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
-                        fullscreen_check = 1
-        gameDisplay.fill(gray)
-        fontsmall.render_to(gameDisplay, (80, 70), "Keybinds", black)
-        button("Back", 100, 650, 100, 50, green, bright_green)
-        button(("Clear Decals: " + chr(keybindList[1])), 50,140, 160,50, green,bright_green, clear_decals_key)
-        button(("Pause: " + chr(keybindList[0])), 50,200, 160,50, green,bright_green, pause_hotkey)
-        button(("Clear Stats: " + chr(keybindList[2])), 50, 260, 160,50, green, bright_green, reset_stats_hotkey)
-
-        pygame.display.update()
-        clock.tick(60)
-
-
 def settings():
     global gameDisplay, fullscreen_check
     settings = True
@@ -1379,10 +1350,8 @@ def settings():
                 pygame.quit
                 quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                button2(100, 650, 100, 50, gamemodesDict[gamemode])
-                button2(300, 650, 100, 50, keyBindScreen)
                 button2(200, 190, 100, 50, music_change)
-
+                buttonMc("Back", 100, 650,gamemodesDict[gamemode])
                 pos = pygame.mouse.get_pos()
                 if musicsound.button_rect.collidepoint(pos):
                     musicsound.hit = True
@@ -1404,11 +1373,14 @@ def settings():
         gameDisplay.blit(brick_wall,(0,0))
         fontsmall.render_to(gameDisplay, (80, 70), "Settings", (black))
         fontsmall.render_to(gameDisplay, (17, 148), "Music Volume: ")
+        fontsmall.render_to(gameDisplay, (550, 70), "Keybinds")
         buttonMc("Back", 100, 650)
-        buttonMc("Keybinds", 300, 650)
         buttonMc("Change Song", 200, 190)
+        buttonMc(("Clear Decals: " + chr(keybindList[1])), 550,140, clear_decals_key)
+        buttonMc(("Pause: " + chr(keybindList[0])), 550, 200, pause_hotkey)
+        buttonMc(("Clear Stats: " + chr(keybindList[2])), 550, 260, reset_stats_hotkey)
         musicsound.draw('')
-        fontsmall.render_to(gameDisplay, (190,150), str(round(musicsound.val* 100)), (black))
+        fontsmall.render_to(gameDisplay, (190, 150), str(round(musicsound.val* 100)), black)
         pygame.display.update()
         clock.tick(60)
 
@@ -1569,6 +1541,8 @@ def game_loop_practice():
                         button2(600, y_practice_value + 630, 180, 50, change_target)
                         button2(800, y_practice_value + 570, 180, 50, change_hitmarker)
                         button2(600, y_practice_value + 570, 180, 50, change_flash)
+                        button2(100, 650, 100, 50, game_intro)
+
                     button2(600, y_practice_value + 80, 80, 50, changeGameDown)
                     button2(900, y_practice_value + 80, 80, 50, changeGameUp)
                     pos = pygame.mouse.get_pos()
@@ -1583,8 +1557,7 @@ def game_loop_practice():
         for s in slides:
             if s.hit:
                 s.move()
-        gameDisplay.fill(gray)
-        button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
+        gameDisplay.blit(brick_wall, (0, 0))
         blit_labels_prac()
         recoilamp.draw('')
         for x in range(len(hitmarkers)):
@@ -1763,10 +1736,10 @@ def blit_labels_flick():
     xlist = [200,370,540,710]
     for x in xlist:
         gameDisplay.blit(minecraft_button, (x, 580))
-    fontminecraft.render_to(gameDisplay, (540, 580), "Hits: " + str(hits), black)
-    fontminecraft.render_to(gameDisplay, (200, 580), 'Tick: ' + str(int(valList[1])), black)
-    fontminecraft.render_to(gameDisplay, (710, 580), "Misses: " + str(misses), black)
-    fontminecraft.render_to(gameDisplay, (370, 580), 'Time ' + str(time_minute) + ':' + str(time_secondstr), black)
+    fontsmall.render_to(gameDisplay, (540, 580), "Hits: " + str(hits), black)
+    fontsmall.render_to(gameDisplay, (200, 580), 'Tick: ' + str(int(valList[1])), black)
+    fontsmall.render_to(gameDisplay, (710, 580), "Misses: " + str(misses), black)
+    fontsmall.render_to(gameDisplay, (370, 580), 'Time ' + str(time_minute) + ':' + str(time_secondstr), black)
 
 def blit_labels_idle():
     gameDisplay.fill(gray)
@@ -1793,9 +1766,10 @@ def blit_labels_idle():
     pygame.display.update()
 
 def blit_labels_prac():
+    #button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
     button('', 25, 50, 170, 180, peach, peach, None, brown)
     fontsmall.render_to(gameDisplay, (140,72), str(int(hitNum)), black)
-    button("Back", 100, 650, 100, 50, green, bright_green, game_intro)
+    button("Back", 100, 650, 100, 50, green, bright_green)
     fontsmall.render_to(gameDisplay, (120,360), str(round(recoilamp.val * 100)), black)
     recoilamp.draw('')
     fontsmall.render_to(gameDisplay, (20, 320), "Recoil Scale", black)
