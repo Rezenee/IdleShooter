@@ -1287,12 +1287,12 @@ def paused():
                         gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
                         fullscreen_check = 1
         # This makes the game gray
-        gameDisplay.fill(gray)
+        gameDisplay.blit(brick_wall, (0,0))
         fontlarge.render_to(gameDisplay, (150, 300), "You are Paused", (black))
 
         # The two buttons on this page, remember not to put the () in the function being called
-        button("Continue", 320, 450, 150, 50, green, bright_green, unpause)
-        button("Quit", 620, 450, 100, 50, red, bright_red, quitgame)
+        buttonMc("Continue", 320, 450,unpause)
+        buttonMc("Quit", 620, 450, quitgame)
         # mouse = pygame.mouse.get_pos()
 
         # Needed for the game to run
@@ -1307,6 +1307,10 @@ def changeVal(keyIndex):
     global valList
     tempstr = str(valList[keyIndex])
     while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT():
+                quit()
+        print("hi")
         inkey = get_key()
         if inkey == K_BACKSPACE:
             tempstr = tempstr[:-1]
@@ -1318,12 +1322,14 @@ def changeVal(keyIndex):
         try:
             valList[keyIndex] = int(tempstr)
         except ValueError:
-            valList[keyIndex]= 0
+            valList[keyIndex] = 0
         blit_labels_flick()
+
         pygame.display.update()
 
 
-def change_start_tick(): changeVal(0)
+def change_start_tick():
+    changeVal(0)
 def change_end_tick(): changeVal(2)
 def change_tick_interval(): changeVal(3)
 def change_live_count(): changeVal(4)
@@ -1536,7 +1542,7 @@ def game_loop_practice():
                         fullscreen_check = 1
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    button2(250, 650, 50, 50, settings)
+                    button2(400, 650, 50, 50, settings)
                     if check_in_dropdown == 0:
                         button2(600, y_practice_value + 630, 180, 50, change_target)
                         button2(800, y_practice_value + 570, 180, 50, change_hitmarker)
@@ -1565,13 +1571,7 @@ def game_loop_practice():
 
 
         if game == 0:
-            button("RUST", 700, y_practice_value + 80, 180, 50, red, red, None, black)
 
-            buttonstate2(weaponSelectedPractice[1], "AK Selected", "Select AK", 800, y_practice_value + 150,
-                         180, 50, peach, peach, dark_peach, peach, akgunbuy, black)
-
-            buttonstate2(weaponSelectedPractice[2], "MP5 Selected", "Select MP5", 600, y_practice_value + 210, 180, 50,
-                         peach, peach, dark_peach, peach, mp5gunbuy, black)
 
             # Checks if the weapon is selected if it is call the recoil for it.
             if weaponSelectedPractice[1] == 1:
@@ -1580,33 +1580,6 @@ def game_loop_practice():
                 mp5rust()
 
         if game == 1:
-            button("CSGO", 700, y_practice_value+ 80, 180, 50, red, red, None,black)
-
-            buttonstate2(weaponSelectedPractice[3], "AK47 Selected", "Select AK47", 800, y_practice_value + 150,
-                         180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
-            buttonstate2(weaponSelectedPractice[4], "M4A4 Selected", "Select M4A4", 600, y_practice_value + 210,
-                         180, 50, peach, peach, dark_peach, peach, m4csgunbuy, black)
-            buttonstate2(weaponSelectedPractice[5], "M4A1 Selected", "Select M4A1", 800, y_practice_value + 210,
-                         180, 50, peach, peach, dark_peach, peach, m1csgunbuy, black)
-            buttonstate2(weaponSelectedPractice[10], "SG553 Selected", "Select SG553", 600, y_practice_value + 330,
-                         180, 50, peach, peach, dark_peach, peach, kreiggunbuy, black)
-            buttonstate2(weaponSelectedPractice[7], "AUG Selected", "Select AUG", 600, y_practice_value + 270,
-                         180, 50, peach, peach, dark_peach, peach, auggunbuy, black)
-            buttonstate2(weaponSelectedPractice[9], "AUG Scoped", "AUG Scoped", 800, y_practice_value + 270,
-                         180, 50, peach, peach, dark_peach, peach, augscopedgunbuy, black)
-            buttonstate2(weaponSelectedPractice[6], "FAMAS Selected", "Select FAMAS", 600, y_practice_value + 390,
-                         180, 50, peach, peach, dark_peach, peach, famasgunbuy, black)
-            buttonstate2(weaponSelectedPractice[8], "GALIL Selected", "Select GALIL", 800, y_practice_value + 330,
-                         180, 50, peach, peach, dark_peach, peach, galilgunbuy, black)
-            buttonstate2(weaponSelectedPractice[12], "MP7 Selected", "Select MP7", 600, y_practice_value + 510,
-                         180, 50, peach, peach, dark_peach, peach, mp7gunbuy, black)
-            buttonstate2(weaponSelectedPractice[13], "P90 Selected", "Select P90", 800, y_practice_value + 390,
-                         180, 50, peach, peach, dark_peach, peach, p90gunbuy, black)
-            buttonstate2(weaponSelectedPractice[14], "MAC10 Selected", "Select MAC10", 600, y_practice_value + 450,
-                         180, 50, peach, peach, dark_peach, peach, mac10gunbuy, black)
-            buttonstate2(weaponSelectedPractice[11], "UMP Selected", "Select UMP", 800, y_practice_value + 450,
-                         180, 50, peach, peach, dark_peach, peach, umpgunbuy, black)
-
             for i in range(12):
                 if weaponSelectedPractice[i + 3] == 1:
                     csguncalldict[str(i)]()
@@ -1634,7 +1607,6 @@ def game_loop_flickPractice():
     misses = 0
     hits = 0
     lives = valList[4]
-    clock.tick(0)
     blit_labels_flick()
     while not gameExit:
         pygame.display.flip()
@@ -1704,7 +1676,7 @@ def game_loop_flickPractice():
 
             if target_time <= 20:
                 target_time = 20
-            dt = clock.tick(0)
+            dt = clock.tick(80)
             target_reset += dt
             tick_reset += dt
             target_shape_reset += dt
@@ -1736,10 +1708,10 @@ def blit_labels_flick():
     xlist = [200,370,540,710]
     for x in xlist:
         gameDisplay.blit(minecraft_button, (x, 580))
-    fontsmall.render_to(gameDisplay, (540, 580), "Hits: " + str(hits), black)
-    fontsmall.render_to(gameDisplay, (200, 580), 'Tick: ' + str(int(valList[1])), black)
-    fontsmall.render_to(gameDisplay, (710, 580), "Misses: " + str(misses), black)
-    fontsmall.render_to(gameDisplay, (370, 580), 'Time ' + str(time_minute) + ':' + str(time_secondstr), black)
+    fontsmall.render_to(gameDisplay, (570, 594), "Hits: " + str(hits), black)
+    fontsmall.render_to(gameDisplay, (230, 594), 'Tick: ' + str(int(valList[1])), black)
+    fontsmall.render_to(gameDisplay, (740, 594), "Misses: " + str(misses), black)
+    fontsmall.render_to(gameDisplay, (400, 594), 'Time ' + str(time_minute) + ':' + str(time_secondstr), black)
 
 def blit_labels_idle():
     gameDisplay.fill(gray)
@@ -1769,15 +1741,15 @@ def blit_labels_prac():
     #button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
     button('', 25, 50, 170, 180, peach, peach, None, brown)
     fontsmall.render_to(gameDisplay, (140,72), str(int(hitNum)), black)
-    button("Back", 100, 650, 100, 50, green, bright_green)
+    button("Back", 70, 650, 100, 50, dark_peach, peach, None, black)
+    button("Clear Hitmarkers", 200, 650, 170, 50, dark_peach, peach, clearHitmakers, black)
     fontsmall.render_to(gameDisplay, (120,360), str(round(recoilamp.val * 100)), black)
     recoilamp.draw('')
     fontsmall.render_to(gameDisplay, (20, 320), "Recoil Scale", black)
     fontsmall.render_to(gameDisplay, (80, 70), "Hits:", black)
     fontsmall.render_to(gameDisplay, (46, 100), "Misses:", black)
     fontsmall.render_to(gameDisplay, (38, 125), "Percent:", black)
-    gameDisplay.blit(gear, (250, 650))
-    button("Clear Hitmarkers", 350, 650, 170, 50, green, bright_green, clearHitmakers)
+    gameDisplay.blit(gear, (400, 650))
     gameDisplay.blit(targetimg, (200, 150))
     fontsmall.render_to(gameDisplay, (140, 100), str(int(miss_num)), black)
     fontsmall.render_to(gameDisplay, (140, 125), str(hit_percent_label), black)
@@ -1800,7 +1772,41 @@ def blit_labels_prac():
     if sprite_change_list[2] == 1:
         button("Realistic Flash", 600, y_practice_value + 620, 180, 50, dark_peach, peach, make_flash_flash, black)
         button("Nothing", 600, y_practice_value + 670, 180, 50, dark_peach, peach, make_flash_nothing, black)
+    if game == 0:
+        button("RUST", 700, y_practice_value + 80, 180, 50, red, red, None, black)
 
+        buttonstate2(weaponSelectedPractice[1], "AK Selected", "Select AK", 800, y_practice_value + 150,
+                     180, 50, peach, peach, dark_peach, peach, akgunbuy, black)
+
+        buttonstate2(weaponSelectedPractice[2], "MP5 Selected", "Select MP5", 600, y_practice_value + 210, 180, 50,
+                     peach, peach, dark_peach, peach, mp5gunbuy, black)
+    if game == 1:
+        button("CSGO", 700, y_practice_value + 80, 180, 50, red, red, None, black)
+
+        buttonstate2(weaponSelectedPractice[3], "AK47 Selected", "Select AK47", 800, y_practice_value + 150,
+                     180, 50, peach, peach, dark_peach, peach, akcsgunbuy, black)
+        buttonstate2(weaponSelectedPractice[4], "M4A4 Selected", "Select M4A4", 600, y_practice_value + 210,
+                     180, 50, peach, peach, dark_peach, peach, m4csgunbuy, black)
+        buttonstate2(weaponSelectedPractice[5], "M4A1 Selected", "Select M4A1", 800, y_practice_value + 210,
+                     180, 50, peach, peach, dark_peach, peach, m1csgunbuy, black)
+        buttonstate2(weaponSelectedPractice[10], "SG553 Selected", "Select SG553", 600, y_practice_value + 330,
+                     180, 50, peach, peach, dark_peach, peach, kreiggunbuy, black)
+        buttonstate2(weaponSelectedPractice[7], "AUG Selected", "Select AUG", 600, y_practice_value + 270,
+                     180, 50, peach, peach, dark_peach, peach, auggunbuy, black)
+        buttonstate2(weaponSelectedPractice[9], "AUG Scoped", "AUG Scoped", 800, y_practice_value + 270,
+                     180, 50, peach, peach, dark_peach, peach, augscopedgunbuy, black)
+        buttonstate2(weaponSelectedPractice[6], "FAMAS Selected", "Select FAMAS", 600, y_practice_value + 390,
+                     180, 50, peach, peach, dark_peach, peach, famasgunbuy, black)
+        buttonstate2(weaponSelectedPractice[8], "GALIL Selected", "Select GALIL", 800, y_practice_value + 330,
+                     180, 50, peach, peach, dark_peach, peach, galilgunbuy, black)
+        buttonstate2(weaponSelectedPractice[12], "MP7 Selected", "Select MP7", 600, y_practice_value + 510,
+                     180, 50, peach, peach, dark_peach, peach, mp7gunbuy, black)
+        buttonstate2(weaponSelectedPractice[13], "P90 Selected", "Select P90", 800, y_practice_value + 390,
+                     180, 50, peach, peach, dark_peach, peach, p90gunbuy, black)
+        buttonstate2(weaponSelectedPractice[14], "MAC10 Selected", "Select MAC10", 600, y_practice_value + 450,
+                     180, 50, peach, peach, dark_peach, peach, mac10gunbuy, black)
+        buttonstate2(weaponSelectedPractice[11], "UMP Selected", "Select UMP", 800, y_practice_value + 450,
+                     180, 50, peach, peach, dark_peach, peach, umpgunbuy, black)
 
 gamemodesDict = {"game_intro": game_intro, "game_loop_idle": game_loop_idle, "game_loop_practice": game_loop_practice}
 game_intro()
