@@ -35,36 +35,39 @@ dark_peach = (204, 104, 51)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 
-# Defines these as true
-baseSelectIdle = 1
 baseSelectPrac = 1
-
-
-upgrademultiplier = 1.2
-upgradecost = 10
-scoreNum = 99
-scoreAdd = 1
 hitNum = 0
 hitAdd = 1
 miss_num = 0
 hit_percent = 0
 hit_percent_label = 0
 y_practice_value = 0
-
-# minercaft_font = pygame.font.Font("Minecraft.ttf", 305)
+play = 0
+check_in_dropdown = 0
+game = 0
+pauseKey = 108
+reloadKey = 112
+resetStats = 121
+start_tick = 600
+current_tick = start_tick
+end_tick = 200
+ticks_per_decrease = 1
+lives = 3
+valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
+open_target_change = 0
+hitmarker_img_change = 0
+flash_img_change = 0
+sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change]
+keybindList = [pauseKey, reloadKey, resetStats]
+dictKeys = {0: K_0, 1: K_1, 2: K_2, 3: K_3, 4: K_4, 5: K_5, 6: K_6, 7: K_7, 8: K_8, 9: K_9}
 fontsmall = pygame.freetype.Font(None, 20)
 fontlarge = pygame.freetype.Font(None, 100)
 game_font = pygame.freetype.Font(None, 24)
 fontminecraft = pygame.freetype.Font("Minecraft.ttf", 24)
-
-upgradelabel = 'UPGRADE ($' + str(upgradecost) + ')'
-scoreLab = fontsmall.render_to(gameDisplay, (80, 70), "Score :", black)
-
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png")).convert_alpha()
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png')).convert_alpha()
-rainbow_target = pygame.image.load(os.path.join('images', 'target_colors.png')).convert_alpha()
+rainbow_target = pygame.image.load(os.path.join('images', 'theman.jpg')).convert()
 stick_img = pygame.image.load(os.path.join('images', 'homescreen.jpg')).convert()
-
 targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png')).convert_alpha()
 rangeimg = pygame.image.load(os.path.join('images', 'range.jpg')).convert()
 rangeimg = pygame.transform.scale(rangeimg, [964,440])
@@ -76,44 +79,36 @@ brick_wall_section = pygame.image.load(os.path.join('images', 'brick_wall.jpg'))
 brick_wall_section = pygame.transform.scale(brick_wall_section, [1024, 768])
 brick_wall = pygame.image.load(os.path.join('images', 'brick_wall.jpg')).convert()
 brick_wall = pygame.transform.scale(brick_wall, [1024, 768])
-
 mossy_button = pygame.image.load(os.path.join('images', 'mossy_button.jpg')).convert()
 mossy_button_large = mossy_button
 mossy_button = pygame.transform.scale(mossy_button, [160, 50])
 mossy_button_large = pygame.transform.scale(mossy_button_large, [166, 54])
-
-
 minecraft_button = pygame.image.load(os.path.join('images', 'minecraft_button.jpg')).convert()
 minecraft_buttonLarge = pygame.image.load(os.path.join('images', 'minecraft_button.jpg')).convert()
-
 minecraft_button = pygame.transform.scale(minecraft_button, [160, 50])
 minecraft_buttonLarge = pygame.transform.scale(minecraft_buttonLarge, [166, 54])
-
 minecraft_button_resp = pygame.image.load(os.path.join('images', '1.jpg')).convert()
 minecraft_button_title = pygame.image.load(os.path.join('images', 'deathscreen2.jpg')).convert()
 minecraft_button_resp = pygame.transform.scale(minecraft_button_resp, [1024, 768])
 minecraft_button_title = pygame.transform.scale(minecraft_button_title, [1024, 768])
-
-# button2(243, 415, 565, 55, game_loop_flickPractice)
-
-# csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
-# button('', 30, 30, 964, 470, brown, brown, None, black)
-
 hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png')).convert_alpha()
 musicnote = pygame.image.load(os.path.join('images', 'musicnote.png')).convert_alpha()
 musicnote = pygame.transform.scale(musicnote, [30, 30])
-
 gear = pygame.image.load(os.path.join('images', 'gear.png')).convert_alpha()
 weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png')).convert_alpha()
 weaponFlash = pygame.transform.scale(weaponFlash,[25,25])
 clock = pygame.time.Clock()
-gameDisplay.fill(gray)
-musicjazz = pygame.mixer.music.load(os.path.join('images', 'background.wav'))
-musicfire = pygame.mixer.music.load(os.path.join('images', 'background2.mp3'))
+musicjazz = pygame.mixer.music.load(os.path.join('images', 'alex_chew.mp3'))
+musicfire = pygame.mixer.music.load(os.path.join('images', 'alex_chew.mp3'))
 music_list = ['background.wav', 'background2.mp3']
 music_val = 1
 pygame.mixer.music.play(-1)
 font = pygame.font.SysFont("Verdana", 12)
+hitmarkers = []
+games = ["rust", "csgo"]
+global_time = 0
+
+
 def music_change():
     global music_val
     print(music_val)
@@ -124,32 +119,6 @@ def music_change():
         music_val = 0
     pygame.mixer.music.load(os.path.join('images', music_list[music_val]))
     pygame.mixer.music.play(-1)
-
-
-hitmarkers = []
-games = ["rust", "csgo"]
-# This makes a variable that is called to check what game it is.
-game = 0
-
-
-pauseKey = 108
-reloadKey = 112
-resetStats = 121
-
-start_tick = 600
-current_tick = start_tick
-end_tick = 200
-ticks_per_decrease = 1
-lives = 3
-valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
-
-open_target_change = 0
-hitmarker_img_change = 0
-flash_img_change = 0
-sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change]
-
-
-global_time = 0
 
 def get_key():
       while 1:
@@ -166,8 +135,6 @@ class gun(object):
         self.gunSelectIdle = gunSelectIdle
         self.gunSelectPrac = gunSelectPrac
         self.gunBought = gunBought
-
-# First variable = cost, second = selectIdle, third = selectprac, fourth = gunbought all the states of them, 0 at the start
 
 
 ak = gun(100, 0, 0, 0)
@@ -186,17 +153,12 @@ umpcs = gun(100,0,0,0)
 mp7cs = gun(100,0,0,0)
 p90cs = gun(100,0,0,0)
 mac10cs = gun(100,0,0,0)
-bizoncs = gun(100,0,0,0)
 
-weaponSelectedIdle = [baseSelectIdle, ak.gunSelectIdle, mp5.gunSelectIdle, akcs.gunSelectIdle, m4cs.gunSelectIdle, m1cs.gunSelectIdle, famascs.gunSelectIdle
-                      , augcs.gunSelectIdle, galilcs.gunSelectIdle, augscopedcs.gunSelectIdle, kreigcs.gunSelectIdle, umpcs.gunSelectIdle
-                      , mp7cs.gunSelectIdle, p90cs.gunSelectIdle, mac10cs.gunSelectIdle, bizoncs.gunSelectIdle]
 weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
                           , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
                           , mp7cs.gunSelectPrac, p90cs.gunSelectPrac, mac10cs.gunSelectPrac]
 weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought,
-                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought, mac10cs.gunBought
-                , bizoncs.gunBought]
+                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought, mac10cs.gunBought]
 
 
 class Slider():
@@ -268,41 +230,28 @@ recoilamp = Slider("", .5, 1, 0, 15, 350)
 slides = [musicsound,recoilamp]
 
 
-
-def gunbuy(cost, weaponBoughtNum, idleNum, pracNum):
+def gunbuy(pracNum):
     global scoreNum
-    if gamemode == "game_loop_idle":
-        if int(scoreNum) >= cost and weaponbought[weaponBoughtNum] == 0:
-            weaponbought[weaponBoughtNum] = 1
-            scoreNum -= ak.cost
-        if weaponbought[weaponBoughtNum] == 1:
-            for i in range(len(weaponSelectedIdle)):
-                weaponSelectedIdle[i] = 0
-            weaponSelectedIdle[idleNum] = 1
-    if gamemode == "game_loop_practice":
-        for i in range(len(weaponSelectedPractice)):
-            weaponSelectedPractice[i] = 0
-        weaponSelectedPractice[pracNum] = 1
+    for i in range(len(weaponSelectedPractice)):
+        weaponSelectedPractice[i] = 0
+    weaponSelectedPractice[pracNum] = 1
 
 
-def mp5gunbuy(): gunbuy(mp5.cost, 0, 2, 2)
-def akgunbuy(): gunbuy(ak.cost, 0, 1, 1)
-def akcsgunbuy(): gunbuy(akcs.cost, 0, 3, 3)
-def m4csgunbuy(): gunbuy(m4cs.cost,0,4,4)
-def m1csgunbuy(): gunbuy(m1cs.cost,0,5,5)
-def famasgunbuy(): gunbuy(famascs.cost,0,6,6)
-def auggunbuy(): gunbuy(augcs.cost,0,7,7)
-def augscopedgunbuy(): gunbuy(augscopedcs.cost,0,9,9)
-def galilgunbuy(): gunbuy(galilcs.cost,0,8,8)
-def kreiggunbuy(): gunbuy(kreigcs.cost,0,10,10)
-def umpgunbuy(): gunbuy(umpcs.cost,0,11,11)
-def mp7gunbuy(): gunbuy(mp7cs.cost,0,12,12)
-def p90gunbuy(): gunbuy(p90cs.cost,0,13,13)
-def mac10gunbuy(): gunbuy(mac10cs.cost,0,14,14)
-def bizongunbuy(): gunbuy(bizoncs.cost,0,15,15)
-
-
-def target(xx, yy): gameDisplay.blit(targetimg, (xx, yy))
+def mp5gunbuy(): gunbuy(2)
+def akgunbuy(): gunbuy(1)
+def akcsgunbuy(): gunbuy(3)
+def m4csgunbuy(): gunbuy(4)
+def m1csgunbuy(): gunbuy(5)
+def famasgunbuy(): gunbuy(6)
+def auggunbuy(): gunbuy(7)
+def augscopedgunbuy(): gunbuy(9)
+def galilgunbuy(): gunbuy(8)
+def kreiggunbuy(): gunbuy(10)
+def umpgunbuy(): gunbuy(11)
+def mp7gunbuy(): gunbuy(12)
+def p90gunbuy(): gunbuy(13)
+def mac10gunbuy(): gunbuy(14)
+def bizongunbuy(): gunbuy(15)
 
 
 def quitgame(): pygame.quit, quit()
@@ -340,11 +289,8 @@ def buttonstate(gunselect, gunbought, selectedmsg, boughtmsg, buyingmsg, brokems
     elif gunbought == 0 and int(scoreNum) >= guncost:
         button(buyingmsg, x, y, w, h, icbuying, acbuying, action,bordercolor)
 
-for i in range(len(weaponSelectedPractice)):
-    weaponSelectedPractice[i] = 0
-weaponSelectedPractice[2] = 1
 
-def buttonMc(msg, x, y,action=None, block_type = 'stone'):
+def buttonMc(msg, x, y,action=None, block_type='stone'):
     # this gets the mouse's position
     mouse = pygame.mouse.get_pos()
     # This gets when the mouse clicks, it makes a list like this: [1,1,1]
@@ -353,7 +299,6 @@ def buttonMc(msg, x, y,action=None, block_type = 'stone'):
     # If mouse[0] or left click is between the box then draw the active color
     if block_type == 'mossy':
         if x + 160 > mouse[0] > x and y + 50 > mouse[1] > y:
-            #gameDisplay.blit(deathscreen,(x,y))
             gameDisplay.blit(mossy_button_large, (x-3,y-2))
             # If the click is left then do the action that is called
             if click[0] == 1 and action != None:
@@ -363,7 +308,6 @@ def buttonMc(msg, x, y,action=None, block_type = 'stone'):
             gameDisplay.blit(mossy_button, (x,y))
     if block_type == 'stone':
         if x + 160 > mouse[0] > x and y + 50 > mouse[1] > y:
-            #gameDisplay.blit(deathscreen,(x,y))
             gameDisplay.blit(minecraft_buttonLarge, (x-3,y-2))
             # If the click is left then do the action that is called
             if click[0] == 1 and action != None:
@@ -413,17 +357,11 @@ def button(msg, x, y, w, h, ic, ac, action=None, bordercolor = None):
     if bordercolor != None:
         pygame.draw.rect(gameDisplay,bordercolor,(x,y,w,h),2)
 
+
 def baseselect2():
-    global weaponSelectedIdle
-    global weaponSelectedPractice
-    if gamemode == "game_loop_idle":
-        for i in range(len(weaponSelectedIdle)):
-            weaponSelectedIdle[i] = 0
-        weaponSelectedIdle[0] = 1
-    if gamemode == "game_loop_practice":
-        for i in range(len(weaponSelectedPractice)):
-            weaponSelectedPractice[i] = 0
-        weaponSelectedPractice[0] = 1
+    for i in range(len(weaponSelectedPractice)):
+        weaponSelectedPractice[i] = 0
+    weaponSelectedPractice[0] = 1
 
 
 def changeGameUp():
@@ -432,57 +370,27 @@ def changeGameUp():
     global weaponSelectedPractice
     global weaponSelectedIdle
     game += 1
-    if gamemode == "game_loop_idle":
-        for i in range(len(weaponSelectedIdle)):
-            weaponSelectedIdle[i] = 0
-        weaponSelectedIdle[0] = 1
-    if gamemode == "game_loop_practice":
-        for i in range(len(weaponSelectedPractice)):
-            weaponSelectedPractice[i] = 0
-        weaponSelectedPractice[0] = 1
+    for i in range(len(weaponSelectedPractice)):
+        weaponSelectedPractice[i] = 0
+    weaponSelectedPractice[0] = 1
     if game >= len(games):
         game = 0
-
-
 def changeGameDown():
     global game
     global games
     global weaponSelectedPractice
     global weaponSelectedIdle
     game -= 1
-    if gamemode == "game_loop_idle":
-        for i in range(len(weaponSelectedIdle)):
-            weaponSelectedIdle[i] = 0
-        weaponSelectedIdle[0] = 1
-    if gamemode == "game_loop_practice":
-        for i in range(len(weaponSelectedPractice)):
-            weaponSelectedPractice[i] = 0
-        weaponSelectedPractice[0] = 1
+    for i in range(len(weaponSelectedPractice)):
+        weaponSelectedPractice[i] = 0
+    weaponSelectedPractice[0] = 1
     if game == -1:
         game = len(games) - 1
-
-
-def base():
-    global scoreNum
-    global hitNum
-    global hitAdd
-    global scoreAdd
-    if gamemode == "game_loop_idle":
-        scoreNum = int(scoreNum) + scoreAdd
-    if gamemode == "game_loop_practice":
-        hitNum = int(hitNum) + hitAdd
 
 
 def clearHitmakers():
     global hitmarkers
     hitmarkers = []
-
-# Stops going left after 7 bullets, goes straight up for 1
-# goes right for 3
-# goes straight up for 1
-# goes left again for 5 bulletsn
-# satys in about the same position for 3 bullets
-# moves right for the rust of the spray
 
 
 mp5pos = (
@@ -549,7 +457,6 @@ AKPOS = (
  (-17, -25),
  (0, 0),
 )
-
 AKPOSCS = (
  (6, -10),
  (-5, -26),
@@ -582,7 +489,6 @@ AKPOSCS = (
  (20, 0),
  (0, 0),
 )
-
 M4POSCS = (
  (-3, -15),
  (1, -17),
@@ -615,7 +521,6 @@ M4POSCS = (
  (-8, 2),
  (0, 0),
 )
-
 M1POSCS = (
  (-2, -10),
  (2, -10),
@@ -638,7 +543,6 @@ M1POSCS = (
  (6, 3),
  (0, 0),
 )
-
 FAMASPOSCS = (
  (9, -8),
  (-2, -8),
@@ -666,7 +570,6 @@ FAMASPOSCS = (
  (-30, 23),
  (0, 0),
 )
-
 AUGPOSCS = (
  (-8, -12),
  (0, -25),
@@ -699,7 +602,6 @@ AUGPOSCS = (
  (-10, 3),
  (0, 0),
 )
-
 AUGSCOPEDPOSCS = (
  (-6, -8),
  (3, -8),
@@ -732,7 +634,6 @@ AUGSCOPEDPOSCS = (
  (3, -2),
  (0, 0),
 )
-
 GALILPOSCS = (
  (-8, -9),
  (5, -9),
@@ -802,7 +703,6 @@ KREIGPOSCS = (
     (62, 8),
     (0, 0),
 )
-
 UMPPOSCS = (
  (2, -13),
  (7, -16),
@@ -830,7 +730,6 @@ UMPPOSCS = (
  (7, 3),
  (0, 0),
 )
-
 MP7POSCS = (
     (0, -8),
     (2, -7),
@@ -863,7 +762,6 @@ MP7POSCS = (
     (1, -6),
     (0, 0),
 )
-
 P90POSCS = (
    (6, -7),
    (-1, -8),
@@ -916,7 +814,6 @@ P90POSCS = (
    (-9, 3),
    (0, 0),
 )
-
 MAC10POSCS = (
     (9, -6),
     (3, -7),
@@ -950,112 +847,12 @@ MAC10POSCS = (
     (0, 0),
 )
 
-BIZONPOSCS = (
-    (2, -9), #2
-    (5, -6), #3
-    (7, -15), #4
-    (15, -24), #5
-    (25, -29), #6
-    (-6, -39), #7
-    (-18, -38), #8
-    (-1, -33), #9
-    (-37, -11), #10
-    (-28, -10), #11
-    (-11, -17),
-    (-28, -4),
-    (13, -15),
-    (51, 2),
-    (0, -6),#16
-    (-25, 0),
-    (-12, 0),
-    (8, -6),
-    (-13, -11),
-    (-19, -4), #21
-    (500, 1),
-    (500, -15),
-    (500, -15),
-    (500, -10),
-    (500, 5), #26
-    (500, 5),
-    (500, -12),
-    (500, -8),
-    (500, 8),
-    (500, 0), #31
-    (500, -8),
-    (500, -7),
-    (500, -6),
-    (500, -46),
-    (500, -52), #36
-    (500, -56),
-    (500, -23),
-    (500, -27),
-    (500, -20),
-    (500, -12), #41
-    (500, -8),
-    (500, -7),
-    (500, -11),
-    (500, -17),
-    (500, 7),
-    (500, 29), #47
-    (500, 13),
-    (500, 5),
-    (500, -6),
-    (500, 9),
-    (500, 1), #52
-    (500, -15),
-    (500, -15),
-    (500, -10),
-    (500, 5),
-    (500, 5), #57
-    (500, -12), #58
-    (500, -8), #59
-    (500, 8), #60
-    (500, 0), #61
-    (500, -8), #62
-    (500, 8), #63
-    (500, 0), #64
-    (500, -8),
 
-)
-
-dummypos = (
-    (500, -8),
-    (500, -7),
-    (500, -6),
-    (500, -46),
-    (500, -52),
-    (500, -56),
-    (500, -23),
-    (500, -27),
-    (500, -20),
-    (500, -12),
-    (500, -8),
-    (500, -7),
-    (500, -11),
-    (500, -17),
-    (500, 7),
-    (500, 29),
-    (500, 13),
-    (500, 5),
-    (500, -6),
-    (500, 9),
-    (500, 1),
-    (500, -15),
-    (500, -15),
-    (500, -10),
-    (500, 5),
-    (500, 5),
-    (500, -12),
-    (500, -8),
-    (500, 8),
-    (500, 0),
-)
 def makeGunStart(GUNPOS,sleepTime):
     global scoreNum, hitNum, hitmarkers, miss_num, hit_percent, hit_percent_label
     click = pygame.mouse.get_pressed()
     x, y = pygame.mouse.get_pos()
     if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
-        #0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 put this back when you want it tarrget only
         for dx, dy in GUNPOS:
             recoilchange = recoilamp.val * 2
             dx *= recoilchange
@@ -1085,44 +882,16 @@ def makeGunStart(GUNPOS,sleepTime):
                 gameDisplay.blit(hitmarker, (hitmarkers[z][0], hitmarkers[z][1]))
             gameDisplay.blit(weaponFlash, (x - 12, y - 12))
             if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
-                if gamemode == "game_loop_idle":
-                    scoreNum += scoreAdd
-                    hit_percent = hitNum / (scoreNum + miss_num)
-                    hit_percent_label = round(hit_percent,2)
-                    if int(scoreNum) >= upgradecost:
-                        button(upgradelabel, 600, 90, 180, 50, green, bright_green)
-                        button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green)
-                    if int(scoreNum) < upgradecost:
-                        button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red)
-                elif gamemode == "game_loop_practice":
-                    hitNum += hitAdd
-                    hit_percent = hitNum / (hitNum + miss_num)
-                    hit_percent_label = round(hit_percent,2)
+                hitNum += hitAdd
+                hit_percent = hitNum / (hitNum + miss_num)
+                hit_percent_label = round(hit_percent,2)
             else:
-                if gamemode == "game_loop_idle":
-                    miss_num += 1
-                    hit_percent = miss_num / (scoreNum + miss_num)
-                    hit_percent_label = round(hit_percent,2)
-                    if int(scoreNum) >= upgradecost:
-                        button(upgradelabel, 600, 90, 180, 50, green, bright_green)
-                        button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green)
-                    if int(scoreNum) < upgradecost:
-                        button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red)
-                elif gamemode == "game_loop_practice":
-                    miss_num += 1
-                    hit_percent = hitNum / (hitNum + miss_num)
-                    hit_percent_label = round(hit_percent,2)
+                miss_num += 1
+                hit_percent = hitNum / (hitNum + miss_num)
+                hit_percent_label = round(hit_percent,2)
 
             pygame.display.update()
             time.sleep(sleepTime)
-
-def clear_stats():
-    global miss_num, hit_percent, hitNum, scoreNum, hit_percent_label
-    miss_num = 0
-    hitNum = 0
-    scoreNum = 0
-    hit_percent = 0
-    hit_percent_label = 0
 
 
 def akrust(): makeGunStart(AKPOS,.125)
@@ -1145,60 +914,14 @@ csguncalldict = {'0': akcscall, '1': m4cscall, '2': m1cscall, '3': famascscall, 
              '5': galilcscall, '6': augscopedcscall, '7': kreigcscall, '8': umpcscall,
              '9': mp7cscall, '10': p90cscall, '11': mac10cscall}
 
+def clear_stats():
+    global miss_num, hit_percent, hitNum, scoreNum, hit_percent_label
+    miss_num = 0
+    hitNum = 0
+    scoreNum = 0
+    hit_percent = 0
+    hit_percent_label = 0
 
-def upgradeall():
-    global scoreNum
-    global scoreAdd
-    global upgradecost
-    global upgradelabel
-    while int(scoreNum) >= upgradecost:
-        scoreAdd += 1
-        scoreNum -= upgradecost
-        upgradecost = upgradecost * upgrademultiplier
-        upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
-
-
-def upgradebase():
-    global scoreNum
-    global scoreAdd
-    global upgradecost
-    global upgradelabel
-    if int(scoreNum) >= upgradecost:
-        scoreAdd += 1
-        scoreNum -= upgradecost
-        upgradecost = upgradecost * upgrademultiplier
-        upgradelabel = 'UPGRADE ($' + str(int(upgradecost)) + ')'
-
-# valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
-def button(msg, x, y, w, h, ic, ac, action=None, bordercolor = None):
-    # this gets the mouse's position
-    mouse = pygame.mouse.get_pos()
-    # This gets when the mouse clicks, it makes a list like this: [1,1,1]
-    # left, middle, right, 1 is active, 0 is inactive
-    click = pygame.mouse.get_pressed()
-
-    # If mouse[0] or left click is between the box then draw the active color
-    if x + w > mouse[0] > x and y + h > mouse[1] > y:
-        pygame.draw.rect(gameDisplay, ac, (x, y, w, h))
-
-        # If the click is left then do the action that is called
-        if click[0] == 1 and action != None:
-            action()
-    # If not draw the box with  the inactive color.
-    else:
-        pygame.draw.rect(gameDisplay, ic, (x, y, w, h))
-
-   # This calls a small text. It goes the font then font size
-    smallText = pygame.font.Font("freesansbold.ttf", 20)
-
-    # no clue just do it
-    textSurf, textRect = text_objects(msg, smallText)
-    # This makes the text in the center of the button
-    textRect.center = ((x + (w / 2)), (y + (h / 2)))
-    # Draws something on screen
-    gameDisplay.blit(textSurf, textRect)
-    if bordercolor != None:
-        pygame.draw.rect(gameDisplay,bordercolor,(x,y,w,h),2)
 
 
 def deathScreen():
@@ -1249,7 +972,6 @@ def game_intro():
                 pygame.quit
                 quit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                button2(80, 530, 140, 50, game_loop_idle)
                 button2(80, 590, 140, 50, game_loop_practice)
                 button2(80, 650, 140, 50, game_loop_flickPractice)
             if event.type == pygame.KEYDOWN:
@@ -1261,15 +983,14 @@ def game_intro():
                         gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
                         fullscreen_check = 1
 
-        gameDisplay.blit(homescreen,(0,0))
+        gameDisplay.blit(homescreen, (0, 0))
 
-        button2(250,650,50,50,settings)
-        gameDisplay.blit(gear, (250,650))
-        buttonMc("Play Game", 80, 530, None, 'mossy')
+        button2(250, 650, 50, 50, settings)
+        gameDisplay.blit(gear, (250, 650))
         buttonMc("Play Practice", 80, 590, None, 'mossy')
         buttonMc('Flick Practice', 80, 650, None, 'mossy')
         pygame.display.update()
-        clock.tick(15)
+
 
 def unpause():
     global pause
@@ -1277,7 +998,7 @@ def unpause():
 
 
 def paused():
-    global gameDisplay,fullscreen_check
+    global gameDisplay, fullscreen_check
     while pause:
         # Always put this so they can exit
         for event in pygame.event.get():
@@ -1292,31 +1013,19 @@ def paused():
                     else:
                         gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
                         fullscreen_check = 1
-        # This makes the game gray
-        gameDisplay.blit(brick_wall, (0,0))
-        fontlarge.render_to(gameDisplay, (150, 300), "You are Paused", (black))
+        gameDisplay.blit(brick_wall, (0, 0))
+        fontlarge.render_to(gameDisplay, (150, 300), "You are Paused", black)
 
-        # The two buttons on this page, remember not to put the () in the function being called
-        buttonMc("Continue", 320, 450,unpause)
+        buttonMc("Continue", 320, 450, unpause)
         buttonMc("Quit", 620, 450, quitgame)
-        # mouse = pygame.mouse.get_pos()
-
-        # Needed for the game to run
         pygame.display.update()
-        clock.tick(15)
 
-
-keybindList = [pauseKey, reloadKey, resetStats]
-dictKeys = {0: K_0, 1: K_1, 2: K_2, 3: K_3, 4: K_4, 5: K_5, 6: K_6, 7: K_7, 8: K_8, 9: K_9}
 
 def changeVal(keyIndex):
     global valList
     tempstr = str(valList[keyIndex])
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT():
-                quit()
-        print("hi")
+
         inkey = get_key()
         if inkey == K_BACKSPACE:
             tempstr = tempstr[:-1]
@@ -1334,11 +1043,12 @@ def changeVal(keyIndex):
         pygame.display.update()
 
 
-def change_start_tick():
-    changeVal(0)
+def change_start_tick(): changeVal(0)
 def change_end_tick(): changeVal(2)
 def change_tick_interval(): changeVal(3)
 def change_live_count(): changeVal(4)
+
+
 def changeKeyBind(keyIndex):
     global keybindList
     inkey = get_key()
@@ -1352,18 +1062,18 @@ def reset_stats_hotkey(): changeKeyBind(2)
 def clear_decals_key(): changeKeyBind(1)
 def pause_hotkey(): changeKeyBind(0)
 
+
 def settings():
     global gameDisplay, fullscreen_check
     settings = True
     while settings:
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit
                 quit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 button2(200, 190, 100, 50, music_change)
-                buttonMc("Back", 100, 650,gamemodesDict[gamemode])
+                buttonMc("Back", 100, 650, gamemodesDict[gamemode])
                 pos = pygame.mouse.get_pos()
                 if musicsound.button_rect.collidepoint(pos):
                     musicsound.hit = True
@@ -1384,7 +1094,7 @@ def settings():
                 pygame.mixer.music.set_volume(musicsound.val)
         gameDisplay.blit(brick_wall,(0,0))
         gameDisplay.blit(musicnote, (220,140))
-        fontsmall.render_to(gameDisplay, (80, 70), "Settings", (black))
+        fontsmall.render_to(gameDisplay, (80, 70), "Settings", black)
         fontsmall.render_to(gameDisplay, (17, 148), "Music Volume: ")
         fontsmall.render_to(gameDisplay, (550, 70), "Keybinds")
         buttonMc("Back", 100, 650)
@@ -1393,9 +1103,8 @@ def settings():
         buttonMc(("Pause: " + chr(keybindList[0])), 550, 200, pause_hotkey)
         buttonMc(("Clear Stats: " + chr(keybindList[2])), 550, 260, reset_stats_hotkey)
         musicsound.draw('')
-        fontsmall.render_to(gameDisplay, (190, 150), str(round(musicsound.val* 100)), black)
+        fontsmall.render_to(gameDisplay, (190, 150), str(round(musicsound.val * 100)), black)
         pygame.display.update()
-        clock.tick(60)
 
 
 def change_flash():
@@ -1407,6 +1116,8 @@ def change_flash():
         sprite_change_list[2] = 1
     else:
         sprite_change_list[2] = 0
+
+
 def change_hitmarker():
     global sprite_change_list, check_in_dropdown
     check_in_dropdown = 1
@@ -1417,17 +1128,7 @@ def change_hitmarker():
     else:
         sprite_change_list[1] = 0
 
-def makePlay():
-    global play
-    play = 1
-    game_loop_flickPractice()
-def makeStop():
-    global play
-    play = 0
-    game_loop_flickPractice()
-play = 0
 
-check_in_dropdown = 0
 def change_target():
     global open_target_change
     global check_in_dropdown
@@ -1439,42 +1140,65 @@ def change_target():
         sprite_change_list[0] = 1
     else:
         sprite_change_list[0] = 0
+
+
+def makePlay():
+    global play
+    play = 1
+    game_loop_flickPractice()
+
+
+def makeStop():
+    global play
+    play = 0
+    game_loop_flickPractice()
+
+
 def make_flash_flash():
     global weaponFlash, sprite_change_list, check_in_dropdown
     weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png'))
     weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
     sprite_change_list[2] = 0
     check_in_dropdown = 0
+
+
 def make_flash_nothing():
     global weaponFlash, sprite_change_list, check_in_dropdown
     weaponFlash = pygame.image.load(os.path.join('images', 'nothing.png'))
-
     sprite_change_list[2] = 0
     check_in_dropdown = 0
+
+
 def make_flash_flash2():
     global weaponFlash, sprite_change_list, check_in_dropdown
     weaponFlash = pygame.image.load(os.path.join('images', 'weapon_flash2.png'))
     weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
     sprite_change_list[2] = 0
     check_in_dropdown = 0
+
+
 def make_hitmarker_cod():
     global hitmarker, sprite_change_list, check_in_dropdown
     hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
-
     sprite_change_list[1] = 0
     check_in_dropdown = 0
+
+
 def make_hitmarker_hole():
     global hitmarker, sprite_change_list, check_in_dropdown
     hitmarker = pygame.image.load(os.path.join('images', 'bullethole.png'))
     hitmarker = pygame.transform.scale(hitmarker, [15, 15])
     sprite_change_list[1] = 0
     check_in_dropdown = 0
+
+
 def make_target_target():
     global targetimg, sprite_change_list, check_in_dropdown
     targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png'))
-
     sprite_change_list[0] = 0
     check_in_dropdown = 0
+
+
 def make_target_CS():
     global targetimg, sprite_change_list, check_in_dropdown
     targetimg = pygame.image.load(os.path.join('images', 'mp5.png'))
@@ -1482,56 +1206,8 @@ def make_target_CS():
     check_in_dropdown = 0
 
 
-def game_loop_idle():
-    global gameDisplay, fullscreen_check
-    global pause
-    global gamemode
-    gamemode = "game_loop_idle"
-    while not gameExit:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == keybindList[0]:
-                    pause = True
-                    paused()
-                if event.key == K_F11:
-                    if fullscreen_check == 1:
-                        gameDisplay = pygame.display.set_mode((xres, yres))
-                        fullscreen_check = 0
-                    else:
-                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
-                        fullscreen_check = 1
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    if int(scoreNum) < upgradecost:
-                        button(upgradelabel, 600, 90, 180, 50, red, bright_red, upgradebase)
-                    elif int(scoreNum) >= upgradecost:
-                        button(upgradelabel, 600, 90, 180, 50, green, bright_green, upgradebase)
-                    if int(scoreNum) < upgradecost:
-                        button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red, upgradeall)
-                    elif int(scoreNum) >= upgradecost:
-                        button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green, upgradeall)
-                    if weaponSelectedIdle[0] == 1:
-                        button2(250, 150, 300, 300, base)
-                    button2(100, 650, 100, 50, game_intro)
-
-        click = pygame.mouse.get_pressed()
-
-
-
-
-
-        x, y = pygame.mouse.get_pos()
-        if weaponSelectedIdle[1] == 1 and 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
-            akrust()
-        blit_labels_idle()
-        clock.tick(60)
-
-
 def game_loop_practice():
-    global pause, gamemode,hitmarkers, y_practice_value, recoilamp, global_time, gameDisplay, fullscreen_check
+    global pause, gamemode, hitmarkers, y_practice_value, recoilamp, global_time, gameDisplay, fullscreen_check
     gamemode = "game_loop_practice"
     while not gameExit:
         for event in pygame.event.get():
@@ -1582,10 +1258,7 @@ def game_loop_practice():
         for x in range(len(hitmarkers)):
             gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
 
-
-        if game == 0:
-
-
+        if games == 0:
             # Checks if the weapon is selected if it is call the recoil for it.
             if weaponSelectedPractice[1] == 1:
                 akrust()
@@ -1601,7 +1274,6 @@ def game_loop_practice():
         print(clock.get_fps())
         pygame.display.update()
         clock.tick(144)
-
 def game_loop_flickPractice():
     global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic, valList, play, gameDisplay, fullscreen_check
     # valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
@@ -1686,7 +1358,6 @@ def game_loop_flickPractice():
                 if target_time > valList[2]:
                     target_time -= .05
                 tick_reset = 0
-
             if target_time <= 20:
                 target_time = 20
             dt = clock.tick(80)
@@ -1700,6 +1371,8 @@ def game_loop_flickPractice():
             print(clock.get_fps())
         else:
             blit_labels_flick()
+
+# Functions that blit everything for the respective game modes
 
 
 def blit_labels_flick():
@@ -1726,34 +1399,10 @@ def blit_labels_flick():
     fontsmall.render_to(gameDisplay, (740, 594), "Misses: " + str(misses), black)
     fontsmall.render_to(gameDisplay, (400, 594), 'Time ' + str(time_minute) + ':' + str(time_secondstr), black)
 
-def blit_labels_idle():
-    gameDisplay.fill(gray)
-    target(250, 150)
-    fontsmall.render_to(gameDisplay, (190, 74), str(int(scoreNum)), black)
-    fontsmall.render_to(gameDisplay, (80, 70), "Money : $", black)
-
-    if int(scoreNum) < upgradecost:
-        button(upgradelabel, 600, 90, 180, 50, red, bright_red)
-    elif int(scoreNum) >= upgradecost:
-        button(upgradelabel, 600, 90, 180, 50, green, bright_green)
-    if int(scoreNum) < upgradecost:
-        button('UPGRADE (MAX)', 800, 90, 180, 50, red, bright_red)
-    elif int(scoreNum) >= upgradecost:
-        button('UPGRADE (MAX)', 800, 90, 180, 50, green, bright_green)
-    buttonstate(weaponSelectedIdle[1], weaponbought[0], "AK Selected", "Select AK", "Buy AK ($100)",
-                "Buy AK ($100)", ak.cost, 800, 150,
-                180, 50, peach, peach, dark_peach, peach, red, bright_red, green, bright_green, akgunbuy, black)
-    if weaponSelectedIdle[0] != 1:
-        button("Select Base", 600, 150, 180, 50, dark_peach, peach, baseselect2)
-    elif weaponSelectedIdle[0] == 1:
-        button("Base Selected", 600, 150, 180, 50, peach, peach, baseselect2)
-    button("Back", 100, 650, 100, 50, green, bright_green)
-    pygame.display.update()
 
 def blit_labels_prac():
-    #button('', 580, 0, 450, 768, (153, 76, 0), (153, 76, 0))
     button('', 25, 50, 170, 180, peach, peach, None, brown)
-    fontsmall.render_to(gameDisplay, (140,72), str(int(hitNum)), black)
+    fontsmall.render_to(gameDisplay, (140, 72), str(int(hitNum)), black)
     button("Back", 70, 650, 100, 50, dark_peach, peach, None, black)
     button("Clear Hitmarkers", 200, 650, 170, 50, dark_peach, peach, clearHitmakers, black)
     fontsmall.render_to(gameDisplay, (120,360), str(round(recoilamp.val * 100)), black)
@@ -1777,8 +1426,8 @@ def blit_labels_prac():
     button("Hitmarker Type \/", 800, y_practice_value + 570, 180, 50, dark_peach, peach, None, black)
     button("Weapon Flash \/", 600, y_practice_value + 570, 180, 50, dark_peach, peach, None, black)
     if sprite_change_list[0] == 1:
-        button("Target", 600, y_practice_value + 680, 180, 50, dark_peach, peach,make_target_target, black)
-        button("CSGO Model", 600, y_practice_value + 730, 180, 50, dark_peach, peach,make_target_CS, black)
+        button("Target", 600, y_practice_value + 680, 180, 50, dark_peach, peach, make_target_target, black)
+        button("CSGO Model", 600, y_practice_value + 730, 180, 50, dark_peach, peach, make_target_CS, black)
     if sprite_change_list[1] == 1:
         button("COD Hitmarker", 800, y_practice_value + 620, 180, 50, dark_peach, peach, make_hitmarker_cod, black)
         button("Bullet Hole", 800, y_practice_value + 670, 180, 50, dark_peach, peach, make_hitmarker_hole, black)
@@ -1822,5 +1471,6 @@ def blit_labels_prac():
         buttonstate2(weaponSelectedPractice[11], "UMP Selected", "Select UMP", 800, y_practice_value + 450,
                      180, 50, peach, peach, dark_peach, peach, umpgunbuy, black)
 
-gamemodesDict = {"game_intro": game_intro, "game_loop_idle": game_loop_idle, "game_loop_practice": game_loop_practice}
+
+gamemodesDict = {"game_intro": game_intro, "game_loop_practice": game_loop_practice}
 game_intro()
