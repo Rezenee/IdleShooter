@@ -1,20 +1,25 @@
 
-import pygame
-import pygame.freetype
+import pygame, pygame.freetype
+from pygame.locals import *
 import time
 import random
-import math
 import os
-from pygame.locals import *
+
+# Initialized pygame
 pygame.init()
 
+# Sets the resolution for the game
 xres = 1024
 yres = 768
 gameDisplay = pygame.display.set_mode((xres, yres))
+
+# Names game
 pygame.display.set_caption('Idle Shooter')
-pause = False
+
+# Makes gameExit False, so it doesn't close
 gameExit = False
 
+# Defines colours
 gray = (200, 200, 200)
 black = (0, 0, 0)
 white = (255, 255, 255)
@@ -24,16 +29,16 @@ green = (0, 200, 0)
 orange = (200,100,50)
 trans = (1,1,1)
 brown = (139,69,19)
-
-
 dark_gray = (100,100,100)
 darkish_peach = (210,110,61)
 dark_peach = (204, 104, 51)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 
+# Defines these as true
 baseSelectIdle = 1
 baseSelectPrac = 1
+
 
 upgrademultiplier = 1.2
 upgradecost = 10
@@ -94,10 +99,12 @@ minecraft_button_title = pygame.transform.scale(minecraft_button_title, [1024, 7
 # csgo_t_model = pygame.image.load(os.path.join('images', 'csgo_T_model.png'))
 # button('', 30, 30, 964, 470, brown, brown, None, black)
 
-hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png'))
-musicnote = pygame.image.load(os.path.join('images', 'musicnote.png'))
-gear = pygame.image.load(os.path.join('images', 'gear.png'))
-weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png'))
+hitmarker = pygame.image.load(os.path.join('images', 'hitmarker.png')).convert_alpha()
+musicnote = pygame.image.load(os.path.join('images', 'musicnote.png')).convert_alpha()
+musicnote = pygame.transform.scale(musicnote, [30, 30])
+
+gear = pygame.image.load(os.path.join('images', 'gear.png')).convert_alpha()
+weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png')).convert_alpha()
 weaponFlash = pygame.transform.scale(weaponFlash,[25,25])
 clock = pygame.time.Clock()
 gameDisplay.fill(gray)
@@ -1139,7 +1146,6 @@ csguncalldict = {'0': akcscall, '1': m4cscall, '2': m1cscall, '3': famascscall, 
              '9': mp7cscall, '10': p90cscall, '11': mac10cscall}
 
 
-
 def upgradeall():
     global scoreNum
     global scoreAdd
@@ -1377,6 +1383,7 @@ def settings():
                 s.move()
                 pygame.mixer.music.set_volume(musicsound.val)
         gameDisplay.blit(brick_wall,(0,0))
+        gameDisplay.blit(musicnote, (220,140))
         fontsmall.render_to(gameDisplay, (80, 70), "Settings", (black))
         fontsmall.render_to(gameDisplay, (17, 148), "Music Volume: ")
         fontsmall.render_to(gameDisplay, (550, 70), "Keybinds")
@@ -1442,6 +1449,12 @@ def make_flash_nothing():
     global weaponFlash, sprite_change_list, check_in_dropdown
     weaponFlash = pygame.image.load(os.path.join('images', 'nothing.png'))
 
+    sprite_change_list[2] = 0
+    check_in_dropdown = 0
+def make_flash_flash2():
+    global weaponFlash, sprite_change_list, check_in_dropdown
+    weaponFlash = pygame.image.load(os.path.join('images', 'weapon_flash2.png'))
+    weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
     sprite_change_list[2] = 0
     check_in_dropdown = 0
 def make_hitmarker_cod():
@@ -1771,7 +1784,8 @@ def blit_labels_prac():
         button("Bullet Hole", 800, y_practice_value + 670, 180, 50, dark_peach, peach, make_hitmarker_hole, black)
     if sprite_change_list[2] == 1:
         button("Realistic Flash", 600, y_practice_value + 620, 180, 50, dark_peach, peach, make_flash_flash, black)
-        button("Nothing", 600, y_practice_value + 670, 180, 50, dark_peach, peach, make_flash_nothing, black)
+        button("Circle Flash", 600, y_practice_value + 670, 180, 50, dark_peach, peach, make_flash_flash2, black)
+        button("Nothing", 600, y_practice_value + 720, 180, 50, dark_peach, peach, make_flash_nothing, black)
     if game == 0:
         button("RUST", 700, y_practice_value + 80, 180, 50, red, red, None, black)
 
