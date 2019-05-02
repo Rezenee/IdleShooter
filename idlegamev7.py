@@ -35,44 +35,70 @@ dark_peach = (204, 104, 51)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 
+# Makes it so it selects the base at the start
 baseSelectPrac = 1
+# Makes hits start at 0
 hitNum = 0
+# Is the increment for how much the hits will raise each shot. I added this because it will be dynamic in the idle shooter
 hitAdd = 1
+# Number of misses, no miss add needed
 miss_num = 0
+# Percent of bullets you hit
 hit_percent = 0
+# The label for it that will be rounded
 hit_percent_label = 0
+# This is the y value that changes when you scroll
 y_practice_value = 0
-play = 0
+# Play checks if it is going to run the loops
+play = 1
+# This checks if you are in a dropdown
 check_in_dropdown = 0
+# This is the gamemode that it is in the practice, right now it is either rust or csgo
 game = 0
+# This is the code that is assigned to p, r and t
 pauseKey = 108
 reloadKey = 112
 resetStats = 121
+keybindList = [pauseKey, reloadKey, resetStats]
+
+
+# This is the variables for the flick game mode.
 start_tick = 600
 current_tick = start_tick
 end_tick = 200
 ticks_per_decrease = 1
 lives = 3
 valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
+
+# This is the T or F for the dropdowns
 open_target_change = 0
 hitmarker_img_change = 0
 flash_img_change = 0
 sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change]
-keybindList = [pauseKey, reloadKey, resetStats]
+
+# I need this so it can type those keys
 dictKeys = {0: K_0, 1: K_1, 2: K_2, 3: K_3, 4: K_4, 5: K_5, 6: K_6, 7: K_7, 8: K_8, 9: K_9}
+
+# Defining fonts
 fontsmall = pygame.freetype.Font(None, 20)
 fontlarge = pygame.freetype.Font(None, 100)
 game_font = pygame.freetype.Font(None, 24)
 fontminecraft = pygame.freetype.Font("Minecraft.ttf", 24)
+font = pygame.font.SysFont("Verdana", 12)
+
+
+# Defining all of the images.
 forwardsarrow = pygame.image.load(os.path.join("images", "forwardsarrow.png")).convert_alpha()
 backarrow = pygame.image.load(os.path.join('images', 'backwardsarrow.png')).convert_alpha()
-rainbow_target = pygame.image.load(os.path.join('images', 'theman.jpg')).convert()
+rainbow_target = pygame.image.load(os.path.join('images', 'target_colors.png')).convert_alpha()
 stick_img = pygame.image.load(os.path.join('images', 'homescreen.jpg')).convert()
 targetimg = pygame.image.load(os.path.join('images', 'shooting_target.png')).convert_alpha()
 rangeimg = pygame.image.load(os.path.join('images', 'range.jpg')).convert()
-rangeimg = pygame.transform.scale(rangeimg, [964,440])
+
+# This resizes the images to the proper size
+rangeimg = pygame.transform.scale(rangeimg, [964, 440])
 homescreen = pygame.image.load(os.path.join('images', 'homescreen.jpg')).convert()
-homescreen = pygame.transform.scale(homescreen, [1024,768])
+homescreen = pygame.transform.scale(homescreen, [1024, 768])
 deathscreen = pygame.image.load(os.path.join('images', 'deathscreen.jpg')).convert()
 deathscreen = pygame.transform.scale(deathscreen, [1024, 768])
 brick_wall_section = pygame.image.load(os.path.join('images', 'brick_wall.jpg')).convert()
@@ -96,14 +122,18 @@ musicnote = pygame.image.load(os.path.join('images', 'musicnote.png')).convert_a
 musicnote = pygame.transform.scale(musicnote, [30, 30])
 gear = pygame.image.load(os.path.join('images', 'gear.png')).convert_alpha()
 weaponFlash = pygame.image.load(os.path.join('images', 'flashfinal1.png')).convert_alpha()
-weaponFlash = pygame.transform.scale(weaponFlash,[25,25])
+weaponFlash = pygame.transform.scale(weaponFlash, [25, 25])
+
+# This lets me use ticks
 clock = pygame.time.Clock()
-musicjazz = pygame.mixer.music.load(os.path.join('images', 'alex_chew.mp3'))
-musicfire = pygame.mixer.music.load(os.path.join('images', 'alex_chew.mp3'))
+
+# Defines the songs
+musicjazz = pygame.mixer.music.load(os.path.join('images', 'background.wav'))
+musicfire = pygame.mixer.music.load(os.path.join('images', 'background2.mp3'))
 music_list = ['background.wav', 'background2.mp3']
 music_val = 1
+# Makes the music loop forever
 pygame.mixer.music.play(-1)
-font = pygame.font.SysFont("Verdana", 12)
 hitmarkers = []
 games = ["rust", "csgo"]
 global_time = 0
@@ -111,8 +141,7 @@ global_time = 0
 
 def music_change():
     global music_val
-    print(music_val)
-    print(len(music_list))
+    # Checks if the music val is less than the list of music, if it isnt then add to it, if it is then reset.
     if music_val < len(music_list) -1:
         music_val += 1
     else:
@@ -120,6 +149,7 @@ def music_change():
     pygame.mixer.music.load(os.path.join('images', music_list[music_val]))
     pygame.mixer.music.play(-1)
 
+# This lets the game know what keys you have held down
 def get_key():
       while 1:
           event = pygame.event.poll()
@@ -128,7 +158,7 @@ def get_key():
           else:
               pass
 
-
+# Class does nothing, but lets me define variables
 class gun(object):
     def __init__(self, cost, gunSelectIdle, gunSelectPrac, gunBought):
         self.cost = cost
@@ -136,32 +166,31 @@ class gun(object):
         self.gunSelectPrac = gunSelectPrac
         self.gunBought = gunBought
 
-
+# Defining the two gun for rust
 ak = gun(100, 0, 0, 0)
 mp5 = gun(100, 0, 0, 0)
 
-
+#CS Guns
 akcs = gun(100, 0, 0, 0)
-m4cs = gun(100,0,0,0)
-m1cs = gun(100,0,0,0)
-famascs = gun(100,0,0,0)
-augcs = gun(100,0,0,0)
-augscopedcs = gun(100,0,0,0)
-galilcs = gun(100,0,0,0)
-kreigcs = gun(100,0,0,0)
-umpcs = gun(100,0,0,0)
-mp7cs = gun(100,0,0,0)
-p90cs = gun(100,0,0,0)
-mac10cs = gun(100,0,0,0)
+m4cs = gun(100, 0, 0, 0)
+m1cs = gun(100, 0, 0, 0)
+famascs = gun(100, 0, 0, 0)
+augcs = gun(100, 0, 0, 0)
+augscopedcs = gun(100, 0, 0, 0)
+galilcs = gun(100, 0, 0, 0)
+kreigcs = gun(100, 0, 0, 0)
+umpcs = gun(100, 0, 0, 0)
+mp7cs = gun(100, 0, 0, 0)
+p90cs = gun(100, 0, 0, 0)
+mac10cs = gun(100, 0, 0, 0)
 
+# Lists of all the guns, so you can go through and make them all 0 except the one that you want
 weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, akcs.gunSelectPrac, m4cs.gunSelectPrac, m1cs.gunSelectPrac, famascs.gunSelectPrac
                           , augcs.gunSelectPrac, galilcs.gunSelectPrac, augscopedcs.gunSelectPrac, kreigcs.gunSelectPrac, umpcs.gunSelectPrac
                           , mp7cs.gunSelectPrac, p90cs.gunSelectPrac, mac10cs.gunSelectPrac]
-weaponbought = [ak.gunBought, mp5.gunBought, akcs.gunBought,m4cs.gunBought, m1cs.gunBought, famascs.gunBought, augcs.gunBought, galilcs.gunBought,
-                augscopedcs.gunBought, kreigcs.gunBought, umpcs.gunBought, mp7cs.gunBought, p90cs.gunBought, mac10cs.gunBought]
 
-
-class Slider():
+# I took the basics of this code from https://www.dreamincode.net/forums/topic/401541-buttons-and-sliders-in-pygame/
+class Slider:
     def __init__(self, name, val, maxi, mini, xpos,ypos):
         self.val = val  # start value
         self.maxi = maxi  # maximum at slider position right
@@ -224,19 +253,19 @@ class Slider():
 
     check = 1
 
-
+# Defines the two sliders that are currently in thegame and adds them to a list.
 musicsound = Slider("", .5, 1, 0, 60, 190)
 recoilamp = Slider("", .5, 1, 0, 15, 350)
-slides = [musicsound,recoilamp]
+slides = [musicsound, recoilamp]
 
-
+# It will buy the gun, but in practice it just selects it.
 def gunbuy(pracNum):
     global scoreNum
     for i in range(len(weaponSelectedPractice)):
         weaponSelectedPractice[i] = 0
     weaponSelectedPractice[pracNum] = 1
 
-
+# I can not have parenthesis in the calls in buttons, so i have to do this it adds the gunbuys for the guns
 def mp5gunbuy(): gunbuy(2)
 def akgunbuy(): gunbuy(1)
 def akcsgunbuy(): gunbuy(3)
@@ -253,15 +282,15 @@ def p90gunbuy(): gunbuy(13)
 def mac10gunbuy(): gunbuy(14)
 def bizongunbuy(): gunbuy(15)
 
-
+# again, i need this to have two things in one
 def quitgame(): pygame.quit, quit()
 
-
+# This lets me blit text in an easier format
 def text_objects(text, font):
     textSurface = font.render(str(text), True, black)
     return textSurface, textSurface.get_rect()
 
-
+# This is a button that doesnt draw any thing, so you can blit images instead
 def button2(x, y, w, h, action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -269,26 +298,18 @@ def button2(x, y, w, h, action=None):
         if click[0] == 1 and action != None:
             action()
 
+# This is a button that is for the guns, since they have different colours depending
+# on if thy are selected or being hovered over.
+
 
 def buttonstate2(gunselect, selectmsg, unselectmsg, x, y, w, h, icselected, acselected, icunselected, acunselected,
-              action=None,bordercolor = None):
+              action=None, bordercolor=None):
     if gunselect == 1:
-        button(selectmsg, x, y, w, h, icselected, acselected, action,bordercolor)
+        button(selectmsg, x, y, w, h, icselected, acselected, action, bordercolor)
     elif gunselect == 0:
-        button(unselectmsg, x, y, w, h, icunselected, acunselected, action,bordercolor)
+        button(unselectmsg, x, y, w, h, icunselected, acunselected, action, bordercolor)
 
-
-def buttonstate(gunselect, gunbought, selectedmsg, boughtmsg, buyingmsg, brokemsg, guncost, x, y, w, h, icselected,
-             acselected, icbought, acbought, icbroke, acbroke, icbuying, acbuying, action=None,bordercolor = None):
-    if gunbought == 1 and gunselect == 1:
-        button(selectedmsg, x, y, w, h, icselected, acselected, action, bordercolor)
-    elif gunbought == 1 and gunselect == 0:
-        button(boughtmsg, x, y, w, h, icbought, acbought, action,bordercolor)
-    elif gunbought == 0 and int(scoreNum) < guncost:
-        button(brokemsg, x, y, w, h, icbroke, acbroke, action,bordercolor)
-    elif gunbought == 0 and int(scoreNum) >= guncost:
-        button(buyingmsg, x, y, w, h, icbuying, acbuying, action,bordercolor)
-
+# This isa button that looks lik eit is from minecraft, the block type, if mossy makes it mossy.
 
 def buttonMc(msg, x, y,action=None, block_type='stone'):
     # this gets the mouse's position
@@ -316,7 +337,7 @@ def buttonMc(msg, x, y,action=None, block_type='stone'):
         else:
             gameDisplay.blit(minecraft_button, (x,y))
 
-   # This calls a small text. It goes the font then font size
+    # This calls a small text. It goes the font then font size
     smallText = pygame.font.Font("freesansbold.ttf", 20)
 
     # no clue just do it
@@ -392,7 +413,7 @@ def clearHitmakers():
     global hitmarkers
     hitmarkers = []
 
-
+# Gets the change in x and y for all of the guns
 mp5pos = (
  (6, -19),
  (-5, -26),
@@ -1271,7 +1292,6 @@ def game_loop_practice():
                     csguncalldict[str(i)]()
                 else:
                     continue
-        print(clock.get_fps())
         pygame.display.update()
         clock.tick(144)
 def game_loop_flickPractice():
@@ -1368,7 +1388,6 @@ def game_loop_flickPractice():
             valList[4] = lives
             valList[3] = tick_sub
             valList[1] = target_time
-            print(clock.get_fps())
         else:
             blit_labels_flick()
 
