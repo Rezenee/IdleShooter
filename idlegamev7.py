@@ -50,15 +50,17 @@ hit_percent_label = 0
 # This is the y value that changes when you scroll
 y_practice_value = 0
 # Play checks if it is going to run the loops
-play = 1
+play = 0
 # This checks if you are in a dropdown
 check_in_dropdown = 0
 # This is the gamemode that it is in the practice, right now it is either rust or csgo
 game = 0
+
 # This is the code that is assigned to p, r and t
-pauseKey = 108
-reloadKey = 112
-resetStats = 121
+pauseKey = 112
+reloadKey = 114
+resetStats = 116
+
 keybindList = [pauseKey, reloadKey, resetStats]
 
 
@@ -74,7 +76,8 @@ valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
 open_target_change = 0
 hitmarker_img_change = 0
 flash_img_change = 0
-sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change]
+keybind_set_change = 0
+sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change, keybind_set_change]
 
 # I need this so it can type those keys
 dictKeys = {0: K_0, 1: K_1, 2: K_2, 3: K_3, 4: K_4, 5: K_5, 6: K_6, 7: K_7, 8: K_8, 9: K_9}
@@ -130,7 +133,7 @@ clock = pygame.time.Clock()
 # Defines the songs
 musicjazz = pygame.mixer.music.load(os.path.join('images', 'background.wav'))
 musicfire = pygame.mixer.music.load(os.path.join('images', 'background2.mp3'))
-death_sound = pygame.mixer.Sound(os.path.join('images','Mario_Death.ogg'))
+death_sound = pygame.mixer.Sound(os.path.join('images', 'Mario_Death.ogg'))
 hit_sound = pygame.mixer.Sound(os.path.join('images', 'Arrow.ogg'))
 music_list = ['background.wav', 'background2.mp3']
 music_val = 1
@@ -875,12 +878,13 @@ def makeGunStart(GUNPOS,sleepTime):
     global scoreNum, hitNum, hitmarkers, miss_num, hit_percent, hit_percent_label
     click = pygame.mouse.get_pressed()
     x, y = pygame.mouse.get_pos()
+    # Checks if mouse is within target, and left mouse is held down
     if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
         for dx, dy in GUNPOS:
             recoilchange = recoilamp.val * 2
             dx *= recoilchange
             dy *= recoilchange
-            x,y = pygame.mouse.get_pos()
+            x, y = pygame.mouse.get_pos()
             for event in pygame.event.get():
                 x,y = pygame.mouse.get_pos()
                 if event.type == pygame.KEYDOWN:
@@ -891,19 +895,24 @@ def makeGunStart(GUNPOS,sleepTime):
                         hitmarkers = []
                     if event.key == keybindList[2]:
                         clear_stats()
-            # make teh 250 300 when done with guns
+            # Break if it gets to where the buttons are
             if x - 250 > 330:
                 break
             gameDisplay.blit(brick_wall, (0, 0))
             blit_labels_prac()
             click = pygame.mouse.get_pressed()
+            # Break if you arent holding down
             if click[0] != 1:
                 break
+            # Makes mouse set to the pos plus the change in x and y from the gun lists
             pygame.mouse.set_pos(x + dx, y + dy)
+            # Blits and adds the hitmarkers
             hitmarkers.append((x - 5, y - 5))
             for z in range(len(hitmarkers)):
                 gameDisplay.blit(hitmarker, (hitmarkers[z][0], hitmarkers[z][1]))
+            # Adds flash
             gameDisplay.blit(weaponFlash, (x - 12, y - 12))
+            # If it is within target, add a hit, if not add a miss
             if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300:
                 hitNum += hitAdd
                 hit_percent = hitNum / (hitNum + miss_num)
@@ -914,11 +923,12 @@ def makeGunStart(GUNPOS,sleepTime):
                 hit_percent_label = round(hit_percent,2)
 
             pygame.display.update()
+            # Sleep for the time between bullets
             time.sleep(sleepTime)
 
-
-def akrust(): makeGunStart(AKPOS,.125)
-def mp5rust(): makeGunStart(mp5pos,.1)
+# Defines bullet sleep time for all guns
+def akrust(): makeGunStart(AKPOS, .125)
+def mp5rust(): makeGunStart(mp5pos, .1)
 def akcscall(): makeGunStart(AKPOSCS, .091)
 def m4cscall(): makeGunStart(M4POSCS, .091)
 def m1cscall(): makeGunStart(M1POSCS, .1)
@@ -932,10 +942,11 @@ def mp7cscall(): makeGunStart(MP7POSCS, .08)
 def p90cscall(): makeGunStart(P90POSCS, .07)
 def mac10cscall(): makeGunStart(MAC10POSCS, .075)
 
-
+# These numbers are needed to call the guns from list iteration
 csguncalldict = {'0': akcscall, '1': m4cscall, '2': m1cscall, '3': famascscall, '4': augcscall,
              '5': galilcscall, '6': augscopedcscall, '7': kreigcscall, '8': umpcscall,
              '9': mp7cscall, '10': p90cscall, '11': mac10cscall}
+
 
 def clear_stats():
     global miss_num, hit_percent, hitNum, scoreNum, hit_percent_label
@@ -946,12 +957,10 @@ def clear_stats():
     hit_percent_label = 0
 
 
-
 def deathScreen():
     global valList, play, gameDisplay, fullscreen_check
     while 1:
         mouse = pygame.mouse.get_pos()
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -965,6 +974,7 @@ def deathScreen():
                         gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
                         fullscreen_check = 1
         gameDisplay.blit(deathscreen, (0, 0))
+        # Changes the screen to buttons with blue when you hover over them
         if 243 + 565 > mouse[0] > 243 and 414 + 55 > mouse[1] > 414:
             gameDisplay.blit(minecraft_button_resp, (0, 0))
         if 243 + 565 > mouse[0] > 243 and 488 + 55 > mouse[1] > 488:
@@ -975,7 +985,6 @@ def deathScreen():
         fontminecraft.render_to(gameDisplay, (570, 340),  str(time_minute) + ':' + str(time_secondstr), white)
         fontminecraft.render_to(gameDisplay, (492, 340), "Time:", white)
         fontminecraft.render_to(gameDisplay, (570, 310), str(hits), white)
-
 
         button2(243, 415, 565, 55, game_loop_flickPractice)
         button2(243, 488, 565, 55, game_intro)
@@ -1048,7 +1057,7 @@ def changeVal(keyIndex):
     global valList
     tempstr = str(valList[keyIndex])
     while True:
-
+        # Checks what keys are held down, then adds them, exits, or backspaces depending
         inkey = get_key()
         if inkey == K_BACKSPACE:
             tempstr = tempstr[:-1]
@@ -1074,9 +1083,11 @@ def change_live_count(): changeVal(4)
 
 def changeKeyBind(keyIndex):
     global keybindList
+    # Checks whats keys are down, and makes that the keybind
     inkey = get_key()
     while 1:
         if inkey <= 500:
+            print(inkey)
             keybindList[keyIndex] = inkey
             break
 
@@ -1100,6 +1111,8 @@ def settings():
                 pos = pygame.mouse.get_pos()
                 if musicsound.button_rect.collidepoint(pos):
                     musicsound.hit = True
+                if check_in_dropdown == 0:
+                    button2(750, 140, 150, 50, change_layout)
             elif event.type == pygame.MOUSEBUTTONUP:
                 for s in slides:
                     s.hit = False
@@ -1122,9 +1135,14 @@ def settings():
         fontsmall.render_to(gameDisplay, (550, 70), "Keybinds")
         buttonMc("Back", 100, 650)
         buttonMc("Change Song", 200, 190)
-        buttonMc(("Clear Decals: " + chr(keybindList[1])), 550,140, clear_decals_key)
+        buttonMc(("Clear Decals: " + chr(keybindList[1])), 550, 140, clear_decals_key)
         buttonMc(("Pause: " + chr(keybindList[0])), 550, 200, pause_hotkey)
         buttonMc(("Clear Stats: " + chr(keybindList[2])), 550, 260, reset_stats_hotkey)
+        buttonMc("Preset Binds \/", 750, 140,)
+        if sprite_change_list[3] == 1:
+            buttonMc("QWERTY", 750, 190, make_layout_QWERTY)
+            buttonMc("DVORAK", 750, 240, make_layout_DVORAK)
+            buttonMc("COLEMAK", 750, 290, make_layout_COLEMAK)
         musicsound.draw('')
         fontsmall.render_to(gameDisplay, (190, 150), str(round(musicsound.val * 100)), black)
         pygame.display.update()
@@ -1134,23 +1152,27 @@ def change_flash():
     global sprite_change_list, check_in_dropdown
     check_in_dropdown = 1
     if sprite_change_list[2] == 0:
-        for i in range(3):
+        for i in range(4):
             sprite_change_list[i] = 0
         sprite_change_list[2] = 1
-    else:
-        sprite_change_list[2] = 0
 
 
 def change_hitmarker():
     global sprite_change_list, check_in_dropdown
     check_in_dropdown = 1
     if sprite_change_list[1] == 0:
-        for i in range(3):
+        for i in range(4):
             sprite_change_list[i] = 0
         sprite_change_list[1] = 1
-    else:
-        sprite_change_list[1] = 0
 
+
+def change_layout():
+    global open_target_change, check_in_dropdown
+    check_in_dropdown = 1
+    if sprite_change_list[3] == 0:
+        for i in range(4):
+            sprite_change_list[i] = 0
+        sprite_change_list[3] = 1
 
 def change_target():
     global open_target_change
@@ -1158,11 +1180,9 @@ def change_target():
     check_in_dropdown = 1
     if sprite_change_list[0] == 0:
         # makes the other dropdowns disabled
-        for i in range(3):
+        for i in range(4):
             sprite_change_list[i] = 0
         sprite_change_list[0] = 1
-    else:
-        sprite_change_list[0] = 0
 
 
 def makePlay():
@@ -1175,6 +1195,32 @@ def makeStop():
     global play
     play = 0
     game_loop_flickPractice()
+
+def make_layout_COLEMAK():
+    global sprite_change_list, check_in_dropdown
+    keybindList[0] = 59
+    keybindList[1] = 112
+    keybindList[2] = 103
+    sprite_change_list[3] = 0
+    check_in_dropdown = 0
+
+
+def make_layout_DVORAK():
+    global sprite_change_list, check_in_dropdown
+    keybindList[0] = 108
+    keybindList[1] = 112
+    keybindList[2] = 121
+    sprite_change_list[3] = 0
+    check_in_dropdown = 0
+
+
+def make_layout_QWERTY():
+    global sprite_change_list, check_in_dropdown
+    keybindList[0] = 112
+    keybindList[1] = 114
+    keybindList[2] = 116
+    sprite_change_list[3] = 0
+    check_in_dropdown = 0
 
 
 def make_flash_flash():
@@ -1393,9 +1439,7 @@ def game_loop_flickPractice():
         else:
             blit_labels_flick()
 
-# Functions that blit everything for the respective game modes
-
-
+# Functions that blit everything for the respective game modesaoueaoeuoaeuoaeuoaeu
 def blit_labels_flick():
     global time_minute, time_secondstr
     time_second = int(global_time % 60)
