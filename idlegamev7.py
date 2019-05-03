@@ -130,6 +130,8 @@ clock = pygame.time.Clock()
 # Defines the songs
 musicjazz = pygame.mixer.music.load(os.path.join('images', 'background.wav'))
 musicfire = pygame.mixer.music.load(os.path.join('images', 'background2.mp3'))
+death_sound = pygame.mixer.Sound(os.path.join('images','Mario_Death.ogg'))
+hit_sound = pygame.mixer.Sound(os.path.join('images', 'Arrow.ogg'))
 music_list = ['background.wav', 'background2.mp3']
 music_val = 1
 # Makes the music loop forever
@@ -892,7 +894,7 @@ def makeGunStart(GUNPOS,sleepTime):
             # make teh 250 300 when done with guns
             if x - 250 > 330:
                 break
-            gameDisplay.blit(brick_wall, (0,0))
+            gameDisplay.blit(brick_wall, (0, 0))
             blit_labels_prac()
             click = pygame.mouse.get_pressed()
             if click[0] != 1:
@@ -962,7 +964,7 @@ def deathScreen():
                     else:
                         gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
                         fullscreen_check = 1
-        gameDisplay.blit(deathscreen,(0, 0))
+        gameDisplay.blit(deathscreen, (0, 0))
         if 243 + 565 > mouse[0] > 243 and 414 + 55 > mouse[1] > 414:
             gameDisplay.blit(minecraft_button_resp, (0, 0))
         if 243 + 565 > mouse[0] > 243 and 488 + 55 > mouse[1] > 488:
@@ -1279,13 +1281,12 @@ def game_loop_practice():
         for x in range(len(hitmarkers)):
             gameDisplay.blit(hitmarker, (hitmarkers[x][0], hitmarkers[x][1]))
 
-        if games == 0:
+        if game == 0:
             # Checks if the weapon is selected if it is call the recoil for it.
             if weaponSelectedPractice[1] == 1:
                 akrust()
             if weaponSelectedPractice[2] == 1:
                 mp5rust()
-
         if game == 1:
             for i in range(12):
                 if weaponSelectedPractice[i + 3] == 1:
@@ -1331,7 +1332,7 @@ def game_loop_flickPractice():
                             if targets[i][0] + targets[i][2]/2 > xpos > targets[i][0] - targets[i][2]/2 \
                                     and targets[i][1] + targets[i][2]/2 > ypos > targets[i][1]-targets[i][2]/2:
                                 del targets[i]
-
+                                pygame.mixer.Sound.play(hit_sound)
                                 hits += 1
                                 break
                             if i >= len(targets) - 2:
@@ -1373,6 +1374,7 @@ def game_loop_flickPractice():
                         del targets[i]
                         lives -= 1
                         if lives <= 0:
+                            pygame.mixer.Sound.play(death_sound)
                             deathScreen()
             if tick_reset >= tick_sub:
                 if target_time > valList[2]:
