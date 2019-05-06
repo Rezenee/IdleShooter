@@ -142,6 +142,10 @@ pygame.mixer.music.play(-1)
 hitmarkers = []
 games = ["rust", "csgo"]
 global_time = 0
+try:
+    stats_file = open("stats_file.txt", 'a')
+except FileNotFoundError:
+    stats_file = open("stats_file.txt", 'w')
 
 
 def music_change():
@@ -172,6 +176,8 @@ class gun(object):
         self.gunBought = gunBought
 
 # Defining the two gun for rust
+
+
 ak = gun(100, 0, 0, 0)
 mp5 = gun(100, 0, 0, 0)
 
@@ -288,7 +294,10 @@ def mac10gunbuy(): gunbuy(14)
 def bizongunbuy(): gunbuy(15)
 
 # again, i need this to have two things in one
-def quitgame(): pygame.quit, quit()
+def quitgame():
+    pygame.quit
+    quit()
+    stats_file.close()
 
 # This lets me blit text in an easier format
 def text_objects(text, font):
@@ -963,8 +972,7 @@ def deathScreen():
         mouse = pygame.mouse.get_pos()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                quitgame()
             if event.type == pygame.KEYDOWN:
                 if event.key == K_F11:
                     if fullscreen_check == 1:
@@ -1001,8 +1009,7 @@ def game_intro():
         # Always put this so they can exit
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit
-                quit()
+                quitgame()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 button2(80, 590, 140, 50, game_loop_practice)
                 button2(80, 650, 140, 50, game_loop_flickPractice)
@@ -1035,8 +1042,7 @@ def paused():
         # Always put this so they can exit
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit
-                quit()
+                quitgame()
             if event.type == pygame.KEYDOWN:
                 if event.key == K_F11:
                     if fullscreen_check == 1:
@@ -1066,16 +1072,17 @@ def changeVal(keyIndex):
             game_loop_flickPractice()
         elif inkey > 47 and inkey < 58:
             tempstr += chr(inkey)
+
         try:
             valList[keyIndex] = int(tempstr)
         except ValueError:
             valList[keyIndex] = 0
         blit_labels_flick()
-
+        clock.tick(60)
         pygame.display.update()
 
-
-def change_start_tick(): changeVal(0)
+def change_start_tick():
+    changeVal(0)
 def change_end_tick(): changeVal(2)
 def change_tick_interval(): changeVal(3)
 def change_live_count(): changeVal(4)
@@ -1103,8 +1110,8 @@ def settings():
     while settings:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit
-                quit()
+                quitgame()
+
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 button2(200, 190, 100, 50, music_change)
                 buttonMc("Back", 100, 650, gamemodesDict[gamemode])
@@ -1281,8 +1288,7 @@ def game_loop_practice():
     while not gameExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                quitgame()
             if event.type == pygame.KEYDOWN:
                 if event.key == keybindList[0]:
                     pause = True
@@ -1364,8 +1370,7 @@ def game_loop_flickPractice():
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                quitgame()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 button2(540, 520, 160, 50, makePlay)
                 button2(710, 520, 160, 50, makeStop)
@@ -1421,6 +1426,8 @@ def game_loop_flickPractice():
                         lives -= 1
                         if lives <= 0:
                             pygame.mixer.Sound.play(death_sound)
+                            print(str(hits))
+                            stats_file.write('Hits: ' + str(hits) + ' Misses: ' + str(misses) + ', ')
                             deathScreen()
             if tick_reset >= tick_sub:
                 if target_time > valList[2]:
