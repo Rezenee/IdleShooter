@@ -159,13 +159,7 @@ def music_change():
     pygame.mixer.music.play(-1)
 
 # This lets the game know what keys you have held down
-def get_key():
-      while 1:
-          event = pygame.event.poll()
-          if event.type == KEYDOWN:
-              return event.key
-          else:
-              pass
+
 
 # Class does nothing, but lets me define variables
 class gun(object):
@@ -1087,16 +1081,51 @@ def change_end_tick(): changeVal(2)
 def change_tick_interval(): changeVal(3)
 def change_live_count(): changeVal(4)
 
+def get_key():
+    global fullscreen_check, gameDisplay
+    while 1:
+        print("hi")
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quitgame()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                button2(200, 190, 100, 50, music_change)
+                buttonMc("Back", 100, 650, gamemodesDict[gamemode])
+                pos = pygame.mouse.get_pos()
+                if musicsound.button_rect.collidepoint(pos):
+                    musicsound.hit = True
+                if check_in_dropdown == 0:
+                    button2(750, 140, 150, 50, change_layout)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                for s in slides:
+                    s.hit = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
+                return event.key
+            else:
+                pass
+        for s in slides:
+            if s.hit:
+                s.move()
+                pygame.mixer.music.set_volume(musicsound.val)
+        blit_labels_settings(1)
+        pygame.display.update()
 
 def changeKeyBind(keyIndex):
     global keybindList
+
     # Checks whats keys are down, and makes that the keybind
     inkey = get_key()
     while 1:
         if inkey <= 500:
-            print(inkey)
             keybindList[keyIndex] = inkey
-            break
+            settings()
 
 
 def reset_stats_hotkey(): changeKeyBind(2)
@@ -1105,7 +1134,7 @@ def pause_hotkey(): changeKeyBind(0)
 
 
 def settings():
-    global gameDisplay, fullscreen_check
+    global fullscreen_check
     settings = True
     while settings:
         for event in pygame.event.get():
@@ -1135,24 +1164,34 @@ def settings():
             if s.hit:
                 s.move()
                 pygame.mixer.music.set_volume(musicsound.val)
-        gameDisplay.blit(brick_wall,(0,0))
-        gameDisplay.blit(musicnote, (220,140))
-        fontsmall.render_to(gameDisplay, (80, 70), "Settings", black)
-        fontsmall.render_to(gameDisplay, (17, 148), "Music Volume: ")
-        fontsmall.render_to(gameDisplay, (550, 70), "Keybinds")
-        buttonMc("Back", 100, 650)
-        buttonMc("Change Song", 200, 190)
+
+        blit_labels_settings()
+        pygame.display.update()
+
+def blit_labels_settings(getkey = 0):
+    global gameDisplay
+    gameDisplay.blit(brick_wall, (0, 0))
+    gameDisplay.blit(musicnote, (220, 140))
+    fontsmall.render_to(gameDisplay, (80, 70), "Settings", black)
+    fontsmall.render_to(gameDisplay, (17, 148), "Music Volume: ")
+    fontsmall.render_to(gameDisplay, (550, 70), "Keybinds")
+    buttonMc("Back", 100, 650)
+    buttonMc("Change Song", 200, 190)
+    if getkey == 0:
         buttonMc(("Clear Decals: " + chr(keybindList[1])), 550, 140, clear_decals_key)
         buttonMc(("Pause: " + chr(keybindList[0])), 550, 200, pause_hotkey)
         buttonMc(("Clear Stats: " + chr(keybindList[2])), 550, 260, reset_stats_hotkey)
-        buttonMc("Preset Binds \/", 750, 140,)
-        if sprite_change_list[3] == 1:
-            buttonMc("QWERTY", 750, 190, make_layout_QWERTY)
-            buttonMc("DVORAK", 750, 240, make_layout_DVORAK)
-            buttonMc("COLEMAK", 750, 290, make_layout_COLEMAK)
-        musicsound.draw('')
-        fontsmall.render_to(gameDisplay, (190, 150), str(round(musicsound.val * 100)), black)
-        pygame.display.update()
+    else:
+        buttonMc(("Clear Decals: " + chr(keybindList[1])), 550, 140)
+        buttonMc(("Pause: " + chr(keybindList[0])), 550, 200)
+        buttonMc(("Clear Stats: " + chr(keybindList[2])), 550, 260)
+    buttonMc("Preset Binds \/", 750, 140, )
+    if sprite_change_list[3] == 1:
+        buttonMc("QWERTY", 750, 190, make_layout_QWERTY)
+        buttonMc("DVORAK", 750, 240, make_layout_DVORAK)
+        buttonMc("COLEMAK", 750, 290, make_layout_COLEMAK)
+    musicsound.draw('')
+    fontsmall.render_to(gameDisplay, (190, 150), str(round(musicsound.val * 100)), black)
 
 
 def change_flash():
@@ -1426,7 +1465,6 @@ def game_loop_flickPractice():
                         lives -= 1
                         if lives <= 0:
                             pygame.mixer.Sound.play(death_sound)
-                            print(str(hits))
                             stats_file.write('Hits: ' + str(hits) + ' Misses: ' + str(misses) + ', ')
                             deathScreen()
             if tick_reset >= tick_sub:
