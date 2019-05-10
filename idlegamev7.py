@@ -366,14 +366,10 @@ def button(msg, x, y, w, h, ic, ac, action=None, bordercolor = None):
         pygame.draw.rect(gameDisplay, ic, (x, y, w, h))
 
    # This calls a small text. It goes the font then font size
-    smallText = pygame.font.Font("freesansbold.ttf", 20)
+    if y > -40:
+        fontsmall.render_to(gameDisplay, (x + 10, y + 15), msg, black)
 
-    # no clue just do it
-    textSurf, textRect = text_objects(msg, smallText)
-    # This makes the text in the center of the button
-    textRect.center = ((x + (w / 2)), (y + (h / 2)))
-    # Draws something on screen
-    gameDisplay.blit(textSurf, textRect)
+
     if bordercolor != None:
         pygame.draw.rect(gameDisplay,bordercolor,(x,y,w,h),2)
 
@@ -1431,8 +1427,9 @@ def game_loop_practice():
                     csguncalldict[str(i)]()
                 else:
                     continue
+        print(clock.get_fps())
         pygame.display.update()
-        clock.tick(144)
+        clock.tick(0)
 def game_loop_flickPractice():
     global gamemode, targets, misses, hits, global_time, rainbow_target, rainbow_dynamic, valList, play, gameDisplay, fullscreen_check
     # valList = [start_tick, current_tick, end_tick, ticks_per_decrease, lives]
@@ -1531,7 +1528,7 @@ def game_loop_flickPractice():
         else:
             blit_labels_flick()
         print(clock.get_fps())
-# Functions that blit everything for the respective game modesaoueaoeuoaeuoaeuoaeu
+# Functions that blit everything for the respective game mode
 def blit_labels_flick():
     global time_minute, time_secondstr
     time_second = int(global_time % 60)
