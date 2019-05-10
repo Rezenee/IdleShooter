@@ -142,6 +142,9 @@ pygame.mixer.music.play(-1)
 hitmarkers = []
 games = ["rust", "csgo"]
 global_time = 0
+
+in_keyBindList = [0,0,0,0,0,0,0,0,0,0,0]
+
 try:
     stats_file = open("stats_file.txt", 'a')
 except FileNotFoundError:
@@ -869,7 +872,7 @@ def makeGunStart(GUNPOS,sleepTime):
     click = pygame.mouse.get_pressed()
     x, y = pygame.mouse.get_pos()
     # Checks if mouse is within target, and left mouse is held down
-    if 0 <= x - 250 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
+    if 0 <= x - 230 <= 300 and 0 <= y - 150 <= 300 and click[0] == 1:
         for dx, dy in GUNPOS:
             recoilchange = recoilamp.val * 2
             dx *= recoilchange
@@ -979,37 +982,6 @@ def deathScreen():
         button2(243, 488, 565, 55, game_intro)
         pygame.display.update()
 
-
-def game_intro():
-    global gamemode, gameDisplay, fullscreen_check
-    fullscreen_check = 0
-    # This is needed for the while loop
-    intro = True
-    gamemode = 'game_intro'
-    while intro:
-        # Always put this so they can exit
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quitgame()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                button2(80, 590, 140, 50, game_loop_practice)
-                button2(80, 650, 140, 50, game_loop_flickPractice)
-            if event.type == pygame.KEYDOWN:
-                if event.key == K_F11:
-                    if fullscreen_check == 1:
-                        gameDisplay = pygame.display.set_mode((xres, yres))
-                        fullscreen_check = 0
-                    else:
-                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
-                        fullscreen_check = 1
-
-        gameDisplay.blit(homescreen, (0, 0))
-
-        button2(250, 650, 50, 50, settings)
-        gameDisplay.blit(gear, (250, 650))
-        buttonMc("Play Practice", 80, 590, None, 'mossy')
-        buttonMc('Flick Practice', 80, 650, None, 'mossy')
-        pygame.display.update()
 
 
 def unpause():
@@ -1142,7 +1114,6 @@ def get_key(x,y, keyIndex, gamemode_check, title='', buttonname=''):
 
         pygame.display.update()
 
-in_keyBindList = [0,0,0,0,0,0,0,0,0,0,0]
 
 def changeKeyBind(keyIndex, x, y):
     global keybindList
@@ -1364,6 +1335,39 @@ def make_target_CS():
     check_in_dropdown = 0
 
 
+def game_intro():
+    global gamemode, gameDisplay, fullscreen_check
+    fullscreen_check = 0
+    # This is needed for the while loop
+    intro = True
+    gamemode = 'game_intro'
+    while intro:
+        # Always put this so they can exit
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quitgame()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                button2(80, 590, 140, 50, game_loop_practice)
+                button2(80, 650, 140, 50, game_loop_flickPractice)
+                button2(80, 530, 140, 50, game_loop_main)
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
+
+        gameDisplay.blit(homescreen, (0, 0))
+
+        button2(250, 650, 50, 50, settings)
+        gameDisplay.blit(gear, (250, 650))
+        buttonMc("Play Practice", 80, 590, None, 'mossy')
+        buttonMc('Flick Practice', 80, 650, None, 'mossy')
+        buttonMc('Play Game', 80, 530, None, 'mossy')
+        pygame.display.update()
+
 def game_loop_practice():
     global pause, gamemode, hitmarkers, y_practice_value, recoilamp, global_time, gameDisplay, fullscreen_check
     gamemode = "game_loop_practice"
@@ -1427,7 +1431,6 @@ def game_loop_practice():
                     csguncalldict[str(i)]()
                 else:
                     continue
-        print(clock.get_fps())
         pygame.display.update()
         clock.tick(0)
 def game_loop_flickPractice():
@@ -1527,8 +1530,42 @@ def game_loop_flickPractice():
             valList[1] = target_time
         else:
             blit_labels_flick()
-        print(clock.get_fps())
+            
 # Functions that blit everything for the respective game mode
+def game_loop_main():
+    global gamemode, pause, gameDisplay, fullscreen_check
+    global balance
+    balance = 0
+    gamemode = 'game_main'
+    while not gameExit:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quitgame()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    button2(400, 650, 50, 50, settings)
+                    button2(30, 700, 140, 50, game_intro)
+            if event.type == pygame.KEYDOWN:
+                if event.key == keybindList[0]:
+                    pause = True
+                    paused()
+                if event.key == K_F11:
+                    if fullscreen_check == 1:
+                        gameDisplay = pygame.display.set_mode((xres, yres))
+                        fullscreen_check = 0
+                    else:
+                        gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
+                        fullscreen_check = 1
+        blit_labels_main()
+
+    
+def blit_labels_main():
+
+    gameDisplay.blit(brick_wall, (0, 0))
+    buttonMc('Back', 30, 700,)
+    pygame.display.update()
+
+
 def blit_labels_flick():
     global time_minute, time_secondstr
     time_second = int(global_time % 60)
@@ -1566,7 +1603,7 @@ def blit_labels_prac():
     fontsmall.render_to(gameDisplay, (46, 100), "Misses:", black)
     fontsmall.render_to(gameDisplay, (38, 125), "Percent:", black)
     gameDisplay.blit(gear, (400, 650))
-    gameDisplay.blit(targetimg, (200, 150))
+    gameDisplay.blit(targetimg, (230, 150))
     fontsmall.render_to(gameDisplay, (140, 100), str(int(miss_num)), black)
     fontsmall.render_to(gameDisplay, (140, 125), str(hit_percent_label), black)
     button("Reset", 50, 165, 100, 50, darkish_peach, dark_peach, clear_stats,brown)
