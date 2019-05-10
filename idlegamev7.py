@@ -334,26 +334,17 @@ def buttonMc(msg, x, y,action=None, block_type='stone'):
                 action()
         # If not draw the box with  the inactive color.
         else:
-            gameDisplay.blit(mossy_button, (x,y))
+            gameDisplay.blit(mossy_button, (x, y))
     if block_type == 'stone':
         if x + 160 > mouse[0] > x and y + 50 > mouse[1] > y:
-            gameDisplay.blit(minecraft_buttonLarge, (x-3,y-2))
+            gameDisplay.blit(minecraft_buttonLarge, (x-3, y-2))
             # If the click is left then do the action that is called
             if click[0] == 1 and action != None:
                 action()
         # If not draw the box with  the inactive color.
         else:
-            gameDisplay.blit(minecraft_button, (x,y))
-
-    # This calls a small text. It goes the font then font size
-    smallText = pygame.font.Font("freesansbold.ttf", 20)
-
-    # no clue just do it
-    textSurf, textRect = text_objects(msg, smallText)
-    # This makes the text in the center of the button
-    textRect.center = ((x + (160 / 2)), (y + (50 / 2)))
-    # Draws something on screen
-    gameDisplay.blit(textSurf, textRect)
+            gameDisplay.blit(minecraft_button, (x, y))
+    fontsmall.render_to(gameDisplay, (x + 15, y + 15), msg)
 
 
 def button(msg, x, y, w, h, ic, ac, action=None, bordercolor = None):
@@ -1053,12 +1044,14 @@ def paused():
         pygame.display.update()
 
 
-def changeVal(keyIndex):
+def changeVal(keyIndex, x, y, in_check, title):
     global valList
     tempstr = str(valList[keyIndex])
+    clear_keyBind_list()
+    in_keyBindList[in_check] = 1
     while True:
         # Checks what keys are held down, then adds them, exits, or backspaces depending
-        inkey = get_key()
+        inkey = get_key(x ,y, in_check, 1, title, keyIndex)
         if inkey == K_BACKSPACE:
             tempstr = tempstr[:-1]
 
@@ -1076,29 +1069,55 @@ def changeVal(keyIndex):
         pygame.display.update()
 
 def change_start_tick():
-    changeVal(0)
-def change_end_tick(): changeVal(2)
-def change_tick_interval(): changeVal(3)
-def change_live_count(): changeVal(4)
+    if not in_keyBindList[3]:
+        changeVal(0, 30, 520, 3, "Start ms: ")
+def change_end_tick():
+    if not in_keyBindList[4]:
+        changeVal(2, 200, 520, 4, "End ms: ")
+def change_tick_interval():
+    if not in_keyBindList[5]:
+        changeVal(3, 30, 580, 5, "ms Wait: ")
+def change_live_count():
+    if not in_keyBindList[6]:
+        changeVal(4, 370, 520, 6, 'Lives: ')
 
-def get_key():
-    global fullscreen_check, gameDisplay
+def get_key(x,y, keyIndex, gamemode_check, title='', buttonname=''):
+    global fullscreen_check, gameDisplay, in_keyBindList
     while 1:
-        print("hi")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quitgame()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                button2(200, 190, 100, 50, music_change)
-                buttonMc("Back", 100, 650, gamemodesDict[gamemode])
-                pos = pygame.mouse.get_pos()
-                if musicsound.button_rect.collidepoint(pos):
-                    musicsound.hit = True
-                if check_in_dropdown == 0:
-                    button2(750, 140, 150, 50, change_layout)
-            elif event.type == pygame.MOUSEBUTTONUP:
-                for s in slides:
-                    s.hit = False
+            if gamemode_check == 0:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    button2(200, 190, 100, 50, music_change)
+                    buttonMc("Back", 100, 650, gamemodesDict[gamemode])
+                    pos = pygame.mouse.get_pos()
+                    if musicsound.button_rect.collidepoint(pos):
+                        musicsound.hit = True
+                    if check_in_dropdown == 0:
+                        button2(750, 140, 150, 50, change_layout)
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    for s in slides:
+                        s.hit = False
+            if gamemode_check == 1:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    button2(540, 520, 160, 50, makePlay)
+                    button2(710, 520, 160, 50, makeStop)
+                    click = pygame.mouse.get_pressed()
+                    mouse = pygame.mouse.get_pos()
+                    if click[0] == 1:
+                        if 30 + 964 > mouse[0] > 30 and 30 + 440 > mouse[1] > 30:
+                            for i in range(len(targets) - 1):
+                                xpos, ypos = pygame.mouse.get_pos()
+                                if targets[i][0] + targets[i][2] / 2 > xpos > targets[i][0] - targets[i][2] / 2 \
+                                        and targets[i][1] + targets[i][2] / 2 > ypos > targets[i][1] - targets[i][
+                                    2] / 2:
+                                    del targets[i]
+                                    pygame.mixer.Sound.play(hit_sound)
+                                    hits += 1
+                                    break
+                                if i >= len(targets) - 2:
+                                    misses += 1
             if event.type == pygame.KEYDOWN:
                 if event.key == K_F11:
                     if fullscreen_check == 1:
@@ -1107,30 +1126,51 @@ def get_key():
                     else:
                         gameDisplay = pygame.display.set_mode((xres, yres), FULLSCREEN)
                         fullscreen_check = 1
+                in_keyBindList[keyIndex] = 0
                 return event.key
             else:
                 pass
-        for s in slides:
-            if s.hit:
-                s.move()
-                pygame.mixer.music.set_volume(musicsound.val)
-        blit_labels_settings(1)
+
+
+        if gamemode_check == 0:
+            for s in slides:
+                if s.hit:
+                    s.move()
+                    pygame.mixer.music.set_volume(musicsound.val)
+            blit_labels_settings()
+            buttonMc("Enter Key", x, y)
+
+        elif gamemode_check == 1:
+            blit_labels_flick()
+            buttonMc(title + str(valList[buttonname]) + '|', x, y)
+
         pygame.display.update()
 
-def changeKeyBind(keyIndex):
-    global keybindList
+in_keyBindList = [0,0,0,0,0,0,0,0,0,0,0]
 
+def changeKeyBind(keyIndex, x, y):
+    global keybindList
     # Checks whats keys are down, and makes that the keybind
-    inkey = get_key()
+    clear_keyBind_list()
+    in_keyBindList[keyIndex] = 1
+    inkey = get_key(x, y, keyIndex, 0)
     while 1:
         if inkey <= 500:
             keybindList[keyIndex] = inkey
             settings()
 
 
-def reset_stats_hotkey(): changeKeyBind(2)
-def clear_decals_key(): changeKeyBind(1)
-def pause_hotkey(): changeKeyBind(0)
+def reset_stats_hotkey():
+
+    if not in_keyBindList[2]:
+        changeKeyBind(2, 550, 260)
+def clear_decals_key():
+    if not in_keyBindList[1]:
+        changeKeyBind(1, 550, 140)
+
+def pause_hotkey():
+    if not in_keyBindList[0]:
+        changeKeyBind(0, 550, 200)
 
 
 def settings():
@@ -1168,7 +1208,7 @@ def settings():
         blit_labels_settings()
         pygame.display.update()
 
-def blit_labels_settings(getkey = 0):
+def blit_labels_settings():
     global gameDisplay
     gameDisplay.blit(brick_wall, (0, 0))
     gameDisplay.blit(musicnote, (220, 140))
@@ -1177,14 +1217,11 @@ def blit_labels_settings(getkey = 0):
     fontsmall.render_to(gameDisplay, (550, 70), "Keybinds")
     buttonMc("Back", 100, 650)
     buttonMc("Change Song", 200, 190)
-    if getkey == 0:
-        buttonMc(("Clear Decals: " + chr(keybindList[1])), 550, 140, clear_decals_key)
-        buttonMc(("Pause: " + chr(keybindList[0])), 550, 200, pause_hotkey)
-        buttonMc(("Clear Stats: " + chr(keybindList[2])), 550, 260, reset_stats_hotkey)
-    else:
-        buttonMc(("Clear Decals: " + chr(keybindList[1])), 550, 140)
-        buttonMc(("Pause: " + chr(keybindList[0])), 550, 200)
-        buttonMc(("Clear Stats: " + chr(keybindList[2])), 550, 260)
+
+    buttonMc(("Clear Decals: " + chr(keybindList[1])), 550, 140, clear_decals_key)
+    buttonMc(("Pause: " + chr(keybindList[0])), 550, 200, pause_hotkey)
+    buttonMc(("Clear Stats: " + chr(keybindList[2])), 550, 260, reset_stats_hotkey)
+
     buttonMc("Preset Binds \/", 750, 140, )
     if sprite_change_list[3] == 1:
         buttonMc("QWERTY", 750, 190, make_layout_QWERTY)
@@ -1249,6 +1286,13 @@ def make_layout_COLEMAK():
     keybindList[2] = 103
     sprite_change_list[3] = 0
     check_in_dropdown = 0
+    clear_keyBind_list()
+    settings()
+
+def clear_keyBind_list():
+    global in_keyBindList
+    for i in range(len(in_keyBindList)):
+        in_keyBindList[i] = 0
 
 
 def make_layout_DVORAK():
@@ -1258,6 +1302,8 @@ def make_layout_DVORAK():
     keybindList[2] = 121
     sprite_change_list[3] = 0
     check_in_dropdown = 0
+    clear_keyBind_list()
+    settings()
 
 
 def make_layout_QWERTY():
@@ -1267,7 +1313,8 @@ def make_layout_QWERTY():
     keybindList[2] = 116
     sprite_change_list[3] = 0
     check_in_dropdown = 0
-
+    clear_keyBind_list()
+    settings()
 
 def make_flash_flash():
     global weaponFlash, sprite_change_list, check_in_dropdown
@@ -1483,7 +1530,7 @@ def game_loop_flickPractice():
             valList[1] = target_time
         else:
             blit_labels_flick()
-
+        print(clock.get_fps())
 # Functions that blit everything for the respective game modesaoueaoeuoaeuoaeuoaeu
 def blit_labels_flick():
     global time_minute, time_secondstr
@@ -1494,18 +1541,18 @@ def blit_labels_flick():
     if time_second < 10:
         time_secondstr = '0' + str(time_second)
     buttonMc("Back", 30, 700, game_intro)
-    gameDisplay.blit(rangeimg, (30,30))
-    buttonMc(("Start Tick: " + str(valList[0])), 30, 520, change_start_tick)
-    buttonMc(("End Tick: " + str(valList[2])), 200, 520, change_end_tick)
-    buttonMc(("Tick Interval: " + str(valList[3])), 30, 580, change_tick_interval)
+    gameDisplay.blit(rangeimg, (30, 30))
+    buttonMc("Start ms: " + str(valList[0]), 30, 520, change_start_tick)
+    buttonMc("End ms: " + str(valList[2]), 200, 520, change_end_tick)
     buttonMc('Lives: ' + str(valList[4]), 370, 520, change_live_count)
+    buttonMc("ms Wait: " + str(valList[3]), 30, 580, change_tick_interval)
     buttonMc("Start", 540, 520)
     buttonMc("End", 710, 520)
-    xlist = [200,370,540,710]
+    xlist = [200, 370, 540, 710]
     for x in xlist:
         gameDisplay.blit(minecraft_button, (x, 580))
     fontsmall.render_to(gameDisplay, (570, 594), "Hits: " + str(hits), black)
-    fontsmall.render_to(gameDisplay, (230, 594), 'Tick: ' + str(int(valList[1])), black)
+    fontsmall.render_to(gameDisplay, (230, 594), 'ms: ' + str(int(valList[1])), black)
     fontsmall.render_to(gameDisplay, (740, 594), "Misses: " + str(misses), black)
     fontsmall.render_to(gameDisplay, (400, 594), 'Time ' + str(time_minute) + ':' + str(time_secondstr), black)
 
