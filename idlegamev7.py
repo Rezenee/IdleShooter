@@ -4,9 +4,18 @@ from pygame.locals import *
 import time
 import random
 import os
-
+import json
 # Initialized pygame
 pygame.init()
+
+# Defining fonts
+fontsmall = pygame.freetype.Font(None, 20)
+fontlarge = pygame.freetype.Font(None, 100)
+game_font = pygame.freetype.Font(None, 24)
+fontminecraft = pygame.freetype.Font("Minecraft.ttf", 24)
+font = pygame.font.SysFont("Verdana", 12)
+
+
 
 # Sets the resolution for the game
 xres = 1024
@@ -26,18 +35,17 @@ white = (255, 255, 255)
 peach = (224, 134, 81)
 red = (200, 0, 0)
 green = (0, 200, 0)
-orange = (200,100,50)
-trans = (1,1,1)
-brown = (139,69,19)
-dark_gray = (100,100,100)
-darkish_peach = (210,110,61)
+orange = (200, 100, 50)
+trans = (1, 1, 1)
+brown = (139, 69, 19)
+dark_gray = (100, 100, 100)
+darkish_peach = (210, 110, 61)
 dark_peach = (204, 104, 51)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 
 # Makes it so it selects the base at the start
 baseSelectPrac = 1
-# Makes hits start at 0
 hitNum = 0
 # Is the increment for how much the hits will raise each shot. I added this because it will be dynamic in the idle shooter
 hitAdd = 1
@@ -81,13 +89,6 @@ sprite_change_list = [open_target_change, hitmarker_img_change, flash_img_change
 
 # I need this so it can type those keys
 dictKeys = {0: K_0, 1: K_1, 2: K_2, 3: K_3, 4: K_4, 5: K_5, 6: K_6, 7: K_7, 8: K_8, 9: K_9}
-
-# Defining fonts
-fontsmall = pygame.freetype.Font(None, 20)
-fontlarge = pygame.freetype.Font(None, 100)
-game_font = pygame.freetype.Font(None, 24)
-fontminecraft = pygame.freetype.Font("Minecraft.ttf", 24)
-font = pygame.font.SysFont("Verdana", 12)
 
 
 # Defining all of the images.
@@ -145,10 +146,89 @@ global_time = 0
 
 in_keyBindList = [0,0,0,0,0,0,0,0,0,0,0]
 
+class Slider:
+    def __init__(self, name, val, maxi, mini, xpos,ypos):
+        self.val = val  # start value
+        self.maxi = maxi  # maximum at slider position right
+        self.mini = mini  # minimum at slider position left
+        self.xpos = xpos  # x-location on screen
+        self.ypos = ypos
+        self.surf = pygame.surface.Surface((100, 50))
+        self.hit = False  # the hit attribute indicates slider movement due to mouse interaction
+        self.txt_surf = font.render(name, 1, black)
+        self.txt_rect = self.txt_surf.get_rect(center=(50, 15))
+
+        # Static graphics - slider background #
+        if name == '':
+            self.surf.fill((dark_gray))
+            pygame.draw.rect(self.surf, gray, [0, 0, 100, 50], 3)
+            pygame.draw.rect(self.surf, white, [10, 19, 80, 5], 0)
+        else:
+            self.surf.fill((dark_gray))
+            pygame.draw.rect(self.surf, gray, [0, 0, 100, 50], 3)
+            pygame.draw.rect(self.surf, orange, [10, 10, 80, 10], 0)
+            pygame.draw.rect(self.surf, white, [10, 30, 80, 5], 0)
+        self.surf.blit(self.txt_surf, self.txt_rect)  # this surface never changes
+
+        # dynamic graphics - button surface #
+        self.button_surf = pygame.surface.Surface((20, 20))
+        self.button_surf.fill(trans)
+        self.button_surf.set_colorkey(trans)
+        pygame.draw.circle(self.button_surf, black, (10, 10), 6, 0)
+        pygame.draw.circle(self.button_surf, orange, (10, 10), 4, 0)
+
+    def draw(self, name):
+        """ Combination of static and dynamic graphics in a copy of
+    the basic slide surface
+    """
+        # static
+        surf = self.surf.copy()
+        # dynamic
+        if name == '':
+            pos = (10+int((self.val-self.mini)/(self.maxi-self.mini)*80), 21)
+        else:
+            pos = (10+int((self.val-self.mini)/(self.maxi-self.mini)*80), 33)
+
+        self.button_rect = self.button_surf.get_rect(center=pos)
+        surf.blit(self.button_surf, self.button_rect)
+        self.button_rect.move_ip(self.xpos, self.ypos)  # move of button box to correct screen position
+
+        # screen
+        gameDisplay.blit(surf, (self.xpos, self.ypos))
+
+    def move(self):
+        """
+    The dynamic part; reacts to movement of the slider button.
+    """
+        self.val = (pygame.mouse.get_pos()[0] - self.xpos - 10) / 80 * (self.maxi - self.mini) + self.mini
+        if self.val < self.mini:
+            self.val = self.mini
+        if self.val > self.maxi:
+            self.val = self.maxi
+
+
+    check = 1
+
+
+musicsound = Slider("", .5, 1, 0, 60, 190)
+recoilamp = Slider("", .5, 1, 0, 15, 350)
+slides = [musicsound, recoilamp]
+
+data_default = {
+    'music': {'volume': 0.3, 'song': 1}
+}
 try:
-    stats_file = open("stats_file.txt", 'a')
+    with open('data.txt') as json_file:
+        data = json.load(json_file)
+
 except FileNotFoundError:
-    stats_file = open("stats_file.txt", 'w')
+    with open('data.txt', 'w') as outfile:
+        json.dump(data_default, outfile, indent=4)
+        data = data_default
+
+
+stats_file = open("stats_file.txt", 'a')
+musicsound.val = data['music']['volume']
 
 
 def music_change():
@@ -198,73 +278,10 @@ weaponSelectedPractice = [baseSelectPrac, ak.gunSelectPrac, mp5.gunSelectPrac, a
                           , mp7cs.gunSelectPrac, p90cs.gunSelectPrac, mac10cs.gunSelectPrac]
 
 # I took the basics of this code from https://www.dreamincode.net/forums/topic/401541-buttons-and-sliders-in-pygame/
-class Slider:
-    def __init__(self, name, val, maxi, mini, xpos,ypos):
-        self.val = val  # start value
-        self.maxi = maxi  # maximum at slider position right
-        self.mini = mini  # minimum at slider position left
-        self.xpos = xpos  # x-location on screen
-        self.ypos = ypos
-        self.surf = pygame.surface.Surface((100, 50))
-        self.hit = False  # the hit attribute indicates slider movement due to mouse interaction
-        self.txt_surf = font.render(name, 1, black)
-        self.txt_rect = self.txt_surf.get_rect(center=(50, 15))
 
-        # Static graphics - slider background #
-        if name == '':
-            self.surf.fill((dark_gray))
-            pygame.draw.rect(self.surf, gray, [0, 0, 100, 50], 3)
-            pygame.draw.rect(self.surf, white, [10, 19, 80, 5], 0)
-        else:
-            self.surf.fill((dark_gray))
-            pygame.draw.rect(self.surf, gray, [0, 0, 100, 50], 3)
-            pygame.draw.rect(self.surf, orange, [10, 10, 80, 10], 0)
-            pygame.draw.rect(self.surf, white, [10, 30, 80, 5], 0)
-        self.surf.blit(self.txt_surf, self.txt_rect)  # this surface never changes
-
-        # dynamic graphics - button surface #
-        self.button_surf = pygame.surface.Surface((20, 20))
-        self.button_surf.fill(trans)
-        self.button_surf.set_colorkey(trans)
-        pygame.draw.circle(self.button_surf, black, (10, 10), 6, 0)
-        pygame.draw.circle(self.button_surf, orange, (10, 10), 4, 0)
-
-    def draw(self,name):
-        """ Combination of static and dynamic graphics in a copy of
-    the basic slide surface
-    """
-        # static
-        surf = self.surf.copy()
-        # dynamic
-        if name == '':
-            pos = (10+int((self.val-self.mini)/(self.maxi-self.mini)*80), 21)
-        else:
-            pos = (10+int((self.val-self.mini)/(self.maxi-self.mini)*80), 33)
-
-        self.button_rect = self.button_surf.get_rect(center=pos)
-        surf.blit(self.button_surf, self.button_rect)
-        self.button_rect.move_ip(self.xpos, self.ypos)  # move of button box to correct screen position
-
-        # screen
-        gameDisplay.blit(surf, (self.xpos, self.ypos))
-
-    def move(self):
-        """
-    The dynamic part; reacts to movement of the slider button.
-    """
-        self.val = (pygame.mouse.get_pos()[0] - self.xpos - 10) / 80 * (self.maxi - self.mini) + self.mini
-        if self.val < self.mini:
-            self.val = self.mini
-        if self.val > self.maxi:
-            self.val = self.maxi
-
-
-    check = 1
 
 # Defines the two sliders that are currently in thegame and adds them to a list.
-musicsound = Slider("", .5, 1, 0, 60, 190)
-recoilamp = Slider("", .5, 1, 0, 15, 350)
-slides = [musicsound, recoilamp]
+
 
 # It will buy the gun, but in practice it just selects it.
 def gunbuy(pracNum):
@@ -292,9 +309,12 @@ def bizongunbuy(): gunbuy(15)
 
 # again, i need this to have two things in one
 def quitgame():
+    stats_file.close()
+    f = open('store.pkcl', 'wb')
+    #First var is music sound
+    f.close()
     pygame.quit
     quit()
-    stats_file.close()
 
 # This lets me blit text in an easier format
 def text_objects(text, font):
@@ -983,7 +1003,6 @@ def deathScreen():
         pygame.display.update()
 
 
-
 def unpause():
     global pause
     pause = False
@@ -1336,8 +1355,9 @@ def make_target_CS():
 
 
 def game_intro():
-    global gamemode, gameDisplay, fullscreen_check
+    global gamemode, gameDisplay, fullscreen_check, music_val, musicsound
     fullscreen_check = 0
+
     # This is needed for the while loop
     intro = True
     gamemode = 'game_intro'
@@ -1562,6 +1582,8 @@ def game_loop_main():
 def blit_labels_main():
 
     gameDisplay.blit(brick_wall, (0, 0))
+    button('', 0, 650, 625, 15, black, black)
+    button('', 625, 0, 15, 768, black, black)
     buttonMc('Back', 30, 700,)
     pygame.display.update()
 
